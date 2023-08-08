@@ -8,14 +8,7 @@ export default class DomainEvents {
   }
 
   private getUserEvents() {
-    const events = [
-      'user.created',
-      'user.update',
-      'user.deleted',
-      'user.get',
-      'user.verified',
-      'user.set-admin',
-    ];
+    const events = ['user.created', 'user.update', 'user.deleted', 'user.get'];
 
     return events;
   }
@@ -26,17 +19,10 @@ export default class DomainEvents {
     return events;
   }
 
-  private getTokenEvents() {
-    const events = ['token.created', 'token.used'];
-
-    return events;
-  }
-
   private initialize() {
     const userEvents = this.getUserEvents();
     const sessionEvents = this.getSessionEvents();
-    const tokenEvents = this.getTokenEvents();
-    const allEvents = userEvents.concat(sessionEvents).concat(tokenEvents);
+    const allEvents = userEvents.concat(sessionEvents);
 
     this.eventEmitter = new EventEmitter(allEvents);
     Object.freeze(this);
