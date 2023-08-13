@@ -1,6 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 import fetch from 'node-fetch';
 import {
+  UserDomainError,
   UserDomainErrors,
   userDomainError,
 } from '~/module/users/domain/errors';
@@ -38,7 +39,9 @@ export default class SSOId extends ValueObject<SSOIdProps> {
     }
   }
 
-  public static async create(props: SSOIdProps): Promise<Either<Error, SSOId>> {
+  public static async create(
+    props: SSOIdProps,
+  ): Promise<Either<UserDomainError, SSOId>> {
     const isValid = await this.isValid(props.value);
     if (isValid) {
       return right(new SSOId(props));
