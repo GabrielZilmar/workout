@@ -1,8 +1,4 @@
-import {
-  UserDomainError,
-  UserDomainErrors,
-  userDomainError,
-} from '~/module/users/domain/errors';
+import { UserDomainError } from '~/module/users/domain/errors';
 import { ValueObject } from '~/shared/domain/value-object';
 import { Either, left, right } from '~/shared/either';
 
@@ -31,7 +27,7 @@ export default class Age extends ValueObject<AgeProps> {
   ): Promise<Either<UserDomainError, Age>> {
     const isValid = this.isValid(props.value);
     if (!isValid) {
-      return left(userDomainError(UserDomainErrors.invalidAge));
+      return left(UserDomainError.emit(UserDomainError.messages.invalidAge));
     }
 
     const age = new Age(props);

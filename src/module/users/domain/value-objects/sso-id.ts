@@ -1,10 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 import fetch from 'node-fetch';
-import {
-  UserDomainError,
-  UserDomainErrors,
-  userDomainError,
-} from '~/module/users/domain/errors';
+import { UserDomainError } from '~/module/users/domain/errors';
 import { ValueObject } from '~/shared/domain/value-object';
 import { Either, left, right } from '~/shared/either';
 
@@ -47,6 +43,6 @@ export default class SSOId extends ValueObject<SSOIdProps> {
       return right(new SSOId(props));
     }
 
-    return left(userDomainError(UserDomainErrors.invalidSSOId));
+    return left(UserDomainError.emit(UserDomainError.messages.invalidSSOId));
   }
 }

@@ -1,8 +1,4 @@
-import {
-  UserDomainError,
-  UserDomainErrors,
-  userDomainError,
-} from '~/module/users/domain/errors';
+import { UserDomainError } from '~/module/users/domain/errors';
 import { ValueObject } from '~/shared/domain/value-object';
 import { Either, left, right } from '~/shared/either';
 
@@ -33,7 +29,9 @@ export default class Username extends ValueObject<UsernameProps> {
   ): Either<UserDomainError, Username> {
     const isValid = this.isValid(props.value);
     if (!isValid) {
-      return left(userDomainError(UserDomainErrors.invalidUsername));
+      return left(
+        UserDomainError.emit(UserDomainError.messages.invalidUsername),
+      );
     }
 
     return right(new Username(props));
