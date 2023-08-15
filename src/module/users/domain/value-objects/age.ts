@@ -10,8 +10,13 @@ export type AgeProps = {
 };
 
 export default class Age extends ValueObject<AgeProps> {
+  public readonly minAge: number;
+  public readonly maxAge: number;
+
   private constructor(props: AgeProps) {
     super(props);
+    this.maxAge = MAX_AGE;
+    this.minAge = MIN_AGE;
   }
 
   get value(): number {

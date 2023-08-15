@@ -2,15 +2,18 @@ import { UserDomainError } from '~/module/users/domain/errors';
 import { ValueObject } from '~/shared/domain/value-object';
 import { Either, left, right } from '~/shared/either';
 
-export const MIN_WEIGHT = 36;
+export const MIN_WEIGHT = 36; // 36Kg
 
 export type WeightProps = {
-  value: number;
+  value: number; // In Kg
 };
 
 export default class Weight extends ValueObject<WeightProps> {
+  public readonly minWeight: number;
+
   private constructor(props: WeightProps) {
     super(props);
+    this.minWeight = MIN_WEIGHT;
   }
 
   get value() {
