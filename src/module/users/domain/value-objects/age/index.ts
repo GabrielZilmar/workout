@@ -27,9 +27,7 @@ export default class Age extends ValueObject<AgeProps> {
     return age > MIN_AGE && age < MAX_AGE;
   }
 
-  public static async create(
-    props: AgeProps,
-  ): Promise<Either<UserDomainError, Age>> {
+  public static create(props: AgeProps): Either<UserDomainError, Age> {
     const isValid = this.isValid(props.value);
     if (!isValid) {
       return left(UserDomainError.emit(UserDomainError.messages.invalidAge));
