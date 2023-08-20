@@ -21,7 +21,7 @@ export default class Username extends ValueObject<UsernameProps> {
   }
 
   private static isValid(username: string): boolean {
-    return username.length > MIN_USERNAME_LENGTH;
+    return username.length >= MIN_USERNAME_LENGTH;
   }
 
   public static create(

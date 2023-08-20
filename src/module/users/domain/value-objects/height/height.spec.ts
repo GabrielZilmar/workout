@@ -2,6 +2,10 @@ import { UserDomainError } from '~/module/users/domain/errors';
 import Height from '~/module/users/domain/value-objects/height';
 
 describe('User Height Value Objects', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   type HeightPublicClass = Height & {
     isValid(): boolean;
   };
