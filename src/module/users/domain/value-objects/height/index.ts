@@ -21,7 +21,7 @@ export default class Height extends ValueObject<HeightProps> {
   }
 
   private static isValid(value: number) {
-    return value < MIN_HEIGHT;
+    return value >= MIN_HEIGHT;
   }
 
   static create(props: HeightProps): Either<UserDomainError, Height> {
