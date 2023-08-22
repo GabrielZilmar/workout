@@ -30,7 +30,7 @@ export default class Username extends ValueObject<UsernameProps> {
     const isValid = this.isValid(props.value);
     if (!isValid) {
       return left(
-        UserDomainError.emit(UserDomainError.messages.invalidUsername),
+        UserDomainError.create(UserDomainError.messages.invalidUsername),
       );
     }
 

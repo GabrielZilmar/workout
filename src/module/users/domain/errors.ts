@@ -17,7 +17,7 @@ export class UserDomainError extends Error {
     this.name = 'user-domain';
   }
 
-  public static emit(message: string) {
+  public static create(message: string) {
     return new UserDomainError(message);
   }
 }

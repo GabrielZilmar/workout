@@ -30,7 +30,7 @@ export default class Age extends ValueObject<AgeProps> {
   public static create(props: AgeProps): Either<UserDomainError, Age> {
     const isValid = this.isValid(props.value);
     if (!isValid) {
-      return left(UserDomainError.emit(UserDomainError.messages.invalidAge));
+      return left(UserDomainError.create(UserDomainError.messages.invalidAge));
     }
 
     const age = new Age(props);

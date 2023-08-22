@@ -27,7 +27,9 @@ export default class Height extends ValueObject<HeightProps> {
   static create(props: HeightProps): Either<UserDomainError, Height> {
     const isValid = this.isValid(props.value);
     if (!isValid) {
-      return left(UserDomainError.emit(UserDomainError.messages.invalidHeight));
+      return left(
+        UserDomainError.create(UserDomainError.messages.invalidHeight),
+      );
     }
 
     return right(new Height(props));

@@ -27,7 +27,9 @@ export default class Weight extends ValueObject<WeightProps> {
   public static create(props: WeightProps): Either<UserDomainError, Weight> {
     const isValid = !this.isValid(props.value);
     if (!isValid) {
-      return left(UserDomainError.emit(UserDomainError.messages.invalidWeight));
+      return left(
+        UserDomainError.create(UserDomainError.messages.invalidWeight),
+      );
     }
 
     return right(new Weight(props));
