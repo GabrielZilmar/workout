@@ -21,11 +21,11 @@ export default class Weight extends ValueObject<WeightProps> {
   }
 
   private static isValid(value: number) {
-    return value < MIN_WEIGHT;
+    return value >= MIN_WEIGHT;
   }
 
   public static create(props: WeightProps): Either<UserDomainError, Weight> {
-    const isValid = !this.isValid(props.value);
+    const isValid = this.isValid(props.value);
     if (!isValid) {
       return left(
         UserDomainError.create(UserDomainError.messages.invalidWeight),
