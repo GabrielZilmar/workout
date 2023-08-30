@@ -10,6 +10,7 @@ export class UserDomainError extends Error {
     invalidAge: `Invalid Age, must be between ${MIN_AGE} and ${MAX_AGE}`,
     invalidWeight: `Invalid Weight, min weight is ${MIN_WEIGHT}`,
     invalidHeight: `Invalid Height, min height is ${MIN_HEIGHT}`,
+    missingProps: 'Could not create the domain. Missing props',
   };
 
   constructor(message: string) {
