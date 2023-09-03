@@ -7,11 +7,11 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { UsersService } from '~/module/users/users.service';
 import { CreateUserDto } from '~/module/users/dto/create-user.dto';
 import { UpdateUserDto } from '~/module/users/dto/update-user.dto';
-import { UsersService } from '~/module/users/users.service';
 
-@Controller('users')
+@Controller('/api/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
