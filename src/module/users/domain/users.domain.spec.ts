@@ -66,7 +66,25 @@ describe('UserDomain', () => {
       height: height.value as Height,
     };
 
+<<<<<<< Updated upstream
     const user = UserDomain.create({
+=======
+    return userProps;
+  };
+
+  it('should create an User domain', async () => {
+    const userProps = await getUserDomainProps();
+    const user = await UserDomain.create(userProps);
+
+    expect(user.isRight).toBeTruthy();
+    expect(user.value).toBeInstanceOf(UserDomain);
+    expect((user.value as UserDomain).props).toEqual(userProps);
+  });
+
+  it('should not create an User domain with an invalid props', async () => {
+    const userProps = await getUserDomainProps();
+    const user = await UserDomain.create({
+>>>>>>> Stashed changes
       ...userProps,
       ssoId: null,
     });

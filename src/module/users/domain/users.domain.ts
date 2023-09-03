@@ -1,4 +1,7 @@
 import { UserDomainError } from '~/module/users/domain/errors';
+import UserCreated, {
+  UserCreatedEventPayload,
+} from '~/module/users/domain/event/user-created';
 import Age from '~/module/users/domain/value-objects/age';
 import Height from '~/module/users/domain/value-objects/height';
 import SSOId from '~/module/users/domain/value-objects/sso-id';
@@ -56,10 +59,10 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
     );
   }
 
-  public static create(
+  public static async create(
     props: UserDomainProps,
     id?: UniqueEntityID,
-  ): Either<UserDomainError, UserDomain> {
+  ): Promise<Either<UserDomainError, UserDomain>> {
     const isValid = this.isValid(props);
     if (!isValid) {
       return left(
@@ -68,6 +71,13 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
     }
 
     const user = new UserDomain(props, id);
+
+    const isNewUser = !id;
+    if (isNewUser) {
+      const eventPayload: UserCreatedEventPayload = { user };
+      await user.emitEvent(UserCreated.eventName, eventPayload);
+    }
+
     return right(user);
   }
 }

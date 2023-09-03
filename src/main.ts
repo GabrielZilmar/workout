@@ -9,3 +9,5 @@ async function bootstrap() {
   await app.listen(3000);
 }
 bootstrap();
+
+// TODO: Install husky and pretty-quick
