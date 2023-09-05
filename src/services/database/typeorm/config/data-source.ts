@@ -1,6 +1,6 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import databaseConfig from '~/service/database/typeorm/config/database';
+import databaseConfig from '~/services/database/typeorm/config/database';
 
 export const dataSourceOptions = {
   type: 'postgres',
