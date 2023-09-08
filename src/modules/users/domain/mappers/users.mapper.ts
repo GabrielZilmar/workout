@@ -9,7 +9,9 @@ import Age from '~/modules/users/domain/value-objects/age';
 import Weight from '~/modules/users/domain/value-objects/weight';
 import Height from '~/modules/users/domain/value-objects/height';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export default class UserMapper implements Mapper<UserDomain, UserEntity> {
   public async toDomain(
     raw: UserEntity,
