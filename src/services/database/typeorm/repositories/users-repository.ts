@@ -9,7 +9,7 @@ import { Either, left, right } from '~/shared/either';
 
 export type PreventDuplicatedParams = {
   id?: string;
-  userName?: string;
+  username?: string;
 };
 
 @Injectable()
@@ -20,9 +20,9 @@ export default class UserRepository extends BaseRepository<User, UserDomain> {
 
   private async preventDuplicatedUser({
     id,
-    userName,
+    username,
   }: PreventDuplicatedParams): Promise<Either<RepositoryError, boolean>> {
-    const itemExist = await this.findOneByCriteria({ userName });
+    const itemExist = await this.findOneByCriteria({ username });
 
     if (itemExist) {
       const isSameUser = itemExist.id?.toValue() === id;
@@ -30,9 +30,9 @@ export default class UserRepository extends BaseRepository<User, UserDomain> {
         return right(true);
       }
 
-      const itemsDuplicated: { userName?: string } = {};
-      if (itemExist.userName.value === userName) {
-        itemsDuplicated.userName = userName;
+      const itemsDuplicated: { username?: string } = {};
+      if (itemExist.username.value === username) {
+        itemsDuplicated.username = username;
       }
 
       return left(
@@ -50,7 +50,7 @@ export default class UserRepository extends BaseRepository<User, UserDomain> {
     item: DeepPartial<User>,
   ): Promise<Either<RepositoryError, UserDomain>> {
     const preventDuplicated = await this.preventDuplicatedUser({
-      userName: item.userName,
+      username: item.username,
     });
     if (preventDuplicated.isLeft()) {
       return left(preventDuplicated.value);
@@ -84,7 +84,7 @@ export default class UserRepository extends BaseRepository<User, UserDomain> {
   ): Promise<Either<RepositoryError, boolean>> {
     const preventDuplicated = await this.preventDuplicatedUser({
       id,
-      userName: item.userName,
+      username: item.username,
     });
     if (preventDuplicated.isLeft()) {
       return left(preventDuplicated.value);

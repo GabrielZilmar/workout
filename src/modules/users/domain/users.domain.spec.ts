@@ -24,14 +24,14 @@ describe('UserDomain', () => {
       .mockImplementation(() => Promise.resolve(true));
 
     const ssoId = await SSOId.create({ value: 'valid_sso_id' });
-    const userName = Username.create({ value: 'valid_username' });
+    const username = Username.create({ value: 'valid_username' });
     const age = Age.create({ value: 20 });
     const weight = Weight.create({ value: 80 });
     const height = Height.create({ value: 180 });
 
     const userProps: UserDomainProps = {
       ssoId: ssoId.value as SSOId,
-      userName: userName.value as Username,
+      username: username.value as Username,
       age: age.value as Age,
       weight: weight.value as Weight,
       height: height.value as Height,

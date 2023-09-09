@@ -16,14 +16,14 @@ export default class UserMapper implements Mapper<UserDomain, UserEntity> {
   public async toDomain(
     raw: UserEntity,
   ): Promise<Either<UserDomainError, UserDomain>> {
-    const { id, ssoId, userName, age, weight, height } = raw;
+    const { id, ssoId, username, age, weight, height } = raw;
 
     const ssoIdOrError = await SSOId.create({ value: ssoId });
     if (ssoIdOrError.isLeft()) {
       return left(ssoIdOrError.value);
     }
 
-    const userNameOrError = Username.create({ value: userName });
+    const userNameOrError = Username.create({ value: username });
     if (userNameOrError.isLeft()) {
       return left(userNameOrError.value);
     }
@@ -48,7 +48,7 @@ export default class UserMapper implements Mapper<UserDomain, UserEntity> {
     const userOrError = await UserDomain.create(
       {
         ssoId: ssoIdOrError.value,
-        userName: userNameOrError.value,
+        username: userNameOrError.value,
         age: ageOrError.value,
         weight: weightOrError.value,
         height: heightOrError.value,
@@ -64,12 +64,12 @@ export default class UserMapper implements Mapper<UserDomain, UserEntity> {
   }
 
   public toPersistence(item: UserDomain): UserEntity {
-    const { id, ssoId, userName, age, weight, height } = item;
+    const { id, ssoId, username, age, weight, height } = item;
 
     const userEntity = {
       id: id.toString(),
       ssoId: ssoId.value,
-      userName: userName.value,
+      username: username.value,
       age: age.value,
       weight: weight.value,
       height: height.value,

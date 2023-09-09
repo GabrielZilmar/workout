@@ -13,7 +13,7 @@ import { Either, left, right } from '~/shared/either';
 
 export type UserDomainProps = {
   ssoId: SSOId;
-  userName: Username;
+  username: Username;
   age: Age;
   weight: Weight;
   height: Height;
@@ -28,8 +28,8 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
     return this.props.ssoId;
   }
 
-  get userName(): Username {
-    return this.props.userName;
+  get username(): Username {
+    return this.props.username;
   }
 
   get age(): Age {
@@ -52,7 +52,7 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
 
     return (
       props.ssoId instanceof SSOId &&
-      props.userName instanceof Username &&
+      props.username instanceof Username &&
       props.age instanceof Age &&
       props.weight instanceof Weight &&
       props.height instanceof Height

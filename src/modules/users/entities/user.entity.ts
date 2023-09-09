@@ -15,7 +15,7 @@ export class User {
   ssoId: string;
 
   @Column()
-  userName: string;
+  username: string;
 
   @Column()
   age: number;

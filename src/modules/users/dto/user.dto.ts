@@ -5,7 +5,7 @@ export class UserDto {
   ssoId: string;
 
   @IsString()
-  userName: string;
+  username: string;
 
   @IsNumber()
   age: number;
