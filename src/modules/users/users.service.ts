@@ -7,6 +7,7 @@ import Username from '~/modules/users/domain/value-objects/username';
 import Weight from '~/modules/users/domain/value-objects/weight';
 import { CreateUserDto } from '~/modules/users/dto/create-user.dto';
 import { UpdateUserDto } from '~/modules/users/dto/update-user.dto';
+import { UserDto } from '~/modules/users/dto/user.dto';
 
 @Injectable()
 export class UsersService {
@@ -16,7 +17,7 @@ export class UsersService {
     age,
     weight,
     height,
-  }: CreateUserDto): Promise<UserDomain> {
+  }: CreateUserDto): Promise<UserDto> {
     const ssoIdOrError = await SSOId.create({ value: ssoId });
     if (ssoIdOrError.isLeft()) {
       throw new HttpException(
@@ -65,7 +66,8 @@ export class UsersService {
       throw new HttpException(userOrError.value, HttpStatus.BAD_REQUEST);
     }
 
-    return userOrError.value; // Todo: create dto to return and save on db
+    const userDto = UserDto.domainToDto(userOrError.value);
+    return userDto;
   }
 
   findAll() {
