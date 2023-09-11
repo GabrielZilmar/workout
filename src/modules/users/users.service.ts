@@ -1,5 +1,5 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { UserDomain } from '~/modules/users/domain/users.domain';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 import Age from '~/modules/users/domain/value-objects/age';
 import Height from '~/modules/users/domain/value-objects/height';
 import SSOId from '~/modules/users/domain/value-objects/sso-id';
@@ -8,9 +8,13 @@ import Weight from '~/modules/users/domain/value-objects/weight';
 import { CreateUserDto } from '~/modules/users/dto/create-user.dto';
 import { UpdateUserDto } from '~/modules/users/dto/update-user.dto';
 import { UserDto } from '~/modules/users/dto/user.dto';
+import { User } from '~/modules/users/entities/user.entity';
+import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 
 @Injectable()
 export class UsersService {
+  constructor(private readonly userRepository: UserRepository) {}
+
   public async create({
     ssoId,
     username,
@@ -55,18 +59,23 @@ export class UsersService {
       );
     }
 
-    const userOrError = await UserDomain.create({
-      ssoId: ssoIdOrError.value,
-      username: usernameOrError.value,
-      age: ageOrError.value,
-      weight: weightOrError.value,
-      height: heightOrError.value,
-    });
-    if (userOrError.isLeft()) {
-      throw new HttpException(userOrError.value, HttpStatus.BAD_REQUEST);
+    const user: Partial<User> = {
+      ssoId: ssoIdOrError.value.value,
+      username: usernameOrError.value.value,
+      age: ageOrError.value.value,
+      weight: weightOrError.value.value,
+      height: heightOrError.value.value,
+    };
+    const userCreated = await this.userRepository.create(user);
+
+    if (userCreated.isLeft()) {
+      throw new HttpException(
+        userCreated.value.message,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
-    const userDto = UserDto.domainToDto(userOrError.value);
+    const userDto = UserDto.domainToDto(userCreated.value);
     return userDto;
   }
 
