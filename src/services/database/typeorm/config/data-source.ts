@@ -13,7 +13,7 @@ export const dataSourceOptions = {
   synchronize: true,
   logging: false,
   namingStrategy: new SnakeNamingStrategy(),
-  entities: [join(__dirname, '**', '*.entity.{ts,js}')],
+  entities: [join(__dirname, '../../../../modules/**/*.entity.{ts,js}')],
   migrations: [join(__dirname, '../migrations/*{.ts,.js}')],
   subscribers: [join(__dirname, '../subscribers/*{.ts,.js}')],
 } as DataSourceOptions;
