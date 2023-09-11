@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { DeepPartial } from 'typeorm';
+import { Inject, Injectable } from '@nestjs/common';
+import { DataSource, DeepPartial } from 'typeorm';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { UserDomain } from '~/modules/users/domain/users.domain';
 import { User } from '~/modules/users/entities/user.entity';
@@ -14,8 +14,11 @@ export type PreventDuplicatedParams = {
 
 @Injectable()
 export default class UserRepository extends BaseRepository<User, UserDomain> {
-  constructor(userMapper: UserMapper) {
-    super(User, userMapper);
+  constructor(
+    userMapper: UserMapper,
+    @Inject(DataSource) private readonly dataSource: DataSource,
+  ) {
+    super(User, userMapper, dataSource);
   }
 
   private async preventDuplicatedUser({

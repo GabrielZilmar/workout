@@ -1,4 +1,5 @@
 import {
+  DataSource,
   DeepPartial,
   EntityTarget,
   FindManyOptions,
@@ -7,7 +8,6 @@ import {
   Repository,
 } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-import { AppDataSource } from '~/services/database/typeorm/config/data-source';
 import { RepositoryError } from '~/services/database/typeorm/repositories/error';
 import {
   IRead,
@@ -22,8 +22,16 @@ export abstract class BaseRepository<T extends { id: string }, D>
   public readonly repository: Repository<T>;
   public readonly mapper: Mapper<D, T>;
 
-  constructor(entity: EntityTarget<T>, mapper: Mapper<D, T>) {
-    this.repository = AppDataSource.getRepository(entity);
+  constructor(
+    entity: EntityTarget<T>,
+    mapper: Mapper<D, T>,
+    dataSource: DataSource,
+  ) {
+    if (!dataSource) {
+      throw new RepositoryError('Data Source is not provided');
+    }
+
+    this.repository = dataSource.getRepository(entity);
     this.mapper = mapper;
   }
 
