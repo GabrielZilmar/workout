@@ -24,6 +24,11 @@
     "migration:down": "npm run typeorm -- migration:revert",
     "prepare": "husky install"
   },
+  "lint-staged": {
+    "{*.js,*.jsx,*.ts,*.tsx}": [
+      "eslint"
+    ]
+  },
   "dependencies": {
     "@gabrielzilmar/event-emitter": "^0.0.1",
     "@nestjs/common": "^9.0.0",
