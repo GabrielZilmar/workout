@@ -1,3 +1,4 @@
+import { HttpStatus } from '@nestjs/common';
 import { UserDomainError } from '~/modules/users/domain/errors';
 import { ValueObject } from '~/shared/domain/value-object';
 import { Either, left, right } from '~/shared/either';
@@ -28,7 +29,10 @@ export default class Weight extends ValueObject<WeightProps> {
     const isValid = this.isValid(props.value);
     if (!isValid) {
       return left(
-        UserDomainError.create(UserDomainError.messages.invalidWeight),
+        UserDomainError.create(
+          UserDomainError.messages.invalidWeight,
+          HttpStatus.BAD_REQUEST,
+        ),
       );
     }
 

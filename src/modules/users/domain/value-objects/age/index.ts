@@ -1,3 +1,4 @@
+import { HttpStatus } from '@nestjs/common';
 import { UserDomainError } from '~/modules/users/domain/errors';
 import { ValueObject } from '~/shared/domain/value-object';
 import { Either, left, right } from '~/shared/either';
@@ -30,7 +31,12 @@ export default class Age extends ValueObject<AgeProps> {
   public static create(props: AgeProps): Either<UserDomainError, Age> {
     const isValid = this.isValid(props.value);
     if (!isValid) {
-      return left(UserDomainError.create(UserDomainError.messages.invalidAge));
+      return left(
+        UserDomainError.create(
+          UserDomainError.messages.invalidAge,
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
     }
 
     const age = new Age(props);
