@@ -1,3 +1,4 @@
+import { HttpStatus } from '@nestjs/common';
 import {
   DeepPartial,
   EntityTarget,
@@ -34,7 +35,11 @@ export abstract class BaseRepository<T extends { id: string }, D>
 
     if (!itemExist) {
       return left(
-        RepositoryError.create(RepositoryError.messages.itemNotFound, { id }),
+        RepositoryError.create(
+          RepositoryError.messages.itemNotFound,
+          { id },
+          HttpStatus.BAD_REQUEST,
+        ),
       );
     }
 
@@ -48,9 +53,13 @@ export abstract class BaseRepository<T extends { id: string }, D>
 
     if (itemExist) {
       return left(
-        RepositoryError.create(RepositoryError.messages.itemAlreadyExists, {
-          id,
-        }),
+        RepositoryError.create(
+          RepositoryError.messages.itemAlreadyExists,
+          {
+            id,
+          },
+          HttpStatus.BAD_REQUEST,
+        ),
       );
     }
 
