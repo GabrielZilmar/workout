@@ -17,7 +17,9 @@ export default class SSOId extends ValueObject<SSOIdProps> {
     return this.props.value;
   }
 
-  private static async isValid(ssoId: string): Promise<boolean> {
+  private static async isValid(
+    ssoId: string,
+  ): Promise<Either<UserDomainError, true>> {
     const ssoUrl = process.env.SSO_URL;
     const ssoPort = process.env.SSO_PORT;
     const getUserPath = `${process.env.SSO_GET_USER_PATH}/${ssoId}`;
@@ -26,12 +28,22 @@ export default class SSOId extends ValueObject<SSOIdProps> {
       const ssoUser = await fetch(`${ssoUrl}:${ssoPort}${getUserPath}`);
 
       if (ssoUser.status === HttpStatus.OK) {
-        return true;
+        return right(true);
       }
 
-      return false;
+      return left(
+        UserDomainError.create(
+          UserDomainError.messages.invalidSSOId,
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
     } catch (e) {
-      return false;
+      return left(
+        UserDomainError.create(
+          UserDomainError.messages.couldNotValidateSSOId,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        ),
+      );
     }
   }
 
@@ -39,10 +51,10 @@ export default class SSOId extends ValueObject<SSOIdProps> {
     props: SSOIdProps,
   ): Promise<Either<UserDomainError, SSOId>> {
     const isValid = await this.isValid(props.value);
-    if (isValid) {
+    if (isValid.isRight()) {
       return right(new SSOId(props));
     }
 
-    return left(UserDomainError.create(UserDomainError.messages.invalidSSOId));
+    return left(isValid.value);
   }
 }
