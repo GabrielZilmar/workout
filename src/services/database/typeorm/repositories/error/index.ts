@@ -1,4 +1,7 @@
+import { HttpStatus } from '@nestjs/common';
+
 export class RepositoryError extends Error {
+  public readonly code: number;
   public readonly payload?: unknown;
   public static messages = {
     createError: 'Could not create the item.',
@@ -10,13 +13,18 @@ export class RepositoryError extends Error {
     itemAlreadyExists: 'Item Already exists.',
   };
 
-  constructor(message: string, payload?: unknown) {
+  constructor(message: string, code: number, payload?: unknown) {
     super(message);
     this.payload = payload || null;
+    this.code = code;
     this.name = 'repository-base';
   }
 
-  public static create(message: string, payload?: unknown) {
-    return new RepositoryError(message, payload);
+  public static create(
+    message: string,
+    payload?: unknown,
+    code = HttpStatus.INTERNAL_SERVER_ERROR,
+  ) {
+    return new RepositoryError(message, code, payload);
   }
 }
