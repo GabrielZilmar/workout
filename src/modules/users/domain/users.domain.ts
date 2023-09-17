@@ -1,3 +1,4 @@
+import { HttpStatus } from '@nestjs/common';
 import { UserDomainError } from '~/modules/users/domain/errors';
 import UserCreated, {
   UserCreatedEventPayload,
@@ -66,7 +67,10 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
     const isValid = this.isValid(props);
     if (!isValid) {
       return left(
-        UserDomainError.create(UserDomainError.messages.missingProps),
+        UserDomainError.create(
+          UserDomainError.messages.missingProps,
+          HttpStatus.BAD_REQUEST,
+        ),
       );
     }
 
