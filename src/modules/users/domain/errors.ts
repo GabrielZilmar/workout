@@ -23,7 +23,6 @@ export class UserDomainError extends Error {
     this.code = code;
   }
 
-  // Add code to error, create a branch for it
   public static create(
     message: string,
     code = HttpStatus.INTERNAL_SERVER_ERROR,
