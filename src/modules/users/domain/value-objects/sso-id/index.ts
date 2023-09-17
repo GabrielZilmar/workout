@@ -40,7 +40,7 @@ export default class SSOId extends ValueObject<SSOIdProps> {
     } catch (e) {
       return left(
         UserDomainError.create(
-          `Could not create ${UserDomainError.messages.couldNotValidateSSOId}`,
+          UserDomainError.messages.couldNotValidateSSOId,
           HttpStatus.INTERNAL_SERVER_ERROR,
         ),
       );
