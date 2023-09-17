@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { DeepPartial } from 'typeorm';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { UserDomain } from '~/modules/users/domain/users.domain';
@@ -39,6 +39,7 @@ export default class UserRepository extends BaseRepository<User, UserDomain> {
         RepositoryError.create(
           RepositoryError.messages.itemDuplicated,
           itemsDuplicated,
+          HttpStatus.BAD_REQUEST,
         ),
       );
     }
