@@ -1,5 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import Age from '~/modules/users/domain/value-objects/age';
 import Height from '~/modules/users/domain/value-objects/height';
 import SSOId from '~/modules/users/domain/value-objects/sso-id';
@@ -26,7 +25,7 @@ export class UsersService {
     if (ssoIdOrError.isLeft()) {
       throw new HttpException(
         ssoIdOrError.value.message,
-        HttpStatus.BAD_REQUEST,
+        ssoIdOrError.value.code,
       );
     }
 
@@ -34,20 +33,20 @@ export class UsersService {
     if (usernameOrError.isLeft()) {
       throw new HttpException(
         usernameOrError.value.message,
-        HttpStatus.BAD_REQUEST,
+        usernameOrError.value.code,
       );
     }
 
     const ageOrError = Age.create({ value: age });
     if (ageOrError.isLeft()) {
-      throw new HttpException(ageOrError.value.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(ageOrError.value.message, ageOrError.value.code);
     }
 
     const weightOrError = Weight.create({ value: weight });
     if (weightOrError.isLeft()) {
       throw new HttpException(
         weightOrError.value.message,
-        HttpStatus.BAD_REQUEST,
+        weightOrError.value.code,
       );
     }
 
@@ -55,7 +54,7 @@ export class UsersService {
     if (heightOrError.isLeft()) {
       throw new HttpException(
         heightOrError.value.message,
-        HttpStatus.BAD_REQUEST,
+        heightOrError.value.code,
       );
     }
 
@@ -71,7 +70,7 @@ export class UsersService {
     if (userCreated.isLeft()) {
       throw new HttpException(
         userCreated.value.message,
-        HttpStatus.BAD_REQUEST,
+        userCreated.value.code,
       );
     }
 
