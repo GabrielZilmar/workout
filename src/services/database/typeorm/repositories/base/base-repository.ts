@@ -55,9 +55,7 @@ export abstract class BaseRepository<T extends { id: string }, D>
       return left(
         RepositoryError.create(
           RepositoryError.messages.itemAlreadyExists,
-          {
-            id,
-          },
+          { id },
           HttpStatus.BAD_REQUEST,
         ),
       );
