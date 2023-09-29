@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import Age from '~/modules/users/domain/value-objects/age';
 import Height from '~/modules/users/domain/value-objects/height';
 import SSOId from '~/modules/users/domain/value-objects/sso-id';
