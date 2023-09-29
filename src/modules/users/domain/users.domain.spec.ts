@@ -8,6 +8,7 @@ import Height from '~/modules/users/domain/value-objects/height';
 import SSOId from '~/modules/users/domain/value-objects/sso-id';
 import Username from '~/modules/users/domain/value-objects/username';
 import Weight from '~/modules/users/domain/value-objects/weight';
+import { Either, right } from '~/shared/either';
 
 describe('UserDomain', () => {
   afterEach(() => {
@@ -15,13 +16,13 @@ describe('UserDomain', () => {
   });
 
   type SSOIdPublicClass = SSOId & {
-    isValid(ssoId: string): Promise<boolean>;
+    isValid(ssoId: string): Promise<Either<UserDomainError, true>>;
   };
 
   const getUserDomainProps = async () => {
     jest
       .spyOn(SSOId as unknown as SSOIdPublicClass, 'isValid')
-      .mockImplementation(() => Promise.resolve(true));
+      .mockImplementation(() => Promise.resolve(right(true)));
 
     const ssoId = await SSOId.create({ value: 'valid_sso_id' });
     const username = Username.create({ value: 'valid_username' });
