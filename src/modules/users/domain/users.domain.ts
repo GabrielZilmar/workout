@@ -15,9 +15,9 @@ import { Either, left, right } from '~/shared/either';
 export type UserDomainProps = {
   ssoId: SSOId;
   username: Username;
-  age: Age;
-  weight: Weight;
-  height: Height;
+  age?: Age;
+  weight?: Weight;
+  height?: Height;
 };
 
 export class UserDomain extends AggregateRoot<UserDomainProps> {
@@ -33,31 +33,25 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
     return this.props.username;
   }
 
-  get age(): Age {
+  get age(): Age | undefined {
     return this.props.age;
   }
 
-  get weight(): Weight {
+  get weight(): Weight | undefined {
     return this.props.weight;
   }
 
-  get height(): Height {
+  get height(): Height | undefined {
     return this.props.height;
   }
 
   private static isValid(props: UserDomainProps): boolean {
-    const hasAllProps = Object.values(props).every((prop) => !!prop);
-    if (!hasAllProps) {
+    const hasAllRequiredProps = !!props.ssoId && !!props.username;
+    if (!hasAllRequiredProps) {
       return false;
     }
 
-    return (
-      props.ssoId instanceof SSOId &&
-      props.username instanceof Username &&
-      props.age instanceof Age &&
-      props.weight instanceof Weight &&
-      props.height instanceof Height
-    );
+    return props.ssoId instanceof SSOId && props.username instanceof Username;
   }
 
   public static async create(

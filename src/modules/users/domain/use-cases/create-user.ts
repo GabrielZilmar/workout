@@ -1,26 +1,29 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import Age from '~/modules/users/domain/value-objects/age';
 import Height from '~/modules/users/domain/value-objects/height';
 import SSOId from '~/modules/users/domain/value-objects/sso-id';
 import Username from '~/modules/users/domain/value-objects/username';
 import Weight from '~/modules/users/domain/value-objects/weight';
 import { CreateUserDto } from '~/modules/users/dto/create-user.dto';
-import { UpdateUserDto } from '~/modules/users/dto/update-user.dto';
 import { UserDto } from '~/modules/users/dto/user.dto';
 import { User } from '~/modules/users/entities/user.entity';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
+import { UseCase } from '~/shared/core/use-case';
+
+type CreateUserParams = CreateUserDto;
+type CreateUserResult = Promise<UserDto>;
 
 @Injectable()
-export class UsersService {
+export class CreateUser implements UseCase<CreateUserParams, CreateUserResult> {
   constructor(private readonly userRepository: UserRepository) {}
 
-  public async create({
+  public async execute({
     ssoId,
     username,
     age,
     weight,
     height,
-  }: CreateUserDto): Promise<UserDto> {
+  }: CreateUserParams): Promise<CreateUserResult> {
     const ssoIdOrError = await SSOId.create({ value: ssoId });
     if (ssoIdOrError.isLeft()) {
       throw new HttpException(
@@ -69,28 +72,15 @@ export class UsersService {
 
     if (userCreated.isLeft()) {
       throw new HttpException(
-        userCreated.value.message,
+        {
+          message: userCreated.value.message,
+          duplicatedItems: userCreated.value.payload,
+        },
         userCreated.value.code,
       );
     }
 
     const userDto = UserDto.domainToDto(userCreated.value);
     return userDto;
-  }
-
-  findAll() {
-    return `This action returns all users`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
   }
 }

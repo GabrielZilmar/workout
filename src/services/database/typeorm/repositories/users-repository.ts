@@ -10,6 +10,7 @@ import { Either, left, right } from '~/shared/either';
 export type PreventDuplicatedParams = {
   id?: string;
   username?: string;
+  ssoId?: string;
 };
 
 @Injectable()
@@ -21,8 +22,9 @@ export default class UserRepository extends BaseRepository<User, UserDomain> {
   private async preventDuplicatedUser({
     id,
     username,
+    ssoId,
   }: PreventDuplicatedParams): Promise<Either<RepositoryError, boolean>> {
-    const itemExist = await this.findOneByCriteria({ username });
+    const itemExist = await this.findOneByCriteria([{ username }, { ssoId }]);
 
     if (itemExist) {
       const isSameUser = itemExist.id?.toValue() === id;
@@ -30,9 +32,12 @@ export default class UserRepository extends BaseRepository<User, UserDomain> {
         return right(true);
       }
 
-      const itemsDuplicated: { username?: string } = {};
+      const itemsDuplicated: { username?: string; ssoId?: string } = {};
       if (itemExist.username.value === username) {
         itemsDuplicated.username = username;
+      }
+      if (itemExist.ssoId.value === ssoId) {
+        itemsDuplicated.ssoId = ssoId;
       }
 
       return left(
@@ -52,6 +57,7 @@ export default class UserRepository extends BaseRepository<User, UserDomain> {
   ): Promise<Either<RepositoryError, UserDomain>> {
     const preventDuplicated = await this.preventDuplicatedUser({
       username: item.username,
+      ssoId: item.ssoId,
     });
     if (preventDuplicated.isLeft()) {
       return left(preventDuplicated.value);

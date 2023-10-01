@@ -13,6 +13,7 @@ describe('User SSO ID Value Object', () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
+    jest.clearAllMocks();
   });
 
   it('Should create a valid SSO ID value object', async () => {
@@ -45,8 +46,10 @@ describe('User SSO ID Value Object', () => {
     );
 
     const rejectedRequestMock = requestSsoUserMock.rejectedRequest;
-    (fetch as jest.MockedFunction<typeof fetch>).mockRejectedValue(
-      new Response(JSON.stringify(rejectedRequestMock)),
+    (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
+      new Response(JSON.stringify(rejectedRequestMock), {
+        status: rejectedRequestMock.request.status,
+      }),
     );
 
     const ssoId = await SSOId.create({
@@ -60,6 +63,31 @@ describe('User SSO ID Value Object', () => {
     const ssoIdValueObject = ssoId.value as UserDomainError;
     expect(ssoIdValueObject.message).toBe(
       UserDomainError.messages.invalidSSOId,
+    );
+  });
+
+  it('Should not create a SSO ID value object if sso id throws error', async () => {
+    const isValidSpy = jest.spyOn(
+      SSOId as unknown as SSOIdPublicClass,
+      'isValid',
+    );
+
+    const rejectedRequestMock = requestSsoUserMock.rejectedRequest;
+    (fetch as jest.MockedFunction<typeof fetch>).mockRejectedValue(
+      new Response(),
+    );
+
+    const ssoId = await SSOId.create({
+      value: rejectedRequestMock.userId,
+    });
+
+    expect(ssoId.value).toBeInstanceOf(UserDomainError);
+    expect(ssoId.isLeft()).toBeTruthy();
+    expect(isValidSpy).toHaveBeenCalled();
+
+    const ssoIdValueObject = ssoId.value as UserDomainError;
+    expect(ssoIdValueObject.message).toBe(
+      UserDomainError.messages.couldNotValidateSSOId,
     );
   });
 });
