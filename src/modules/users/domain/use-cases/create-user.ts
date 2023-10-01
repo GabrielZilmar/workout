@@ -69,10 +69,6 @@ export class CreateUser implements UseCase<CreateUserParams, CreateUserResult> {
       height: heightOrError.value.value,
     };
     const userCreated = await this.userRepository.create(user);
-    console.log(
-      '🚀 ~ file: create-user.ts:72 ~ CreateUser ~ userCreated:',
-      userCreated.value,
-    );
 
     if (userCreated.isLeft()) {
       throw new HttpException(
