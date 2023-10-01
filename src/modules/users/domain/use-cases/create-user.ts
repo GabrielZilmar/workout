@@ -72,7 +72,10 @@ export class CreateUser implements UseCase<CreateUserParams, CreateUserResult> {
 
     if (userCreated.isLeft()) {
       throw new HttpException(
-        userCreated.value.message,
+        {
+          message: userCreated.value.message,
+          duplicatedItems: userCreated.value.payload,
+        },
         userCreated.value.code,
       );
     }
