@@ -81,6 +81,13 @@ export class CreateUser implements UseCase<CreateUserParams, CreateUserResult> {
     }
 
     const userDto = UserDto.domainToDto(userCreated.value);
-    return userDto;
+    if (userDto.isLeft()) {
+      throw new HttpException(
+        { message: userDto.value.message },
+        userDto.value.code,
+      );
+    }
+
+    return userDto.value;
   }
 }
