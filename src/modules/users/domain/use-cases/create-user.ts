@@ -1,4 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
+import { UserDomain } from '~/modules/users/domain/users.domain';
 import Age from '~/modules/users/domain/value-objects/age';
 import Height from '~/modules/users/domain/value-objects/height';
 import SSOId from '~/modules/users/domain/value-objects/sso-id';
@@ -24,49 +25,26 @@ export class CreateUser implements UseCase<CreateUserParams, CreateUserResult> {
     weight,
     height,
   }: CreateUserParams): Promise<CreateUserResult> {
-    const ssoIdOrError = await SSOId.create({ value: ssoId });
-    if (ssoIdOrError.isLeft()) {
+    const userDomainOrError = await UserDomain.create({
+      ssoId,
+      username,
+      age,
+      weight,
+      height,
+    });
+    if (userDomainOrError.isLeft()) {
       throw new HttpException(
-        ssoIdOrError.value.message,
-        ssoIdOrError.value.code,
-      );
-    }
-
-    const usernameOrError = Username.create({ value: username });
-    if (usernameOrError.isLeft()) {
-      throw new HttpException(
-        usernameOrError.value.message,
-        usernameOrError.value.code,
-      );
-    }
-
-    const ageOrError = Age.create({ value: age });
-    if (ageOrError.isLeft()) {
-      throw new HttpException(ageOrError.value.message, ageOrError.value.code);
-    }
-
-    const weightOrError = Weight.create({ value: weight });
-    if (weightOrError.isLeft()) {
-      throw new HttpException(
-        weightOrError.value.message,
-        weightOrError.value.code,
-      );
-    }
-
-    const heightOrError = Height.create({ value: height });
-    if (heightOrError.isLeft()) {
-      throw new HttpException(
-        heightOrError.value.message,
-        heightOrError.value.code,
+        { message: userDomainOrError.value.message },
+        userDomainOrError.value.code,
       );
     }
 
     const user: Partial<User> = {
-      ssoId: ssoIdOrError.value.value,
-      username: usernameOrError.value.value,
-      age: ageOrError.value.value,
-      weight: weightOrError.value.value,
-      height: heightOrError.value.value,
+      ssoId: userDomainOrError.value.ssoId.value,
+      username: userDomainOrError.value.username.value,
+      age: userDomainOrError.value.age?.value,
+      weight: userDomainOrError.value.weight?.value,
+      height: userDomainOrError.value.height?.value,
     };
     const userCreated = await this.userRepository.create(user);
 
