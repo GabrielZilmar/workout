@@ -1,10 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { UserDomain } from '~/modules/users/domain/users.domain';
-import Age from '~/modules/users/domain/value-objects/age';
-import Height from '~/modules/users/domain/value-objects/height';
-import SSOId from '~/modules/users/domain/value-objects/sso-id';
-import Username from '~/modules/users/domain/value-objects/username';
-import Weight from '~/modules/users/domain/value-objects/weight';
 import { CreateUserDto } from '~/modules/users/dto/create-user.dto';
 import { UserDto } from '~/modules/users/dto/user.dto';
 import { User } from '~/modules/users/entities/user.entity';
