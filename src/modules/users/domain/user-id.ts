@@ -1,7 +1,7 @@
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 
 export default class UserId extends UniqueEntityID {
-  constructor(id?: string) {
+  constructor(id?: string | null) {
     super(id);
   }
 
