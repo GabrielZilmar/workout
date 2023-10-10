@@ -21,9 +21,9 @@ export abstract class BaseRepository<T extends { id: string }, D>
   implements IWrite<T, D>, IRead<T, D>
 {
   public readonly repository: Repository<T>;
-  public readonly mapper: Mapper<D, T>;
+  public readonly mapper: Mapper<D, T | Partial<T>>;
 
-  constructor(entity: EntityTarget<T>, mapper: Mapper<D, T>) {
+  constructor(entity: EntityTarget<T>, mapper: Mapper<D, T | Partial<T>>) {
     this.repository = AppDataSource.getRepository(entity);
     this.mapper = mapper;
   }
