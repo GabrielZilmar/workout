@@ -12,6 +12,14 @@ import { AggregateRoot } from '~/shared/domain/aggregate-root';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 import { Either, left, right } from '~/shared/either';
 
+export type UserDomainCreateParams = {
+  ssoId: string;
+  username: string;
+  age?: number;
+  weight?: number;
+  height?: number;
+};
+
 export type UserDomainProps = {
   ssoId: SSOId;
   username: Username;
@@ -45,17 +53,62 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
     return this.props.height;
   }
 
-  private static isValid(props: UserDomainProps): boolean {
-    const hasAllRequiredProps = !!props.ssoId && !!props.username;
-    if (!hasAllRequiredProps) {
-      return false;
+  private static async mountValueObjects(
+    valueObjects: UserDomainCreateParams,
+  ): Promise<Either<UserDomainError, UserDomainProps>> {
+    const ssoIdOrError = await SSOId.create({ value: valueObjects.ssoId });
+    if (ssoIdOrError.isLeft()) {
+      return left(ssoIdOrError.value);
     }
 
-    return props.ssoId instanceof SSOId && props.username instanceof Username;
+    const usernameOrError = Username.create({ value: valueObjects.username });
+    if (usernameOrError.isLeft()) {
+      return left(usernameOrError.value);
+    }
+
+    const userProps: UserDomainProps = {
+      ssoId: ssoIdOrError.value,
+      username: usernameOrError.value,
+    };
+
+    if (valueObjects.age) {
+      const ageOrError = Age.create({ value: valueObjects.age });
+      if (ageOrError.isLeft()) {
+        return left(ageOrError.value);
+      }
+
+      userProps.age = ageOrError.value;
+    }
+
+    if (valueObjects.weight) {
+      const weightOrError = Weight.create({ value: valueObjects.weight });
+      if (weightOrError.isLeft()) {
+        return left(weightOrError.value);
+      }
+
+      userProps.weight = weightOrError.value;
+    }
+
+    if (valueObjects.height) {
+      const heightOrError = Height.create({ value: valueObjects.height });
+      if (heightOrError.isLeft()) {
+        return left(heightOrError.value);
+      }
+
+      userProps.height = heightOrError.value;
+    }
+
+    return right(userProps);
+  }
+
+  private static isValid(props: UserDomainCreateParams): boolean {
+    const hasAllRequiredProps = !!props.ssoId && !!props.username;
+
+    return hasAllRequiredProps;
   }
 
   public static async create(
-    props: UserDomainProps,
+    props: UserDomainCreateParams,
     id?: UniqueEntityID,
   ): Promise<Either<UserDomainError, UserDomain>> {
     const isValid = this.isValid(props);
@@ -68,7 +121,11 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
       );
     }
 
-    const user = new UserDomain(props, id);
+    const userPropsMounted = await this.mountValueObjects(props);
+    if (userPropsMounted.isLeft()) {
+      return left(userPropsMounted.value);
+    }
+    const user = new UserDomain(userPropsMounted.value, id);
 
     const isNewUser = !id;
     if (isNewUser) {

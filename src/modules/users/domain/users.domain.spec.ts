@@ -1,6 +1,7 @@
 import { UserDomainError } from '~/modules/users/domain/errors';
 import {
   UserDomain,
+  UserDomainCreateParams,
   UserDomainProps,
 } from '~/modules/users/domain/users.domain';
 import Age from '~/modules/users/domain/value-objects/age';
@@ -17,6 +18,22 @@ describe('UserDomain', () => {
 
   type SSOIdPublicClass = SSOId & {
     isValid(ssoId: string): Promise<Either<UserDomainError, true>>;
+  };
+
+  const getUserDomainParams = () => {
+    jest
+      .spyOn(SSOId as unknown as SSOIdPublicClass, 'isValid')
+      .mockImplementation(() => Promise.resolve(right(true)));
+
+    const userParams: UserDomainCreateParams = {
+      ssoId: 'valid_sso_id',
+      username: 'valid_username',
+      age: 20,
+      weight: 80,
+      height: 180,
+    };
+
+    return userParams;
   };
 
   const getUserDomainProps = async () => {
@@ -42,19 +59,21 @@ describe('UserDomain', () => {
   };
 
   it('should create an User domain', async () => {
-    const userProps = await getUserDomainProps();
-    const user = await UserDomain.create(userProps);
+    const userParams = getUserDomainParams();
+    const user = await UserDomain.create(userParams);
 
     expect(user.isRight).toBeTruthy();
     expect(user.value).toBeInstanceOf(UserDomain);
+
+    const userProps = await getUserDomainProps();
     expect((user.value as UserDomain).props).toEqual(userProps);
   });
 
   it('should not create an User domain with an invalid props', async () => {
-    const userProps = await getUserDomainProps();
+    const userParams = getUserDomainParams();
     const user = await UserDomain.create({
-      ...userProps,
-      ssoId: null,
+      ...userParams,
+      ssoId: '',
     });
 
     expect(user.isLeft).toBeTruthy();

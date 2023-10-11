@@ -18,13 +18,13 @@ export class User {
   username: string;
 
   @Column({ nullable: true })
-  age: number;
+  age?: number;
 
   @Column({ nullable: true })
-  weight: number;
+  weight?: number;
 
   @Column({ nullable: true })
-  height: number;
+  height?: number;
 
   @CreateDateColumn()
   createdAt: Date;
