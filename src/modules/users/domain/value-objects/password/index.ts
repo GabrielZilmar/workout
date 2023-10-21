@@ -10,6 +10,11 @@ export type PasswordProps = {
   value: string;
 };
 
+export type CreatePasswordParams = {
+  value: string;
+  isHashed?: boolean;
+};
+
 export default class Password extends ValueObject<PasswordProps> {
   private static readonly minPasswordLength = MIN_PASSWORD_LENGTH;
 
@@ -36,19 +41,19 @@ export default class Password extends ValueObject<PasswordProps> {
     return isEqual;
   }
 
-  public static async create(
-    password: string,
+  public static async create({
+    value,
     isHashed = false,
-  ): Promise<Either<UserDomainError, Password>> {
-    if (!this.isValid(password)) {
+  }: CreatePasswordParams): Promise<Either<UserDomainError, Password>> {
+    if (!this.isValid(value)) {
       return left(
         UserDomainError.create(UserDomainError.messages.invalidPassword),
       );
     }
 
-    let hashedPassword = password;
+    let hashedPassword = value;
     if (!isHashed) {
-      hashedPassword = await this.hashPassword(password);
+      hashedPassword = await this.hashPassword(value);
     }
 
     return right(new Password({ value: hashedPassword }));

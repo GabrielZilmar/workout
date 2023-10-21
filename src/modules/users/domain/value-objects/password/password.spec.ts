@@ -17,7 +17,7 @@ describe('Password Value Objects', () => {
     );
 
     const passwordValue = '123456';
-    const password = await Password.create(passwordValue);
+    const password = await Password.create({ value: passwordValue });
 
     expect(password.value).toBeInstanceOf(Password);
     expect(password.isRight()).toBeTruthy();
@@ -37,7 +37,7 @@ describe('Password Value Objects', () => {
     );
 
     const passwordValue = '123';
-    const password = await Password.create(passwordValue);
+    const password = await Password.create({ value: passwordValue });
 
     expect(password.value).toBeInstanceOf(UserDomainError);
     expect(password.isLeft()).toBeTruthy();
