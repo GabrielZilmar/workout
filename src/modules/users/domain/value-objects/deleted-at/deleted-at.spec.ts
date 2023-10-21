@@ -1,10 +1,6 @@
 import DeletedAt from '~/modules/users/domain/value-objects/deleted-at';
 
 describe('DeletedAt Value Objects', () => {
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   it('should create a deleted-at value object', () => {
     const date = new Date();
     let deletedAt = DeletedAt.create(date);
