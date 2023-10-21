@@ -13,6 +13,7 @@ export class UserDomainError extends Error {
     invalidWeight: `Invalid Weight, min weight is ${MIN_WEIGHT}`,
     invalidHeight: `Invalid Height, min height is ${MIN_HEIGHT}`,
     missingProps: 'Could not create the domain. Missing props',
+    invalidEmail: 'Invalid email! Please, insert a valid email.',
   };
 
   constructor(message: string, code: number) {
