@@ -5,7 +5,6 @@ import UserCreated, {
 } from '~/modules/users/domain/event/user-created';
 import Age from '~/modules/users/domain/value-objects/age';
 import Height from '~/modules/users/domain/value-objects/height';
-import SSOId from '~/modules/users/domain/value-objects/sso-id';
 import Username from '~/modules/users/domain/value-objects/username';
 import Weight from '~/modules/users/domain/value-objects/weight';
 import { AggregateRoot } from '~/shared/domain/aggregate-root';
@@ -13,7 +12,6 @@ import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 import { Either, left, right } from '~/shared/either';
 
 export type UserDomainCreateParams = {
-  ssoId: string;
   username: string;
   age?: number;
   weight?: number;
@@ -21,7 +19,6 @@ export type UserDomainCreateParams = {
 };
 
 export type UserDomainProps = {
-  ssoId: SSOId;
   username: Username;
   age?: Age;
   weight?: Weight;
@@ -31,10 +28,6 @@ export type UserDomainProps = {
 export class UserDomain extends AggregateRoot<UserDomainProps> {
   constructor(props: UserDomainProps, id?: UniqueEntityID) {
     super(props, id);
-  }
-
-  get ssoId(): SSOId {
-    return this.props.ssoId;
   }
 
   get username(): Username {
@@ -56,18 +49,12 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
   private static async mountValueObjects(
     valueObjects: UserDomainCreateParams,
   ): Promise<Either<UserDomainError, UserDomainProps>> {
-    const ssoIdOrError = await SSOId.create({ value: valueObjects.ssoId });
-    if (ssoIdOrError.isLeft()) {
-      return left(ssoIdOrError.value);
-    }
-
     const usernameOrError = Username.create({ value: valueObjects.username });
     if (usernameOrError.isLeft()) {
       return left(usernameOrError.value);
     }
 
     const userProps: UserDomainProps = {
-      ssoId: ssoIdOrError.value,
       username: usernameOrError.value,
     };
 
@@ -102,7 +89,7 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
   }
 
   private static isValid(props: UserDomainCreateParams): boolean {
-    const hasAllRequiredProps = !!props.ssoId && !!props.username;
+    const hasAllRequiredProps = !!props.username;
 
     return hasAllRequiredProps;
   }

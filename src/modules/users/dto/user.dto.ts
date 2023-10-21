@@ -8,9 +8,6 @@ export class UserDto {
   @IsUUID()
   id: string;
 
-  @IsUUID()
-  ssoId: string;
-
   @IsString()
   username: string;
 
@@ -27,7 +24,7 @@ export class UserDto {
   height?: number;
 
   public static domainToDto(domain: UserDomain): Either<UserDtoError, UserDto> {
-    const { id, ssoId, username, age, weight, height } = domain;
+    const { id, username, age, weight, height } = domain;
 
     if (!id) {
       return left(
@@ -40,7 +37,6 @@ export class UserDto {
 
     const userDto = new UserDto();
     userDto.id = id.toString();
-    userDto.ssoId = ssoId.value;
     userDto.username = username.value;
     userDto.age = age?.value;
     userDto.weight = weight?.value;

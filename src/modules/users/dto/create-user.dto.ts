@@ -14,10 +14,6 @@ import { MIN_WEIGHT } from '~/modules/users/domain/value-objects/weight';
 
 @Injectable()
 export class CreateUserDto {
-  @IsUUID()
-  @IsNotEmpty()
-  ssoId: string;
-
   @IsString()
   @MinLength(MIN_USERNAME_LENGTH)
   @IsNotEmpty()

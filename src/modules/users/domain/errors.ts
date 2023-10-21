@@ -8,8 +8,6 @@ export class UserDomainError extends Error {
   public readonly code: number;
   public static messages = {
     internalError: 'Internal Error. Try again later',
-    invalidSSOId: 'Invalid SSO ID',
-    couldNotValidateSSOId: 'Internal Error. Could not validate SSO Id',
     invalidUsername: `Invalid Username, must be at least ${MIN_USERNAME_LENGTH} characters`,
     invalidAge: `Invalid Age, must be between ${MIN_AGE} and ${MAX_AGE}`,
     invalidWeight: `Invalid Weight, min weight is ${MIN_WEIGHT}`,

@@ -14,14 +14,12 @@ export class CreateUser implements UseCase<CreateUserParams, CreateUserResult> {
   constructor(private readonly userRepository: UserRepository) {}
 
   public async execute({
-    ssoId,
     username,
     age,
     weight,
     height,
   }: CreateUserParams): Promise<CreateUserResult> {
     const userDomainOrError = await UserDomain.create({
-      ssoId,
       username,
       age,
       weight,
@@ -35,7 +33,6 @@ export class CreateUser implements UseCase<CreateUserParams, CreateUserResult> {
     }
 
     const user: Partial<User> = {
-      ssoId: userDomainOrError.value.ssoId.value,
       username: userDomainOrError.value.username.value,
       age: userDomainOrError.value.age?.value,
       weight: userDomainOrError.value.weight?.value,

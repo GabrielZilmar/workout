@@ -6,27 +6,17 @@ import {
 } from '~/modules/users/domain/users.domain';
 import Age from '~/modules/users/domain/value-objects/age';
 import Height from '~/modules/users/domain/value-objects/height';
-import SSOId from '~/modules/users/domain/value-objects/sso-id';
 import Username from '~/modules/users/domain/value-objects/username';
 import Weight from '~/modules/users/domain/value-objects/weight';
-import { Either, right } from '~/shared/either';
+import { Either } from '~/shared/either';
 
 describe('UserDomain', () => {
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  type SSOIdPublicClass = SSOId & {
-    isValid(ssoId: string): Promise<Either<UserDomainError, true>>;
-  };
-
   const getUserDomainParams = () => {
-    jest
-      .spyOn(SSOId as unknown as SSOIdPublicClass, 'isValid')
-      .mockImplementation(() => Promise.resolve(right(true)));
-
     const userParams: UserDomainCreateParams = {
-      ssoId: 'valid_sso_id',
       username: 'valid_username',
       age: 20,
       weight: 80,
@@ -37,18 +27,12 @@ describe('UserDomain', () => {
   };
 
   const getUserDomainProps = async () => {
-    jest
-      .spyOn(SSOId as unknown as SSOIdPublicClass, 'isValid')
-      .mockImplementation(() => Promise.resolve(right(true)));
-
-    const ssoId = await SSOId.create({ value: 'valid_sso_id' });
     const username = Username.create({ value: 'valid_username' });
     const age = Age.create({ value: 20 });
     const weight = Weight.create({ value: 80 });
     const height = Height.create({ value: 180 });
 
     const userProps: UserDomainProps = {
-      ssoId: ssoId.value as SSOId,
       username: username.value as Username,
       age: age.value as Age,
       weight: weight.value as Weight,
@@ -73,7 +57,7 @@ describe('UserDomain', () => {
     const userParams = getUserDomainParams();
     const user = await UserDomain.create({
       ...userParams,
-      ssoId: '',
+      username: '',
     });
 
     expect(user.isLeft).toBeTruthy();

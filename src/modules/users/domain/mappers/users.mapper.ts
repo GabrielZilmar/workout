@@ -13,12 +13,11 @@ export default class UserMapper
   public async toDomain(
     raw: UserEntity,
   ): Promise<Either<UserDomainError, UserDomain>> {
-    const { id, ssoId, username, age, weight, height } = raw;
+    const { id, username, age, weight, height } = raw;
 
     const entityId = new UniqueEntityID(id);
     const userOrError = await UserDomain.create(
       {
-        ssoId,
         username,
         age,
         weight,
@@ -35,11 +34,10 @@ export default class UserMapper
   }
 
   public toPersistence(item: UserDomain): Partial<UserEntity> {
-    const { id, ssoId, username, age, weight, height } = item;
+    const { id, username, age, weight, height } = item;
 
     const userEntity: Partial<UserEntity> = {
       id: id?.toString(),
-      ssoId: ssoId.value,
       username: username.value,
       age: age?.value,
       weight: weight?.value,
