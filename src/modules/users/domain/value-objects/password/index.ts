@@ -6,9 +6,9 @@ import Env from '~/shared/env';
 
 export const MIN_PASSWORD_LENGTH = 6;
 
-export interface PasswordProps {
+export type PasswordProps = {
   value: string;
-}
+};
 
 export default class Password extends ValueObject<PasswordProps> {
   private static readonly minPasswordLength = MIN_PASSWORD_LENGTH;
