@@ -2,7 +2,7 @@ import IsAdmin from '~/modules/users/domain/value-objects/is-admin';
 
 describe('IsAdmin Value Objects', () => {
   it('should create a is-admin value object', () => {
-    const isAdmin = IsAdmin.create(true);
+    const isAdmin = IsAdmin.create({ value: true });
 
     expect(isAdmin.value).toBe(true);
   });
@@ -16,7 +16,7 @@ describe('IsAdmin Value Objects', () => {
   });
 
   it('Should unset admin', () => {
-    const isAdmin = IsAdmin.create(true);
+    const isAdmin = IsAdmin.create({ value: true });
     expect(isAdmin.value).toBe(true);
 
     isAdmin.unsetAdmin();

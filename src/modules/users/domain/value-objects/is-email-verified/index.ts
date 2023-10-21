@@ -23,7 +23,8 @@ export default class IsEmailVerified extends ValueObject<IsEmailVerifiedProps> {
     return this;
   }
 
-  public static create(value = false): IsEmailVerified {
+  public static create(props?: IsEmailVerifiedProps): IsEmailVerified {
+    const value = props?.value ?? false;
     return new IsEmailVerified({ value });
   }
 }

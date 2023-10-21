@@ -22,7 +22,8 @@ export default class DeletedAt extends ValueObject<DeletedAtProps> {
     return this;
   }
 
-  public static create(value: Date | null = null): DeletedAt {
+  public static create(props?: DeletedAtProps): DeletedAt {
+    const value = props?.value ?? null;
     return new DeletedAt({ value });
   }
 }

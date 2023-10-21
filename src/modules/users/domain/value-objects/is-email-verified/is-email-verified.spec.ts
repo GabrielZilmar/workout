@@ -2,7 +2,7 @@ import IsEmailVerified from '~/modules/users/domain/value-objects/is-email-verif
 
 describe('IsEmailVerified Value Objects', () => {
   it('should create a is-admin value object', () => {
-    const isEmailVerified = IsEmailVerified.create(true);
+    const isEmailVerified = IsEmailVerified.create({ value: true });
 
     expect(isEmailVerified.value).toBe(true);
   });
@@ -16,7 +16,7 @@ describe('IsEmailVerified Value Objects', () => {
   });
 
   it('Should un-verify email', () => {
-    const isEmailVerified = IsEmailVerified.create(true);
+    const isEmailVerified = IsEmailVerified.create({ value: true });
     expect(isEmailVerified.value).toBe(true);
 
     isEmailVerified.unVerifyEmail();

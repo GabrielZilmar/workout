@@ -23,7 +23,8 @@ export default class IsAdmin extends ValueObject<IsAdminProps> {
     return this;
   }
 
-  public static create(value = false): IsAdmin {
+  public static create(props?: IsAdminProps): IsAdmin {
+    const value = props?.value ?? false;
     return new IsAdmin({ value });
   }
 }
