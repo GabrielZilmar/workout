@@ -1,3 +1,9 @@
+import { ConfigModule } from '@nestjs/config';
+
+ConfigModule.forRoot({
+  envFilePath: '.env',
+});
+
 export default class Env {
   static get port(): number {
     const port = this.getEnvOrDefault('PORT', '3000');
@@ -5,8 +11,10 @@ export default class Env {
     return Number(port);
   }
 
-  static get passwordSalt(): string {
-    return this.getEnvOrThrow('PASSWORD_SALT');
+  static get passwordSalt(): number {
+    const passwordSalt = this.getEnvOrThrow('PASSWORD_SALT');
+
+    return Number(passwordSalt);
   }
 
   private static getEnvOrThrow(envName: string): string {
