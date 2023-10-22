@@ -4,7 +4,12 @@ import UserCreated, {
   UserCreatedEventPayload,
 } from '~/modules/users/domain/event/user-created';
 import Age from '~/modules/users/domain/value-objects/age';
+import DeletedAt from '~/modules/users/domain/value-objects/deleted-at';
+import Email from '~/modules/users/domain/value-objects/email';
 import Height from '~/modules/users/domain/value-objects/height';
+import IsAdmin from '~/modules/users/domain/value-objects/is-admin';
+import IsEmailVerified from '~/modules/users/domain/value-objects/is-email-verified';
+import Password from '~/modules/users/domain/value-objects/password';
 import Username from '~/modules/users/domain/value-objects/username';
 import Weight from '~/modules/users/domain/value-objects/weight';
 import { AggregateRoot } from '~/shared/domain/aggregate-root';
@@ -13,16 +18,29 @@ import { Either, left, right } from '~/shared/either';
 
 export type UserDomainCreateParams = {
   username: string;
+  email: string;
+  password: {
+    value: string;
+    isHashed?: boolean;
+  };
   age?: number;
   weight?: number;
   height?: number;
+  isEmailVerified?: boolean;
+  isAdmin?: boolean;
+  deletedAt?: Date | null;
 };
 
 export type UserDomainProps = {
   username: Username;
+  email: Email;
+  password: Password;
   age?: Age;
   weight?: Weight;
   height?: Height;
+  isEmailVerified: IsEmailVerified;
+  isAdmin: IsAdmin;
+  deletedAt: DeletedAt;
 };
 
 export class UserDomain extends AggregateRoot<UserDomainProps> {
@@ -32,6 +50,14 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
 
   get username(): Username {
     return this.props.username;
+  }
+
+  get email(): Email {
+    return this.props.email;
+  }
+
+  get password(): Password {
+    return this.props.password;
   }
 
   get age(): Age | undefined {
@@ -46,6 +72,17 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
     return this.props.height;
   }
 
+  get isEmailVerified(): IsEmailVerified {
+    return this.props.isEmailVerified;
+  }
+
+  get isAdmin(): IsAdmin {
+    return this.props.isAdmin;
+  }
+  get deletedAt(): DeletedAt {
+    return this.props.deletedAt;
+  }
+
   private static async mountValueObjects(
     valueObjects: UserDomainCreateParams,
   ): Promise<Either<UserDomainError, UserDomainProps>> {
@@ -54,8 +91,27 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
       return left(usernameOrError.value);
     }
 
+    const emailOrError = Email.create({ value: valueObjects.email });
+    if (emailOrError.isLeft()) {
+      return left(emailOrError.value);
+    }
+
+    const passwordOrError = await Password.create(valueObjects.password);
+    if (passwordOrError.isLeft()) {
+      return left(passwordOrError.value);
+    }
+
+    const isEmailVerified = IsEmailVerified.create();
+    const isAdmin = IsAdmin.create();
+    const deletedAt = DeletedAt.create();
+
     const userProps: UserDomainProps = {
       username: usernameOrError.value,
+      email: emailOrError.value,
+      password: passwordOrError.value,
+      isEmailVerified,
+      isAdmin,
+      deletedAt,
     };
 
     if (valueObjects.age) {
@@ -89,7 +145,8 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
   }
 
   private static isValid(props: UserDomainCreateParams): boolean {
-    const hasAllRequiredProps = !!props.username;
+    const hasAllRequiredProps =
+      !!props.username && !!props.email && !!props.password;
 
     return hasAllRequiredProps;
   }
