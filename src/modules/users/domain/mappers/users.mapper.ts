@@ -13,15 +13,33 @@ export default class UserMapper
   public async toDomain(
     raw: UserEntity,
   ): Promise<Either<UserDomainError, UserDomain>> {
-    const { id, username, age, weight, height } = raw;
+    const {
+      id,
+      username,
+      email,
+      password,
+      age,
+      weight,
+      height,
+      isEmailVerified,
+      isAdmin,
+      deletedAt,
+    } = raw;
 
     const entityId = new UniqueEntityID(id);
     const userOrError = await UserDomain.create(
       {
         username,
+        email,
+        password: {
+          value: password,
+        },
         age,
         weight,
         height,
+        isEmailVerified,
+        isAdmin,
+        deletedAt,
       },
       entityId,
     );
