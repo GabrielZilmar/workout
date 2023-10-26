@@ -14,16 +14,16 @@ export class User {
   @Column({ unique: true })
   username: string;
 
-  @Column({ unique: true }) // Missing
+  @Column({ unique: true })
   email: string;
 
   @Column()
   password: string;
 
-  @Column({ default: false }) // Missing
+  @Column({ default: false })
   isEmailVerified: boolean;
 
-  @Column({ default: false }) // Missing
+  @Column({ default: false })
   isAdmin: boolean;
 
   @Column({ nullable: true })
@@ -35,7 +35,7 @@ export class User {
   @Column({ nullable: true })
   height?: number;
 
-  @Column({ type: 'timestamptz', nullable: true }) // Missing
+  @Column({ type: 'timestamptz', nullable: true })
   deletedAt: Date | null;
 
   @CreateDateColumn()
