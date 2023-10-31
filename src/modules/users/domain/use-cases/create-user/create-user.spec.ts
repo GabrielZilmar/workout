@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import {
   CreateUser,
@@ -9,26 +10,18 @@ import {
 } from '~/modules/users/domain/users.domain';
 import { UserDto } from '~/modules/users/dto/user.dto';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
+import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
+import { right } from '~/shared/either';
+
+jest.mock('~/modules/users/domain/event/user-created');
 
 describe('CreateUser', () => {
-  let userMapper: UserMapper;
   let userRepository: UserRepository;
   let createUser: CreateUser;
   let userParams: UserDomainCreateParams;
   let userDomain: UserDomain;
 
-  beforeAll(async () => {
-    const repositoryCreateUserMock = jest.fn().mockResolvedValue(userDomain);
-    // const userRepositoryMock = jest.fn().mockImplementation(() => ({
-    //   create: repositoryCreateUserMock,
-    // }));
-    const userRepositoryMock = jest.fn().mockImplementation(() => {
-      return { create: repositoryCreateUserMock };
-    }) as any;
-
-    userMapper = new UserMapper();
-    userRepository = userRepositoryMock;
-    createUser = new CreateUser(userRepository);
+  const mockUserParams = () => {
     userParams = {
       username: 'valid_username',
       email: 'valid@email.com',
@@ -39,12 +32,42 @@ describe('CreateUser', () => {
       weight: 80,
       height: 180,
     };
+  };
 
-    const userDomainOrError = await UserDomain.create(userParams);
+  const mockUserDomain = async () => {
+    const userDomainOrError = await UserDomain.create(
+      userParams,
+      new UniqueEntityID(uuid()),
+    );
     if (userDomainOrError.isLeft()) {
       throw new Error('Invalid user domain');
     }
     userDomain = userDomainOrError.value;
+  };
+
+  const mockUserRepository = () => {
+    const useMapper = new UserMapper();
+
+    const repositoryCreateUserMock = jest
+      .fn()
+      .mockResolvedValue(right(userDomain));
+    const userRepositoryMock = new UserRepository(useMapper) as jest.Mocked<
+      InstanceType<typeof UserRepository>
+    >;
+    userRepositoryMock.create = repositoryCreateUserMock;
+
+    userRepository = userRepositoryMock;
+  };
+
+  const mockCreateUser = () => {
+    createUser = new CreateUser(userRepository);
+  };
+
+  beforeAll(async () => {
+    mockUserParams();
+    await mockUserDomain();
+    mockUserRepository();
+    mockCreateUser();
   });
 
   afterEach(() => {
@@ -62,7 +85,14 @@ describe('CreateUser', () => {
       height: userParams.height,
     };
 
-    const newUser = createUser.execute(createUserParams);
-    expect(newUser).resolves.toBeInstanceOf(UserDto);
+    const newUser = await createUser.execute(createUserParams);
+    expect(newUser).toBeInstanceOf(UserDto);
+    expect(newUser).toMatchObject({
+      username: userParams.username,
+      email: userParams.email,
+      age: userParams.age,
+      weight: userParams.weight,
+      height: userParams.height,
+    });
   });
 });
