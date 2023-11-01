@@ -1,4 +1,5 @@
 import { v4 as uuid } from 'uuid';
+import { UserDomainError } from '~/modules/users/domain/errors';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import {
   CreateUser,
@@ -94,5 +95,20 @@ describe('CreateUser', () => {
       weight: userParams.weight,
       height: userParams.height,
     });
+  });
+
+  it('Should not create a user with invalid domain', async () => {
+    const invalidCreateUserParams: CreateUserParams = {
+      username: '',
+      email: userParams.email,
+      password: userParams.password.value,
+      age: userParams.age,
+      weight: userParams.weight,
+      height: userParams.height,
+    };
+
+    await expect(createUser.execute(invalidCreateUserParams)).rejects.toThrow(
+      UserDomainError.create(UserDomainError.messages.missingProps),
+    );
   });
 });
