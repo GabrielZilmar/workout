@@ -1,3 +1,4 @@
+import { HttpStatus } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 import { UserDomainError } from '~/modules/users/domain/errors';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
@@ -10,9 +11,10 @@ import {
   UserDomainCreateParams,
 } from '~/modules/users/domain/users.domain';
 import { UserDto } from '~/modules/users/dto/user.dto';
+import { RepositoryError } from '~/services/database/typeorm/repositories/error';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
-import { right } from '~/shared/either';
+import { left, right } from '~/shared/either';
 
 jest.mock('~/modules/users/domain/event/user-created');
 
@@ -109,6 +111,27 @@ describe('CreateUser', () => {
 
     await expect(createUser.execute(invalidCreateUserParams)).rejects.toThrow(
       UserDomainError.create(UserDomainError.messages.missingProps),
+    );
+  });
+
+  it('Should not create a user with duplicated username', async () => {
+    const createUserParams: CreateUserParams = {
+      username: userParams.username,
+      email: userParams.email,
+      password: userParams.password.value,
+      age: userParams.age,
+      weight: userParams.weight,
+      height: userParams.height,
+    };
+    const errorMock = RepositoryError.create(
+      RepositoryError.messages.itemDuplicated,
+      { username: createUserParams.username },
+      HttpStatus.BAD_REQUEST,
+    );
+
+    userRepository.create = jest.fn().mockResolvedValue(left(errorMock));
+    await expect(createUser.execute(createUserParams)).rejects.toThrow(
+      errorMock,
     );
   });
 });
