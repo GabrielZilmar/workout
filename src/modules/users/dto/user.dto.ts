@@ -1,5 +1,11 @@
 import { HttpStatus } from '@nestjs/common';
-import { IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+  IsEmail,
+} from 'class-validator';
 import { UserDomain } from '~/modules/users/domain/users.domain';
 import { UserDtoError } from '~/modules/users/dto/errors/user-dto-errors';
 import { Either, left, right } from '~/shared/either';
@@ -8,11 +14,12 @@ export class UserDto {
   @IsUUID()
   id: string;
 
-  @IsUUID()
-  ssoId: string;
-
   @IsString()
   username: string;
+
+  @IsString()
+  @IsEmail()
+  email: string;
 
   @IsNumber()
   @IsOptional()
@@ -27,7 +34,7 @@ export class UserDto {
   height?: number;
 
   public static domainToDto(domain: UserDomain): Either<UserDtoError, UserDto> {
-    const { id, ssoId, username, age, weight, height } = domain;
+    const { id, username, email, age, weight, height } = domain;
 
     if (!id) {
       return left(
@@ -40,8 +47,8 @@ export class UserDto {
 
     const userDto = new UserDto();
     userDto.id = id.toString();
-    userDto.ssoId = ssoId.value;
     userDto.username = username.value;
+    userDto.email = email.value;
     userDto.age = age?.value;
     userDto.weight = weight?.value;
     userDto.height = height?.value;

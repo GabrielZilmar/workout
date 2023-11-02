@@ -11,11 +11,20 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('uuid', { unique: true })
-  ssoId: string;
-
   @Column({ unique: true })
   username: string;
+
+  @Column({ unique: true })
+  email: string;
+
+  @Column()
+  password: string;
+
+  @Column({ default: false })
+  isEmailVerified: boolean;
+
+  @Column({ default: false })
+  isAdmin: boolean;
 
   @Column({ nullable: true })
   age?: number;
@@ -25,6 +34,9 @@ export class User {
 
   @Column({ nullable: true })
   height?: number;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  deletedAt: Date | null;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -10,7 +10,7 @@ import { Either, left, right } from '~/shared/either';
 export type PreventDuplicatedParams = {
   id?: string;
   username?: string;
-  ssoId?: string;
+  email?: string;
 };
 
 @Injectable()
@@ -22,9 +22,9 @@ export default class UserRepository extends BaseRepository<User, UserDomain> {
   private async preventDuplicatedUser({
     id,
     username,
-    ssoId,
+    email,
   }: PreventDuplicatedParams): Promise<Either<RepositoryError, boolean>> {
-    const itemExist = await this.findOneByCriteria([{ username }, { ssoId }]);
+    const itemExist = await this.findOneByCriteria([{ username }, { email }]);
 
     if (itemExist) {
       const isSameUser = itemExist.id?.toValue() === id;
@@ -32,12 +32,13 @@ export default class UserRepository extends BaseRepository<User, UserDomain> {
         return right(true);
       }
 
-      const itemsDuplicated: { username?: string; ssoId?: string } = {};
+      const itemsDuplicated: { username?: string; email?: string } = {};
       if (itemExist.username.value === username) {
         itemsDuplicated.username = username;
       }
-      if (itemExist.ssoId.value === ssoId) {
-        itemsDuplicated.ssoId = ssoId;
+
+      if (itemExist.email.value === email) {
+        itemsDuplicated.email = email;
       }
 
       return left(
@@ -57,7 +58,7 @@ export default class UserRepository extends BaseRepository<User, UserDomain> {
   ): Promise<Either<RepositoryError, UserDomain>> {
     const preventDuplicated = await this.preventDuplicatedUser({
       username: item.username,
-      ssoId: item.ssoId,
+      email: item.email,
     });
     if (preventDuplicated.isLeft()) {
       return left(preventDuplicated.value);
