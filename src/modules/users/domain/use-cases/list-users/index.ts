@@ -3,7 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { FindManyOptions, ILike } from 'typeorm';
+import { FindOptionsWhere, ILike } from 'typeorm';
 import { FindAllUsersDto } from '~/modules/users/dto/find-all-users.dto';
 import { UserDto } from '~/modules/users/dto/user.dto';
 import { User } from '~/modules/users/entities/user.entity';
@@ -17,47 +17,44 @@ export type ListUsersResult = Promise<UserDto[]>;
 export class ListUsers implements UseCase<ListUsersParams, ListUsersResult> {
   constructor(private readonly userRepository: UserRepository) {}
 
-  // TODO: Make it generic and reusable in the base-repository
-  private mountSearch(params: ListUsersParams): FindManyOptions<User> {
-    const search: FindManyOptions<User> = Object.entries(params).reduce(
+  private mountSearch(
+    params: Record<string, string | number>,
+  ): FindOptionsWhere<User> {
+    const search: FindOptionsWhere<User> = Object.entries(params).reduce(
       (acc, [key, value]) => {
-        const isSkipOrTake = key === 'skip' || key === 'take';
-        if (isSkipOrTake) {
+        if (typeof value === 'string') {
+          return {
+            ...acc,
+            [key]: ILike(`%${value}%`),
+          };
+        }
+        if (typeof value === 'number') {
           return {
             ...acc,
             [key]: value,
           };
         }
 
-        if (typeof value === 'string') {
-          return {
-            where: {
-              ...acc.where,
-              [key]: ILike(`%${value}%`),
-            },
-          };
-        }
-        if (typeof value === 'number') {
-          return {
-            where: {
-              ...acc.where,
-              [key]: value,
-            },
-          };
-        }
-
         return acc;
       },
-      {} as FindManyOptions<User>,
+      {} as FindOptionsWhere<User>,
     );
 
     return search;
   }
 
-  public async execute(params: ListUsersParams): Promise<ListUsersResult> {
+  public async execute({
+    skip,
+    take,
+    ...params
+  }: ListUsersParams): Promise<ListUsersResult> {
     try {
       const search = this.mountSearch({ ...params });
-      const users = await this.userRepository.find(search);
+      const users = await this.userRepository.find({
+        where: { ...search },
+        skip,
+        take,
+      });
 
       const usersDto: UserDto[] = [];
       users.forEach((user) => {
