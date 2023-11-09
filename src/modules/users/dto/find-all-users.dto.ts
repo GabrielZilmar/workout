@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Type } from 'class-transformer';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { PaginatedDto } from '~/shared/dto/paginated';
 
 @Injectable()
-export class FindAllUsersDto {
+export class FindAllUsersDto extends PaginatedDto {
   @IsString()
   @IsOptional()
   username?: string;
@@ -26,14 +27,4 @@ export class FindAllUsersDto {
   @Type(() => Number)
   @IsOptional()
   height?: number;
-
-  @IsNumber()
-  @Type(() => Number)
-  @IsOptional()
-  skip?: number;
-
-  @IsNumber()
-  @Type(() => Number)
-  @IsOptional()
-  take?: number;
 }
