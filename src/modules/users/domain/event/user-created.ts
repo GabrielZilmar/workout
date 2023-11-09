@@ -8,11 +8,12 @@ export type UserCreatedEventPayload = {
   user: UserDomain;
 };
 
+// It's an example class of a event listener
 export default class UserCreated {
   public static readonly eventName = EVENT_NAME;
 
   @TriggersOn(EVENT_NAME, domainEvent.eventEmitter)
   public userCreated(payload: UserCreatedEventPayload) {
-    console.info('User created!', payload);
+    return payload;
   }
 }
