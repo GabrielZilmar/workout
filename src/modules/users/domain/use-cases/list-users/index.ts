@@ -10,8 +10,8 @@ import { User } from '~/modules/users/entities/user.entity';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 import { UseCase } from '~/shared/core/use-case';
 
-export type ListUsersParams = FindAllUsersDto;
-export type ListUsersResult = Promise<UserDto[]>;
+type ListUsersParams = FindAllUsersDto;
+type ListUsersResult = Promise<UserDto[]>;
 
 @Injectable()
 export class ListUsers implements UseCase<ListUsersParams, ListUsersResult> {
