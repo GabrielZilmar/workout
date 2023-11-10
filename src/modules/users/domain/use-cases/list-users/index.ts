@@ -11,7 +11,7 @@ import UserRepository from '~/services/database/typeorm/repositories/users-repos
 import { UseCase } from '~/shared/core/use-case';
 
 type ListUsersParams = FindAllUsersDto;
-type ListUsersResult = Promise<UserDto[]>;
+type ListUsersResult = Promise<{ users: UserDto[]; count: number }>;
 
 @Injectable()
 export class ListUsers implements UseCase<ListUsersParams, ListUsersResult> {
@@ -50,7 +50,7 @@ export class ListUsers implements UseCase<ListUsersParams, ListUsersResult> {
   }: ListUsersParams): Promise<ListUsersResult> {
     try {
       const search = this.mountSearch({ ...params });
-      const users = await this.userRepository.find({
+      const { items: users, count } = await this.userRepository.find({
         where: { ...search },
         skip,
         take,
@@ -70,9 +70,9 @@ export class ListUsers implements UseCase<ListUsersParams, ListUsersResult> {
         usersDto.push(userDto.value);
       });
 
-      return usersDto; // Missing count
+      return { users: usersDto, count };
     } catch (e) {
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException((e as Error).message);
     }
   }
 }
