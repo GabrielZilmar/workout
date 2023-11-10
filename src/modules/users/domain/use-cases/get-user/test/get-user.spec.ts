@@ -1,4 +1,4 @@
-import { HttpException } from '@nestjs/common';
+import { HttpException, InternalServerErrorException } from '@nestjs/common';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { GetUser } from '~/modules/users/domain/use-cases/get-user';
 import { GetUserMock } from '~/modules/users/domain/use-cases/get-user/test/get-user.mock';
@@ -43,5 +43,19 @@ describe('Get user use case', () => {
     await expect(
       getUser.execute({ idOrUsername: GetUserMock.userMock.id }),
     ).rejects.toThrowError(HttpException);
+  });
+
+  it('Should throw internal error if user repository failed to get users', () => {
+    const userRepositoryMock = new UserRepository(useMapper) as jest.Mocked<
+      InstanceType<typeof UserRepository>
+    >;
+    const repositoryGetUserMock = jest.fn().mockRejectedValue(false);
+    userRepositoryMock.findOne = repositoryGetUserMock;
+    const userRepository = userRepositoryMock;
+    const getUser = new GetUser(userRepository);
+
+    expect(
+      getUser.execute({ idOrUsername: GetUserMock.userMock.id }),
+    ).rejects.toThrowError(InternalServerErrorException);
   });
 });
