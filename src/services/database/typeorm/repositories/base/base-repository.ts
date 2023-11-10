@@ -173,8 +173,10 @@ export abstract class BaseRepository<T extends { id: string }, D>
     return itemToDomain.isRight() ? itemToDomain.value : null;
   }
 
-  async find(options?: FindManyOptions<T>): Promise<D[]> {
-    const items = await this.repository.find(options);
+  async find(
+    options?: FindManyOptions<T>,
+  ): Promise<{ items: D[]; count: number }> {
+    const [items, count] = await this.repository.findAndCount(options);
 
     const itemsToDomain: D[] = [];
     for await (const item of items) {
@@ -185,7 +187,7 @@ export abstract class BaseRepository<T extends { id: string }, D>
       }
     }
 
-    return itemsToDomain;
+    return { items: itemsToDomain, count };
   }
 
   async findOneByCriteria(

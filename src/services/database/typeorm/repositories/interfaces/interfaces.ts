@@ -19,7 +19,7 @@ export interface IWrite<T, D> {
 }
 
 export interface IRead<T, D> {
-  find(options?: FindManyOptions<T>): Promise<D[]>;
+  find(options?: FindManyOptions<T>): Promise<{ items: D[]; count: number }>;
   findOne(options: FindOneOptions<T>): Promise<D | null>;
   findAll(): Promise<{ items: D[]; count: number }>;
   findOneByCriteria(
