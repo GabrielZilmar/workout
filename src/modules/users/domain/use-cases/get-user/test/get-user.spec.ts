@@ -29,4 +29,19 @@ describe('Get user use case', () => {
     });
     expect(user).toMatchObject(userDto);
   });
+
+  it('Should throw http exception if failed to pass user to dto', async () => {
+    const userDomain = await GetUserMock.mountUserDomain(true);
+    const userRepositoryMock = new UserRepository(useMapper) as jest.Mocked<
+      InstanceType<typeof UserRepository>
+    >;
+    const repositoryGetUserMock = jest.fn().mockResolvedValue(userDomain);
+    userRepositoryMock.findOne = repositoryGetUserMock;
+    const userRepository = userRepositoryMock;
+    const getUser = new GetUser(userRepository);
+
+    await expect(
+      getUser.execute({ idOrUsername: GetUserMock.userMock.id }),
+    ).rejects.toThrowError(HttpException);
+  });
 });
