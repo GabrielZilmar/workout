@@ -27,9 +27,7 @@ describe('List users use case', () => {
     const userRepository = userRepositoryMock;
     const listUsers = new ListUsers(userRepository);
 
-    const usersDto = await Promise.all(
-      usersDomain.map((user) => UserDto.domainToDto(user).value),
-    );
+    const usersDto = usersDomain.map((user) => UserDto.domainToDto(user).value);
 
     const users = await listUsers.execute({});
     expect(users).toMatchObject({ users: usersDto, count: usersDto.length });
