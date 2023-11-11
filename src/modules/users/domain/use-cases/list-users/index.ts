@@ -58,7 +58,7 @@ export class ListUsers implements UseCase<ListUsersParams, ListUsersResult> {
 
       const usersDto: UserDto[] = [];
       users.forEach((user) => {
-        const userDto = UserDto.domainToDto(user);
+        const userDto = user.toDto();
 
         if (userDto.isLeft()) {
           throw new HttpException(

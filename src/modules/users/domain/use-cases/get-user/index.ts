@@ -46,7 +46,7 @@ export class GetUser implements UseCase<GetUserParams, GetUserResult> {
       );
     }
 
-    const userDto = UserDto.domainToDto(user);
+    const userDto = user.toDto();
     if (userDto.isLeft()) {
       throw new HttpException(userDto.value.message, userDto.value.code);
     }
