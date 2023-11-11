@@ -8,7 +8,7 @@ import UserRepository from '~/services/database/typeorm/repositories/users-repos
 jest.mock('~/services/database/typeorm/repositories/users-repository');
 
 describe('List users use case', () => {
-  const useMapper = new UserMapper();
+  const userMapper = new UserMapper();
 
   afterEach(() => {
     jest.restoreAllMocks();
@@ -17,7 +17,7 @@ describe('List users use case', () => {
 
   it('Should list all users', async () => {
     const usersDomain = await ListUsersMock.mountUsersDomains();
-    const userRepositoryMock = new UserRepository(useMapper) as jest.Mocked<
+    const userRepositoryMock = new UserRepository(userMapper) as jest.Mocked<
       InstanceType<typeof UserRepository>
     >;
     const repositoryListUserMock = jest
@@ -35,7 +35,7 @@ describe('List users use case', () => {
 
   it('Should throw http exception if failed to pass users to dto', async () => {
     const invalidUsersDomain = await ListUsersMock.mountUsersDomains(true);
-    const userRepositoryMock = new UserRepository(useMapper) as jest.Mocked<
+    const userRepositoryMock = new UserRepository(userMapper) as jest.Mocked<
       InstanceType<typeof UserRepository>
     >;
     const repositoryListUserMock = jest.fn().mockResolvedValue({
@@ -50,7 +50,7 @@ describe('List users use case', () => {
   });
 
   it('Should throw internal error if user repository failed to get users', async () => {
-    const userRepositoryMock = new UserRepository(useMapper) as jest.Mocked<
+    const userRepositoryMock = new UserRepository(userMapper) as jest.Mocked<
       InstanceType<typeof UserRepository>
     >;
     const repositoryListUserMock = jest.fn().mockRejectedValue(false);

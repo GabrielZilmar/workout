@@ -49,12 +49,12 @@ describe('CreateUser', () => {
   };
 
   const mockUserRepository = () => {
-    const useMapper = new UserMapper();
+    const userMapper = new UserMapper();
 
     const repositoryCreateUserMock = jest
       .fn()
       .mockResolvedValue(right(userDomain));
-    const userRepositoryMock = new UserRepository(useMapper) as jest.Mocked<
+    const userRepositoryMock = new UserRepository(userMapper) as jest.Mocked<
       InstanceType<typeof UserRepository>
     >;
     userRepositoryMock.create = repositoryCreateUserMock;
