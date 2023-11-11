@@ -31,6 +31,13 @@ export type UserDomainCreateParams = {
   deletedAt?: Date | null;
 };
 
+export type UserDomainUpdateParams = {
+  username?: string;
+  age?: number;
+  weight?: number;
+  height?: number;
+};
+
 export type UserDomainProps = {
   username: Username;
   email: Email;
@@ -77,6 +84,51 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
   }
   get deletedAt(): DeletedAt {
     return this.props.deletedAt;
+  }
+
+  public async update({
+    username,
+    age,
+    weight,
+    height,
+  }: UserDomainUpdateParams): Promise<Either<UserDomainError, UserDomain>> {
+    if (username) {
+      const usernameOrError = Username.create({ value: username });
+      if (usernameOrError.isLeft()) {
+        return left(usernameOrError.value);
+      }
+
+      this.props.username = usernameOrError.value;
+    }
+
+    if (age) {
+      const ageOrError = Age.create({ value: age });
+      if (ageOrError.isLeft()) {
+        return left(ageOrError.value);
+      }
+
+      this.props.age = ageOrError.value;
+    }
+
+    if (weight) {
+      const weightOrError = Weight.create({ value: weight });
+      if (weightOrError.isLeft()) {
+        return left(weightOrError.value);
+      }
+
+      this.props.weight = weightOrError.value;
+    }
+
+    if (height) {
+      const heightOrError = Height.create({ value: height });
+      if (heightOrError.isLeft()) {
+        return left(heightOrError.value);
+      }
+
+      this.props.height = heightOrError.value;
+    }
+
+    return right(this);
   }
 
   private static async mountValueObjects(
