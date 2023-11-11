@@ -24,7 +24,10 @@ export default class UserRepository extends BaseRepository<User, UserDomain> {
     username,
     email,
   }: PreventDuplicatedParams): Promise<Either<RepositoryError, boolean>> {
-    const itemExist = await this.findOneByCriteria([{ username }, { email }]);
+    const itemExist = await this.findOne({
+      where: [{ username }, { email }],
+      withDeleted: true,
+    });
 
     if (itemExist) {
       const isSameUser = itemExist.id?.toValue() === id;
