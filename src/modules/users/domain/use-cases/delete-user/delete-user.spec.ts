@@ -1,4 +1,8 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { DeleteUser } from '~/modules/users/domain/use-cases/delete-user';
@@ -33,14 +37,9 @@ describe('Delete user use case', () => {
     userRepository = userRepositoryMock;
   };
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     await mockUserRepository();
     deleteUser = new DeleteUser(userRepository);
-  });
-
-  afterEach(() => {
-    jest.restoreAllMocks();
-    jest.clearAllMocks();
   });
 
   it('Should delete a user', async () => {
@@ -58,6 +57,15 @@ describe('Delete user use case', () => {
         UserUseCaseError.messages.userNotFound(id),
         HttpStatus.NOT_FOUND,
       ),
+    );
+  });
+
+  it('Should not update a user if throws an internal error in repository', async () => {
+    const deleteRepositoryMock = jest.fn().mockRejectedValue(false);
+    userRepository.repository.softDelete = deleteRepositoryMock;
+
+    await expect(deleteUser.execute({ id: uuid() })).rejects.toThrow(
+      InternalServerErrorException,
     );
   });
 });
