@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 import {
   IsBoolean,
   IsDate,
@@ -17,7 +16,6 @@ import { MIN_PASSWORD_LENGTH } from '~/modules/users/domain/value-objects/passwo
 import { MIN_USERNAME_LENGTH } from '~/modules/users/domain/value-objects/username';
 import { MIN_WEIGHT } from '~/modules/users/domain/value-objects/weight';
 
-@Injectable()
 export class CreateUserDto {
   @IsString()
   @MinLength(MIN_USERNAME_LENGTH)

@@ -3,17 +3,34 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
+  Query,
+  Put,
 } from '@nestjs/common';
 import { CreateUser } from '~/modules/users/domain/use-cases/create-user';
+import { DeleteUser } from '~/modules/users/domain/use-cases/delete-user';
+import { GetUser } from '~/modules/users/domain/use-cases/get-user';
+import { ListUsers } from '~/modules/users/domain/use-cases/list-users';
+import { UpdateUser } from '~/modules/users/domain/use-cases/update-user';
 import { CreateUserDto } from '~/modules/users/dto/create-user.dto';
-import { UpdateUserDto } from '~/modules/users/dto/update-user.dto';
+import { DeleteUserParamsDto } from '~/modules/users/dto/delete-user.dto';
+import { FindAllUsersDto } from '~/modules/users/dto/find-all-users.dto';
+import { GetUserDto } from '~/modules/users/dto/get-user.dto';
+import {
+  CreateUserParamsDto,
+  UpdateUserBodyDto,
+} from '~/modules/users/dto/update-user.dto';
 
 @Controller('/api/users')
 export class UsersController {
-  constructor(private readonly createUser: CreateUser) {}
+  constructor(
+    private readonly createUser: CreateUser,
+    private readonly listUsers: ListUsers,
+    private readonly getUser: GetUser,
+    private readonly updateUser: UpdateUser,
+    private readonly deleteUser: DeleteUser,
+  ) {}
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
@@ -21,22 +38,28 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
-    return `This action returns all users`;
+  findAll(@Query() query: FindAllUsersDto) {
+    return this.listUsers.execute(query);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return `This action returns a #${id} user`;
+  @Get(':idOrUsername')
+  findOne(@Param() idOrUsername: GetUserDto) {
+    return this.getUser.execute(idOrUsername);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  @Put(':id')
+  update(
+    @Param() id: CreateUserParamsDto,
+    @Body() updateUserDto: UpdateUserBodyDto,
+  ) {
+    return this.updateUser.execute({
+      ...id,
+      ...updateUserDto,
+    });
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return `This action removes a #${id} user`;
+  remove(@Param() params: DeleteUserParamsDto) {
+    return this.deleteUser.execute(params);
   }
 }

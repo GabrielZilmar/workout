@@ -12,6 +12,7 @@ import IsEmailVerified from '~/modules/users/domain/value-objects/is-email-verif
 import Password from '~/modules/users/domain/value-objects/password';
 import Username from '~/modules/users/domain/value-objects/username';
 import Weight from '~/modules/users/domain/value-objects/weight';
+import { UserDto } from '~/modules/users/dto/user.dto';
 import { AggregateRoot } from '~/shared/domain/aggregate-root';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 import { Either, left, right } from '~/shared/either';
@@ -31,6 +32,13 @@ export type UserDomainCreateParams = {
   deletedAt?: Date | null;
 };
 
+export type UserDomainUpdateParams = {
+  username?: string;
+  age?: number;
+  weight?: number;
+  height?: number;
+};
+
 export type UserDomainProps = {
   username: Username;
   email: Email;
@@ -44,10 +52,6 @@ export type UserDomainProps = {
 };
 
 export class UserDomain extends AggregateRoot<UserDomainProps> {
-  constructor(props: UserDomainProps, id?: UniqueEntityID) {
-    super(props, id);
-  }
-
   get username(): Username {
     return this.props.username;
   }
@@ -81,6 +85,62 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
   }
   get deletedAt(): DeletedAt {
     return this.props.deletedAt;
+  }
+
+  public toDto() {
+    return UserDto.domainToDto(this);
+  }
+
+  public async update({
+    username,
+    age,
+    weight,
+    height,
+  }: UserDomainUpdateParams): Promise<Either<UserDomainError, this>> {
+    if (username) {
+      const usernameOrError = Username.create({ value: username });
+      if (usernameOrError.isLeft()) {
+        return left(usernameOrError.value);
+      }
+
+      this.props.username = usernameOrError.value;
+    }
+
+    if (age) {
+      const ageOrError = Age.create({ value: age });
+      if (ageOrError.isLeft()) {
+        return left(ageOrError.value);
+      }
+
+      this.props.age = ageOrError.value;
+    }
+
+    if (weight) {
+      const weightOrError = Weight.create({ value: weight });
+      if (weightOrError.isLeft()) {
+        return left(weightOrError.value);
+      }
+
+      this.props.weight = weightOrError.value;
+    }
+
+    if (height) {
+      const heightOrError = Height.create({ value: height });
+      if (heightOrError.isLeft()) {
+        return left(heightOrError.value);
+      }
+
+      this.props.height = heightOrError.value;
+    }
+
+    return right(this);
+  }
+
+  public delete(date?: Date): this {
+    const deletedAt = DeletedAt.create({ value: date ?? new Date() });
+    this.props.deletedAt = deletedAt;
+
+    return this;
   }
 
   private static async mountValueObjects(

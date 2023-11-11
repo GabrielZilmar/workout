@@ -1,8 +1,10 @@
+import { v4 as uuid } from 'uuid';
 import { UserDomainError } from '~/modules/users/domain/errors';
 import {
   UserDomain,
   UserDomainCreateParams,
   UserDomainProps,
+  UserDomainUpdateParams,
 } from '~/modules/users/domain/users.domain';
 import Age from '~/modules/users/domain/value-objects/age';
 import DeletedAt from '~/modules/users/domain/value-objects/deleted-at';
@@ -13,6 +15,8 @@ import IsEmailVerified from '~/modules/users/domain/value-objects/is-email-verif
 import Password from '~/modules/users/domain/value-objects/password';
 import Username from '~/modules/users/domain/value-objects/username';
 import Weight from '~/modules/users/domain/value-objects/weight';
+import { UserDto } from '~/modules/users/dto/user.dto';
+import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 
 describe('UserDomain', () => {
   afterEach(() => {
@@ -34,24 +38,33 @@ describe('UserDomain', () => {
     return userParams;
   };
 
-  const getUserDomainProps = async () => {
-    const username = Username.create({ value: 'valid_username' });
-    const email = Email.create({ value: 'valid@email.com' });
-    const password = await Password.create({ value: 'valid_password' });
-    const age = Age.create({ value: 20 });
-    const weight = Weight.create({ value: 80 });
-    const height = Height.create({ value: 180 });
+  const getUserDomainProps = async ({
+    username,
+    email,
+    password,
+    age,
+    weight,
+    height,
+  }: Partial<UserDomainCreateParams> = {}) => {
+    const usernameVO = Username.create({ value: username ?? 'valid_username' });
+    const emailVO = Email.create({ value: email ?? 'valid@email.com' });
+    const passwordVO = await Password.create({
+      value: password?.value ?? 'valid_password',
+    });
+    const ageVO = Age.create({ value: age ?? 20 });
+    const weightVO = Weight.create({ value: weight ?? 80 });
+    const heightVO = Height.create({ value: height ?? 180 });
     const isEmailVerified = IsEmailVerified.create();
     const isAdmin = IsAdmin.create();
     const deletedAt = DeletedAt.create();
 
     const userProps: UserDomainProps = {
-      username: username.value as Username,
-      email: email.value as Email,
-      password: password.value as Password,
-      age: age.value as Age,
-      weight: weight.value as Weight,
-      height: height.value as Height,
+      username: usernameVO.value as Username,
+      email: emailVO.value as Email,
+      password: passwordVO.value as Password,
+      age: ageVO.value as Age,
+      weight: weightVO.value as Weight,
+      height: heightVO.value as Height,
       isEmailVerified,
       isAdmin,
       deletedAt,
@@ -60,7 +73,7 @@ describe('UserDomain', () => {
     return userProps;
   };
 
-  it('should create an User domain', async () => {
+  it('should create a User domain', async () => {
     const userParams = getUserDomainParams();
     const user = await UserDomain.create(userParams);
 
@@ -79,7 +92,7 @@ describe('UserDomain', () => {
     });
   });
 
-  it('should not create an User domain with an invalid props', async () => {
+  it('Should not create an User domain with an invalid props', async () => {
     const userParams = getUserDomainParams();
     const user = await UserDomain.create({
       ...userParams,
@@ -91,5 +104,60 @@ describe('UserDomain', () => {
     expect((user.value as UserDomainError).message).toBe(
       UserDomainError.messages.missingProps,
     );
+  });
+
+  it('Should update a User Domain', async () => {
+    const userParams = getUserDomainParams();
+    const userProps = await getUserDomainProps();
+
+    const user = await UserDomain.create(userParams);
+
+    expect({ ...(user.value as UserDomain).props, password: '' }).toEqual({
+      ...userProps,
+      password: '',
+    });
+
+    const updateParams: UserDomainUpdateParams = {
+      username: 'update_username',
+      age: 30,
+      weight: 90,
+      height: 190,
+    };
+    const updateUserProps = await getUserDomainProps(updateParams);
+
+    const newUser = await (user.value as UserDomain).update(updateParams);
+    expect({ ...(newUser.value as UserDomain).props, password: '' }).toEqual({
+      ...updateUserProps,
+      password: '',
+    });
+  });
+
+  it('Should convert the user domain to user dto', async () => {
+    const userParams = getUserDomainParams();
+    const id = new UniqueEntityID(uuid());
+    const user = await UserDomain.create(userParams, id);
+
+    const userDto = (user.value as UserDomain).toDto();
+    expect(userDto.isRight()).toBeTruthy();
+    expect(userDto.value).toBeInstanceOf(UserDto);
+  });
+
+  it('Should not convert the user domain to user dto if the id is missing', async () => {
+    const userParams = getUserDomainParams();
+    const user = await UserDomain.create(userParams);
+
+    const userDto = (user.value as UserDomain).toDto();
+    expect(userDto.isLeft()).toBeTruthy();
+    expect(userDto.value).toBeInstanceOf(Error);
+  });
+
+  it('Should delete a user domain', async () => {
+    const userParams = getUserDomainParams();
+
+    const user = await UserDomain.create(userParams);
+    expect((user.value as UserDomain).props.deletedAt.value).toBeFalsy();
+
+    const userDeleted = (user.value as UserDomain).delete();
+    expect(userDeleted.props.deletedAt.value).toBeTruthy();
   });
 });
