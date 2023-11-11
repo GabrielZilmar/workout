@@ -2,10 +2,7 @@ import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { UserUseCaseError } from '~/modules/users/domain/use-cases/errors';
-import {
-  UpdateUser,
-  UpdateUserParams,
-} from '~/modules/users/domain/use-cases/update-user';
+import { UpdateUser } from '~/modules/users/domain/use-cases/update-user';
 import { UpdateUserMock } from '~/modules/users/domain/use-cases/update-user/test/update-user.mock';
 import { UserDomain } from '~/modules/users/domain/users.domain';
 import { RepositoryError } from '~/services/database/typeorm/repositories/error';
@@ -94,6 +91,22 @@ describe('Update user use case', () => {
         message: repositoryError.message,
         duplicatedItems: repositoryError.payload,
       }),
+    );
+  });
+
+  it('Should not update a user if throws an internal error in repository', async () => {
+    const updateError = RepositoryError.create(
+      RepositoryError.messages.updateError,
+    );
+    const repositoryUpdateUserMock = jest
+      .fn()
+      .mockResolvedValue(left(updateError));
+    userRepository.update = repositoryUpdateUserMock;
+
+    await expect(
+      updateUser.execute(UpdateUserMock.updateUserParams),
+    ).rejects.toThrowError(
+      new HttpException(updateError.message, updateError.code),
     );
   });
 });
