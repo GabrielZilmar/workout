@@ -34,7 +34,6 @@ export class UpdateUser implements UseCase<UpdateUserParams, UpdateUserResult> {
 
     // TODO: Create update user method in UserDomain
     const userData = this.userMapper.toPersistence(user);
-
     const userUpdatedOrError = await this.userRepository.update(id, {
       ...userData,
       ...params,
