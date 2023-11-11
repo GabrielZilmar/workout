@@ -52,11 +52,12 @@ export default class UserMapper
   }
 
   public toPersistence(item: UserDomain): Partial<UserEntity> {
-    const { id, username, age, weight, height } = item;
+    const { id, username, age, weight, height, email } = item;
 
     const userEntity: Partial<UserEntity> = {
       id: id?.toString(),
       username: username.value,
+      email: email.value,
       age: age?.value,
       weight: weight?.value,
       height: height?.value,
