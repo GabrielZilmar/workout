@@ -1,9 +1,7 @@
-import { Injectable } from '@nestjs/common';
 import { Type } from 'class-transformer';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { PaginatedDto } from '~/shared/dto/paginated';
 
-@Injectable()
 export class FindAllUsersDto extends PaginatedDto {
   @IsString()
   @IsOptional()
