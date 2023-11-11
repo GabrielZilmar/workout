@@ -22,9 +22,9 @@ export class GetUser implements UseCase<GetUserParams, GetUserResult> {
   public async execute({
     idOrUsername,
   }: GetUserParams): Promise<GetUserResult> {
-    try {
-      let user: UserDomain | null = null;
+    let user: UserDomain | null = null;
 
+    try {
       const isId = validateUUID(idOrUsername);
       if (isId) {
         user = await this.userRepository.findOne({
@@ -35,25 +35,22 @@ export class GetUser implements UseCase<GetUserParams, GetUserResult> {
           where: { username: idOrUsername },
         });
       }
-
-      if (!user) {
-        throw new HttpException(
-          UserUseCaseError.messages.userNotFound(idOrUsername),
-          HttpStatus.NOT_FOUND,
-        );
-      }
-
-      const userDto = UserDto.domainToDto(user);
-      if (userDto.isLeft()) {
-        throw new HttpException(
-          { message: userDto.value.message },
-          userDto.value.code,
-        );
-      }
-
-      return userDto.value;
-    } catch (e) {
-      throw new InternalServerErrorException((e as Error).message);
+    } catch (error) {
+      throw new InternalServerErrorException((error as Error).message);
     }
+
+    if (!user) {
+      throw new HttpException(
+        UserUseCaseError.messages.userNotFound(idOrUsername),
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const userDto = UserDto.domainToDto(user);
+    if (userDto.isLeft()) {
+      throw new HttpException(userDto.value.message, userDto.value.code);
+    }
+
+    return userDto.value;
   }
 }
