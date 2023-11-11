@@ -1,6 +1,7 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -35,7 +36,7 @@ export class User {
   @Column({ nullable: true })
   height?: number;
 
-  @Column({ type: 'timestamptz', nullable: true })
+  @DeleteDateColumn()
   deletedAt: Date | null;
 
   @CreateDateColumn()
