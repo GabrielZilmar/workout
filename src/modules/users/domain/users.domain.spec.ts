@@ -150,4 +150,14 @@ describe('UserDomain', () => {
     expect(userDto.isLeft()).toBeTruthy();
     expect(userDto.value).toBeInstanceOf(Error);
   });
+
+  it('Should delete a user domain', async () => {
+    const userParams = getUserDomainParams();
+
+    const user = await UserDomain.create(userParams);
+    expect((user.value as UserDomain).props.deletedAt.value).toBeFalsy();
+
+    const userDeleted = (user.value as UserDomain).delete();
+    expect(userDeleted.props.deletedAt.value).toBeTruthy();
+  });
 });

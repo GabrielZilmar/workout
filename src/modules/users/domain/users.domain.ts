@@ -96,7 +96,7 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
     age,
     weight,
     height,
-  }: UserDomainUpdateParams): Promise<Either<UserDomainError, UserDomain>> {
+  }: UserDomainUpdateParams): Promise<Either<UserDomainError, this>> {
     if (username) {
       const usernameOrError = Username.create({ value: username });
       if (usernameOrError.isLeft()) {
@@ -134,6 +134,13 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
     }
 
     return right(this);
+  }
+
+  public delete(date?: Date): this {
+    const deletedAt = DeletedAt.create({ value: date ?? new Date() });
+    this.props.deletedAt = deletedAt;
+
+    return this;
   }
 
   private static async mountValueObjects(
