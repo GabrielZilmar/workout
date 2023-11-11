@@ -1,5 +1,7 @@
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
+import { UserUseCaseError } from '~/modules/users/domain/use-cases/errors';
 import {
   UpdateUser,
   UpdateUserParams,
@@ -48,10 +50,24 @@ describe('Update user use case', () => {
     updateUser = new UpdateUser(userRepository, userMapper);
   });
 
-  it('should update a user', async () => {
+  it('Should update a user', async () => {
     const userHasBeenUpdated = await updateUser.execute(
       UpdateUserMock.updateUserParams,
     );
     expect(userHasBeenUpdated).toBeTruthy();
+  });
+
+  it('Should not update a user if it user does not exists', async () => {
+    const repositoryFindOneByIdMock = jest.fn().mockResolvedValue(null);
+    userRepository.findOneById = repositoryFindOneByIdMock;
+
+    const userParams = UpdateUserMock.updateUserParams;
+
+    await expect(updateUser.execute(userParams)).rejects.toThrowError(
+      new HttpException(
+        UserUseCaseError.messages.userNotFound(userParams.id),
+        HttpStatus.NOT_FOUND,
+      ),
+    );
   });
 });
