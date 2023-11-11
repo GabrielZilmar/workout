@@ -44,10 +44,6 @@ export type UserDomainProps = {
 };
 
 export class UserDomain extends AggregateRoot<UserDomainProps> {
-  constructor(props: UserDomainProps, id?: UniqueEntityID) {
-    super(props, id);
-  }
-
   get username(): Username {
     return this.props.username;
   }
