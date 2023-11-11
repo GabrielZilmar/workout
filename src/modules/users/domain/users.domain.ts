@@ -12,6 +12,7 @@ import IsEmailVerified from '~/modules/users/domain/value-objects/is-email-verif
 import Password from '~/modules/users/domain/value-objects/password';
 import Username from '~/modules/users/domain/value-objects/username';
 import Weight from '~/modules/users/domain/value-objects/weight';
+import { UserDto } from '~/modules/users/dto/user.dto';
 import { AggregateRoot } from '~/shared/domain/aggregate-root';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 import { Either, left, right } from '~/shared/either';
@@ -84,6 +85,10 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
   }
   get deletedAt(): DeletedAt {
     return this.props.deletedAt;
+  }
+
+  public toDto() {
+    return UserDto.domainToDto(this);
   }
 
   public async update({

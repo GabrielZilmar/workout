@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import { UserDomainError } from '~/modules/users/domain/errors';
 import {
   UserDomain,
@@ -14,6 +15,8 @@ import IsEmailVerified from '~/modules/users/domain/value-objects/is-email-verif
 import Password from '~/modules/users/domain/value-objects/password';
 import Username from '~/modules/users/domain/value-objects/username';
 import Weight from '~/modules/users/domain/value-objects/weight';
+import { UserDto } from '~/modules/users/dto/user.dto';
+import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 
 describe('UserDomain', () => {
   afterEach(() => {
@@ -127,5 +130,24 @@ describe('UserDomain', () => {
       ...updateUserProps,
       password: '',
     });
+  });
+
+  it('Should convert the user domain to user dto', async () => {
+    const userParams = getUserDomainParams();
+    const id = new UniqueEntityID(uuid());
+    const user = await UserDomain.create(userParams, id);
+
+    const userDto = (user.value as UserDomain).toDto();
+    expect(userDto.isRight()).toBeTruthy();
+    expect(userDto.value).toBeInstanceOf(UserDto);
+  });
+
+  it('Should not convert the user domain to user dto if the id is missing', async () => {
+    const userParams = getUserDomainParams();
+    const user = await UserDomain.create(userParams);
+
+    const userDto = (user.value as UserDomain).toDto();
+    expect(userDto.isLeft()).toBeTruthy();
+    expect(userDto.value).toBeInstanceOf(Error);
   });
 });
