@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { UserUseCaseError } from '~/modules/users/domain/use-cases/errors';
@@ -8,9 +8,10 @@ import {
 } from '~/modules/users/domain/use-cases/update-user';
 import { UpdateUserMock } from '~/modules/users/domain/use-cases/update-user/test/update-user.mock';
 import { UserDomain } from '~/modules/users/domain/users.domain';
+import { RepositoryError } from '~/services/database/typeorm/repositories/error';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
-import { right } from '~/shared/either';
+import { left, right } from '~/shared/either';
 
 describe('Update user use case', () => {
   const userMapper = new UserMapper();
@@ -68,6 +69,31 @@ describe('Update user use case', () => {
         UserUseCaseError.messages.userNotFound(userParams.id),
         HttpStatus.NOT_FOUND,
       ),
+    );
+  });
+
+  it('Should not update a user if the username is duplicated', async () => {
+    const userParams = UpdateUserMock.updateUserParams;
+    const itemsDuplicated = {
+      username: userParams.username,
+    };
+
+    const repositoryError = RepositoryError.create(
+      RepositoryError.messages.itemDuplicated,
+      itemsDuplicated,
+      HttpStatus.BAD_REQUEST,
+    );
+    const repositoryUpdateUserMock = jest
+      .fn()
+      .mockResolvedValue(left(repositoryError));
+    userRepository.update = repositoryUpdateUserMock;
+
+    await expect(updateUser.execute(userParams)).rejects.toThrowError(
+      new BadRequestException({
+        statusCode: repositoryError.code,
+        message: repositoryError.message,
+        duplicatedItems: repositoryError.payload,
+      }),
     );
   });
 });
