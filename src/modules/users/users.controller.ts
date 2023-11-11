@@ -9,10 +9,12 @@ import {
   Put,
 } from '@nestjs/common';
 import { CreateUser } from '~/modules/users/domain/use-cases/create-user';
+import { DeleteUser } from '~/modules/users/domain/use-cases/delete-user';
 import { GetUser } from '~/modules/users/domain/use-cases/get-user';
 import { ListUsers } from '~/modules/users/domain/use-cases/list-users';
 import { UpdateUser } from '~/modules/users/domain/use-cases/update-user';
 import { CreateUserDto } from '~/modules/users/dto/create-user.dto';
+import { DeleteUserParamsDto } from '~/modules/users/dto/delete-user.dto';
 import { FindAllUsersDto } from '~/modules/users/dto/find-all-users.dto';
 import { GetUserDto } from '~/modules/users/dto/get-user.dto';
 import {
@@ -27,6 +29,7 @@ export class UsersController {
     private readonly listUsers: ListUsers,
     private readonly getUser: GetUser,
     private readonly updateUser: UpdateUser,
+    private readonly deleteUser: DeleteUser,
   ) {}
 
   @Post()
@@ -56,7 +59,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return `This action removes a #${id} user`;
+  remove(@Param() params: DeleteUserParamsDto) {
+    return this.deleteUser.execute(params);
   }
 }
