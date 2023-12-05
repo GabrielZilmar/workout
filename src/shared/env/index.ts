@@ -29,6 +29,10 @@ export default class Env {
     return this.getEnvOrThrow('ALGORITHM_IV');
   }
 
+  static get jwtSecret(): string {
+    return this.getEnvOrThrow('JWT_SECRET');
+  }
+
   private static getEnvOrThrow(envName: string): string {
     const env = process.env[envName];
     if (!env) {
