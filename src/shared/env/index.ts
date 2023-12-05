@@ -17,6 +17,18 @@ export default class Env {
     return Number(passwordSalt);
   }
 
+  static get cryptographyAlgorithm(): string {
+    return this.getEnvOrThrow('ALGORITHM');
+  }
+
+  static get cryptographySecurityKey(): string {
+    return this.getEnvOrThrow('ALGORITHM_SECURITY_KEY');
+  }
+
+  static get cryptographyInitVector(): string {
+    return this.getEnvOrThrow('ALGORITHM_IV');
+  }
+
   private static getEnvOrThrow(envName: string): string {
     const env = process.env[envName];
     if (!env) {
