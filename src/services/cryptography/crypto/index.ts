@@ -23,7 +23,6 @@ export default class Crypto {
 
     let encryptedData = cipher.update(value, 'utf-8', 'base64');
     encryptedData += cipher.final('base64');
-    value = encryptedData;
 
     return encryptedData;
   }
