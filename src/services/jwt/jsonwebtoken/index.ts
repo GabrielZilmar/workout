@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import { JwtContract } from '~/services/jwt/contract';
 import Env from '~/shared/env';
+
+type JwtPayload = jwt.JwtPayload;
 
 @Injectable()
 export default class JwtService implements JwtContract<JwtPayload> {
