@@ -73,4 +73,23 @@ describe('Token Value Object', () => {
       (await tokenValueObject.getDecodedValue()) as JwtPayload;
     expect(decodedValue.value).toBe(tokenValue);
   });
+
+  it('Should decode the token value', async () => {
+    const tokenValue = {
+      name: 'token',
+      value: 'token_value',
+    };
+
+    const token = Token.create(tokenValue);
+    const tokenValueObject = token.value as Token;
+
+    const decodedValue =
+      (await tokenValueObject.getDecodedValue()) as JwtPayload;
+
+    expect(decodedValue).toEqual({
+      ...tokenValue,
+      iat: expect.any(Number),
+      exp: expect.any(Number),
+    });
+  });
 });
