@@ -92,4 +92,20 @@ describe('Token Value Object', () => {
       exp: expect.any(Number),
     });
   });
+
+  it('Should encrypt and decrypt the token value', () => {
+    const tokenValue = {
+      name: 'token',
+      value: 'token_value',
+    };
+
+    const token = Token.create(tokenValue);
+    const jwtToken = jwtService.signToken(tokenValue);
+    const tokenValueObject = token.value as Token;
+
+    const encryptedValue = tokenValueObject.getEncryptValue();
+    const decryptValue = tokenValueObject.getDecryptValue();
+    expect(encryptedValue).not.toBe(jwtToken);
+    expect(decryptValue).toBe(jwtToken);
+  });
 });
