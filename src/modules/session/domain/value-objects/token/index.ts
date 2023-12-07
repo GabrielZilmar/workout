@@ -110,11 +110,7 @@ export default class Token extends ValueObject<TokenProps> {
     const isAuth = !jwtService.isTokenExpired(token);
 
     return right(
-      new Token(
-        { value: token, isAuth, isEncrypted },
-        jwtService,
-        cryptoService,
-      ),
+      new Token({ value: token, isAuth }, jwtService, cryptoService),
     );
   }
 }
