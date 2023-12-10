@@ -1,7 +1,5 @@
 import { JwtPayload } from 'jsonwebtoken';
-import SessionDomainError, {
-  SessionDomainErrors,
-} from '~/modules/session/domain/errors';
+import SessionDomainError from '~/modules/session/domain/errors';
 import Crypto from '~/services/cryptography/crypto';
 import JwtService from '~/services/jwt/jsonwebtoken';
 import { ValueObject } from '~/shared/domain/value-object';
@@ -94,7 +92,9 @@ export default class Token extends ValueObject<TokenProps> {
   ): Either<SessionDomainError, Token> {
     const { expiresIn, isEncrypted = false } = options;
     if (!this.isValid<T>(props)) {
-      return left(new SessionDomainError(SessionDomainErrors.invalidToken));
+      return left(
+        SessionDomainError.create(SessionDomainError.messages.invalidToken),
+      );
     }
 
     const jwtService = new JwtService();
