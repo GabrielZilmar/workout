@@ -8,9 +8,12 @@ import { Either, left, right } from '~/shared/either';
 // TODO : Test first with own jwt service, after change to nest
 export type TokenProps = {
   value: string;
-  isAuth?: boolean;
-  isEncrypted?: boolean;
+  isAuth: boolean;
+  isEncrypted: boolean;
+  expiry: Date;
 };
+
+export type TokenCreateProps = Partial<TokenProps> & { value: string };
 
 export type TokenOptions = {
   expiresIn?: string;
@@ -108,9 +111,14 @@ export default class Token extends ValueObject<TokenProps> {
     }
 
     const isAuth = !jwtService.isTokenExpired(token);
+    const expiry = new Date(jwtService.decodeToken(token)?.exp ?? 0);
 
     return right(
-      new Token({ value: token, isAuth }, jwtService, cryptoService),
+      new Token(
+        { value: token, isAuth, isEncrypted: false, expiry },
+        jwtService,
+        cryptoService,
+      ),
     );
   }
 }
