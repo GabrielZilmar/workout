@@ -5,7 +5,7 @@ import {
   TokenTypes,
 } from '~/modules/session/entities/token.entity';
 
-describe('Token Value Object', () => {
+describe('Token Type Value Object', () => {
   type TokenTypePublicClass = TokenType & {
     isValid(): boolean;
   };
