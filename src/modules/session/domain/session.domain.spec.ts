@@ -71,7 +71,7 @@ describe('SessionDomain', () => {
     );
     const mountValueObjectSpy = jest.spyOn(
       SessionDomain as unknown as SessionDomainPublicClass,
-      'isValid',
+      'mountValueObject',
     );
 
     const sessionProps = getSessionDomainProps();
@@ -84,5 +84,23 @@ describe('SessionDomain', () => {
     expect(sessionValueObject.props).toEqual(sessionProps);
     expect(isValidSpy).toHaveBeenCalled();
     expect(mountValueObjectSpy).toHaveBeenCalled();
+  });
+
+  it('Should not create a session domain with invalid params', async () => {
+    const isValidSpy = jest.spyOn(
+      SessionDomain as unknown as SessionDomainPublicClass,
+      'isValid',
+    );
+    const mountValueObjectSpy = jest.spyOn(
+      SessionDomain as unknown as SessionDomainPublicClass,
+      'mountValueObject',
+    );
+
+    const session = SessionDomain.create({} as SessionDomainCreateParams);
+
+    expect(session.isLeft()).toBeTruthy();
+    expect(session.value).toBeInstanceOf(Error);
+    expect(isValidSpy).toHaveBeenCalled();
+    expect(mountValueObjectSpy).not.toHaveBeenCalled();
   });
 });
