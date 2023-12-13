@@ -1,4 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
+import { JwtPayload } from 'jsonwebtoken';
 import { validate } from 'uuid';
 import SessionDomainError from '~/modules/session/domain/errors';
 import Token from '~/modules/session/domain/value-objects/token';
@@ -14,10 +15,10 @@ export type SessionDomainProps = {
   tokenType: TokenType;
 };
 
-export type SessionDomainCreateProps = {
+export type SessionDomainCreateParams = {
   userId: string;
   token: {
-    value: string;
+    value: string | JwtPayload;
     isEncrypted?: boolean;
   };
   tokenType: TokenTypes;
@@ -37,7 +38,7 @@ export default class SessionDomain extends AggregateRoot<SessionDomainProps> {
   }
 
   private static mountValueObject(
-    props: SessionDomainCreateProps,
+    props: SessionDomainCreateParams,
   ): Either<SessionDomainError, SessionDomainProps> {
     const token = Token.create(props.token.value, {
       isEncrypted: props.token.isEncrypted,
@@ -60,7 +61,7 @@ export default class SessionDomain extends AggregateRoot<SessionDomainProps> {
     return right(sessionProps);
   }
 
-  private static isValid(props: SessionDomainCreateProps): boolean {
+  private static isValid(props: SessionDomainCreateParams): boolean {
     const { token, tokenType, userId } = props;
     const isValidUserId = validate(userId);
 
@@ -68,7 +69,7 @@ export default class SessionDomain extends AggregateRoot<SessionDomainProps> {
   }
 
   public static create(
-    props: SessionDomainCreateProps,
+    props: SessionDomainCreateParams,
     id?: UniqueEntityID,
   ): Either<SessionDomainError, SessionDomain> {
     const isValid = this.isValid(props);
