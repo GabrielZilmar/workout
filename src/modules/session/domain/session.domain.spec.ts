@@ -48,22 +48,6 @@ describe('SessionDomain', () => {
     return props;
   };
 
-  const getSessionDomainMock = ({
-    userId,
-    token,
-    tokenType,
-  }: Partial<SessionDomainCreateParams> = {}) => {
-    const session = SessionDomain.create({
-      userId: userId ?? sessionParams.userId,
-      token: {
-        value: token?.value ?? sessionParams.token.value,
-      },
-      tokenType: tokenType ?? sessionParams.tokenType,
-    });
-
-    return session.value as SessionDomain;
-  };
-
   it('Should create a session domain', async () => {
     const isValidSpy = jest.spyOn(
       SessionDomain as unknown as SessionDomainPublicClass,
