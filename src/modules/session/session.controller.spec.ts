@@ -1,5 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import SessionUseCaseProviders from '~/modules/session/domain/use-cases/providers';
 import { SessionController } from '~/modules/session/session.controller';
+import UserMapper from '~/modules/users/domain/mappers/users.mapper';
+import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 
 describe('SessionController', () => {
   let controller: SessionController;
@@ -7,7 +10,7 @@ describe('SessionController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [SessionController],
-      providers: [],
+      providers: [UserRepository, UserMapper, ...SessionUseCaseProviders],
     }).compile();
 
     controller = module.get<SessionController>(SessionController);

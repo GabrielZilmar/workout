@@ -1,10 +1,13 @@
 import { Controller, Post, Body } from '@nestjs/common';
-import { SessionLoginDto } from '~/modules/session/dto/create-session.dto';
+import { Login } from '~/modules/session/domain/use-cases/login';
+import { SessionLoginDto } from '~/modules/session/dto/login.dto';
 
-@Controller('session')
+@Controller('/api/session')
 export class SessionController {
-  @Post()
+  constructor(private readonly loginUseCase: Login) {}
+
+  @Post('/login')
   login(@Body() sessionLoginDto: SessionLoginDto) {
-    return `This action should login a user. ${sessionLoginDto}`;
+    return this.loginUseCase.execute(sessionLoginDto);
   }
 }
