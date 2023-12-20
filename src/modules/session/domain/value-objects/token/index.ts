@@ -40,7 +40,7 @@ export default class Token extends ValueObject<TokenProps> {
     }
 
     const isExpired = this.jwtService.isTokenExpired(tokenValue);
-    this.props.isAuth = isExpired;
+    this.props.isAuth = !isExpired;
 
     return this.props.isAuth;
   }
