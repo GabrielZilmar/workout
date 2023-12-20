@@ -9,8 +9,13 @@ import {
 } from 'typeorm';
 import { User } from '~/modules/users/entities/user.entity';
 
-export type TokenTypes = 'RECOVER_PASSWORD' | 'EMAIL_AUTH';
-export const TOKEN_TYPES_ENUM = ['RECOVER_PASSWORD', 'EMAIL_AUTH'];
+export type TokenTypes = 'LOGIN' | 'RECOVER_PASSWORD' | 'EMAIL_AUTH';
+export const TokenTypeMap: Record<TokenTypes, TokenTypes> = {
+  LOGIN: 'LOGIN',
+  RECOVER_PASSWORD: 'RECOVER_PASSWORD',
+  EMAIL_AUTH: 'EMAIL_AUTH',
+};
+export const TOKEN_TYPES_ENUM = Object.values(TokenTypeMap);
 
 @Entity('tokens')
 export class Token {
