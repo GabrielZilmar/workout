@@ -134,4 +134,25 @@ describe('CreateUser', () => {
       errorMock,
     );
   });
+
+  it('Should not create a user with duplicated email', async () => {
+    const createUserParams: CreateUserParams = {
+      username: userParams.username,
+      email: userParams.email,
+      password: userParams.password.value,
+      age: userParams.age,
+      weight: userParams.weight,
+      height: userParams.height,
+    };
+    const errorMock = RepositoryError.create(
+      RepositoryError.messages.itemDuplicated,
+      { email: createUserParams.email },
+      HttpStatus.BAD_REQUEST,
+    );
+
+    userRepository.create = jest.fn().mockResolvedValue(left(errorMock));
+    await expect(createUser.execute(createUserParams)).rejects.toThrow(
+      errorMock,
+    );
+  });
 });
