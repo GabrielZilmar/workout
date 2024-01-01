@@ -1,4 +1,6 @@
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { UserDomainMock } from 'test/utils/user-domain-mock';
+import { SessionUseCaseError } from '~/modules/session/domain/use-cases/errors';
 import { Login } from '~/modules/session/domain/use-cases/login';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { UserDomain } from '~/modules/users/domain/users.domain';
@@ -53,5 +55,34 @@ describe('Login Use Case', () => {
       iat: expect.any(Number),
       exp: expect.any(Number),
     });
+  });
+
+  it('Should not login if user does not exists', async () => {
+    const findByEmailUserMock = jest.fn().mockResolvedValue(right(null));
+    userRepository.findByEmail = findByEmailUserMock;
+
+    await expect(
+      login.execute({
+        email: userDomainParams.email,
+        password: userDomainParams.password,
+      }),
+    ).rejects.toThrowError();
+  });
+
+  it('Should not login if password not match', async () => {
+    const findByEmailUserMock = jest.fn().mockResolvedValue(right(userDomain));
+    userRepository.findByEmail = findByEmailUserMock;
+
+    await expect(
+      login.execute({
+        email: userDomainParams.email,
+        password: 'wrong_password',
+      }),
+    ).rejects.toThrowError(
+      new HttpException(
+        SessionUseCaseError.messages.invalidPassword,
+        HttpStatus.UNAUTHORIZED,
+      ),
+    );
   });
 });
