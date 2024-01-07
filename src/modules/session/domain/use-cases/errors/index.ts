@@ -6,6 +6,7 @@ export class SessionUseCaseError extends Error {
   public static messages = {
     invalidPassword: 'Invalid password, try again.',
     userNotExits: (email: string) => `User with email "${email}" not exists.`,
+    userIdNotFound: (id: string) => `User with id "${id}" was not found.`,
   };
 
   constructor(message: string, code: number, payload?: unknown) {
