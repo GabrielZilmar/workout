@@ -33,6 +33,28 @@ export default class Env {
     return this.getEnvOrThrow('JWT_SECRET');
   }
 
+  static get emailHost(): string {
+    return this.getEnvOrDefault('EMAIL_HOST', 'smtp.gmail.com');
+  }
+
+  static get emailPort(): number {
+    const emailPort = this.getEnvOrDefault('EMAIL_PORT', '465');
+
+    return Number(emailPort);
+  }
+
+  static get emailService(): string {
+    return this.getEnvOrDefault('EMAIL_SERVICE', 'gmail');
+  }
+
+  static get emailSender(): string {
+    return this.getEnvOrThrow('EMAIL_SENDER');
+  }
+
+  static get emailPassword(): string {
+    return this.getEnvOrThrow('EMAIL_PASSWORD');
+  }
+
   private static getEnvOrThrow(envName: string): string {
     const env = process.env[envName];
     if (!env) {
