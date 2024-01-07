@@ -22,10 +22,10 @@ export class SessionController {
     @Req() req: Request,
     @Body() sendVerifyEmailDto: SendVerifyEmailDto,
   ) {
-    const apiUrl = `${req.protocol}://${req.get('host')}`;
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
     return this.sendVerifyEmailUseCase.execute({
       ...sendVerifyEmailDto,
-      apiUrl,
+      baseUrl,
     });
   }
 }

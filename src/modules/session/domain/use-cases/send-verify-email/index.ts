@@ -7,11 +7,12 @@ import UserRepository from '~/services/database/typeorm/repositories/users-repos
 import EmailSender from '~/services/email-sender';
 import EmailSenderError from '~/services/email-sender/errors';
 import { UseCase } from '~/shared/core/use-case';
+import VerifyEmailTemplate from '~/shared/templates/verify-email';
 
 const EXPIRES_IN_15_MIN = '15min';
 
 export type SendVerifyEmailParams = SendVerifyEmailDto & {
-  apiUrl: string;
+  baseUrl: string;
 };
 export type SendVerifyEmailResult = Promise<boolean>;
 
@@ -26,7 +27,7 @@ export class SendVerifyEmail
 
   public async execute({
     userId,
-    apiUrl,
+    baseUrl,
   }: SendVerifyEmailParams): SendVerifyEmailResult {
     const userDomain = await this.userRepository.findOneById(userId);
 
@@ -60,8 +61,12 @@ export class SendVerifyEmail
     try {
       await this.emailSender.send({
         to: userDomain.email.value,
-        subject: 'Verify your email',
-        text: `Hi ${userDomain.username.value}, please verify your email clicking in this link: ${apiUrl}/verify-email/${sessionDomain.token.value}`, // TODO: Create a template
+        subject: VerifyEmailTemplate.subject,
+        html: VerifyEmailTemplate.renderTemplate({
+          username: userDomain.username.value,
+          baseUrl,
+          verifyEmailToken: sessionDomain.token.value,
+        }),
       });
     } catch (err) {
       throw new HttpException(
@@ -69,7 +74,7 @@ export class SendVerifyEmail
           message: (err as EmailSenderError).message,
           payload: (err as EmailSenderError).payload,
         },
-        (err as EmailSenderError).code,
+        (err as EmailSenderError).code || HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
 
