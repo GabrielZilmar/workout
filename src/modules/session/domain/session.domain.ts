@@ -19,6 +19,7 @@ export type SessionDomainCreateParams = {
   userId: string;
   token: {
     value: string | JwtPayload;
+    expiresIn?: string;
     isEncrypted?: boolean;
   };
   tokenType: TokenTypes;
@@ -41,6 +42,7 @@ export default class SessionDomain extends AggregateRoot<SessionDomainProps> {
     props: SessionDomainCreateParams,
   ): Either<SessionDomainError, SessionDomainProps> {
     const token = Token.create(props.token.value, {
+      expiresIn: props.token.expiresIn,
       isEncrypted: props.token.isEncrypted,
     });
 
