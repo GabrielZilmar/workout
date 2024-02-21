@@ -32,7 +32,7 @@ export class Token {
   @Column({ enum: TOKEN_TYPES_ENUM })
   type: TokenTypes;
 
-  @Column()
+  @Column({ unique: true })
   token: string;
 
   @Column({ type: 'timestamptz' })
