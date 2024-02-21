@@ -5,26 +5,26 @@ import { UserDomainMock } from 'test/utils/user-domain-mock';
 import { SendVerifyEmail } from '~/modules/session/domain/use-cases/send-verify-email';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { UserDomain } from '~/modules/users/domain/users.domain';
-import { User } from '~/modules/users/entities/user.entity';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 import EmailSender from '~/services/email-sender';
 
 describe('SendVerifyEmail Use Case', () => {
   let userRepository: UserRepository;
-  let userDomainParams: User;
   let userDomain: UserDomain;
   let sendVerifyEmail: SendVerifyEmail;
   let module: TestingModule;
 
-  const getUserRepositoryProvider = () =>
+  const getUserRepositoryProvider = (userRepositoryMock?: UserRepository) =>
     ({
       provide: UserRepository,
       useFactory: (userMapper: UserMapper) => {
-        const findByEmailIdMock = jest.fn().mockResolvedValue(userDomain);
-        const userRepositoryMock = new UserRepository(
-          userMapper,
-        ) as jest.Mocked<InstanceType<typeof UserRepository>>;
-        userRepositoryMock.findOneById = findByEmailIdMock;
+        if (!userRepositoryMock) {
+          const findByEmailIdMock = jest.fn().mockResolvedValue(userDomain);
+          userRepositoryMock = new UserRepository(userMapper) as jest.Mocked<
+            InstanceType<typeof UserRepository>
+          >;
+          userRepositoryMock.findOneById = findByEmailIdMock;
+        }
 
         userRepository = userRepositoryMock;
 
@@ -45,8 +45,9 @@ describe('SendVerifyEmail Use Case', () => {
       inject: [MailerService],
     } as Provider);
 
-  const getModuleTest = async () => {
-    const userRepositoryProvider = getUserRepositoryProvider();
+  const getModuleTest = async (
+    userRepositoryProvider = getUserRepositoryProvider(),
+  ) => {
     const emailSender = getEmailSenderProvider();
 
     return Test.createTestingModule({
@@ -73,7 +74,6 @@ describe('SendVerifyEmail Use Case', () => {
   };
 
   beforeAll(async () => {
-    userDomainParams = UserDomainMock.userMockParams;
     userDomain = await UserDomainMock.mountUserDomain();
     module = await getModuleTest();
 
@@ -93,7 +93,48 @@ describe('SendVerifyEmail Use Case', () => {
     expect(sendMailSpy).toHaveBeenCalled();
   });
 
-  // it('Should not send verify email if user does not exists', () => {});
+  it('Should not send verify email if user does not exists and repository throw an error', async () => {
+    const userMapper = new UserMapper();
+    const findByEmailIdMock = jest.fn().mockRejectedValue(new Error());
+    const userRepositoryMock = new UserRepository(userMapper) as jest.Mocked<
+      InstanceType<typeof UserRepository>
+    >;
+    userRepositoryMock.findOneById = findByEmailIdMock;
+
+    const userRepositoryProvider =
+      getUserRepositoryProvider(userRepositoryMock);
+
+    const module = await getModuleTest(userRepositoryProvider);
+    const sendVerifyEmail = module.get<SendVerifyEmail>(SendVerifyEmail);
+
+    await expect(
+      sendVerifyEmail.execute({
+        userId: 'non-existing-id',
+        baseUrl: 'http://localhost:3000',
+      }),
+    ).rejects.toThrowError();
+  });
+
+  it('Should not send verify email if not find user and repository return null', async () => {
+    const userMapper = new UserMapper();
+    const findByEmailIdMock = jest.fn().mockResolvedValue(() => null);
+    const userRepositoryMock = new UserRepository(userMapper) as jest.Mocked<
+      InstanceType<typeof UserRepository>
+    >;
+    userRepositoryMock.findOneById = findByEmailIdMock;
+
+    const userRepositoryProvider =
+      getUserRepositoryProvider(userRepositoryMock);
+    const module = await getModuleTest(userRepositoryProvider);
+    const sendVerifyEmail = module.get<SendVerifyEmail>(SendVerifyEmail);
+
+    await expect(
+      sendVerifyEmail.execute({
+        userId: 'non-existing-id',
+        baseUrl: 'http://localhost:3000',
+      }),
+    ).rejects.toThrowError();
+  });
 
   // it('Should not send verify email if user is already verified', () => {});
 
