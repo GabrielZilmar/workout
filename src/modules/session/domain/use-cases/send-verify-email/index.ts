@@ -1,8 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import SessionMapper from '~/modules/session/domain/mappers/session.mapper';
 import SessionDomain from '~/modules/session/domain/session.domain';
 import { SessionUseCaseError } from '~/modules/session/domain/use-cases/errors';
 import { SendVerifyEmailDto } from '~/modules/session/dto/send-verify-email.dto';
 import { TokenTypeMap } from '~/modules/session/entities/token.entity';
+import TokenRepository from '~/services/database/typeorm/repositories/token-repository';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 import EmailSender from '~/services/email-sender';
 import EmailSenderError from '~/services/email-sender/errors';
@@ -22,6 +24,8 @@ export class SendVerifyEmail
 {
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly tokenRepository: TokenRepository,
+    private readonly sessionMapper: SessionMapper,
     private readonly emailSender: EmailSender,
   ) {}
 
@@ -58,6 +62,7 @@ export class SendVerifyEmail
     }
 
     const sessionDomain = sessionDomainOrError.value;
+
     try {
       await this.emailSender.send({
         to: userDomain.email.value,
@@ -68,6 +73,11 @@ export class SendVerifyEmail
           verifyEmailToken: sessionDomain.token.value,
         }),
       });
+
+      sessionDomainOrError.value.token.getEncryptValue();
+      await this.tokenRepository.create(
+        this.sessionMapper.toPersistence(sessionDomain),
+      );
     } catch (err) {
       throw new HttpException(
         {
