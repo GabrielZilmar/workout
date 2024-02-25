@@ -37,6 +37,9 @@ export default class SessionMapper
   public toPersistence(item: SessionDomain): Partial<TokenEntity> {
     const { id, userId, token, tokenType } = item;
 
+    if (!token.isEncrypted) {
+      token.getEncryptValue();
+    }
     const tokenEntity: Partial<TokenEntity> = {
       id: id?.toString(),
       userId,
