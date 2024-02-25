@@ -61,6 +61,19 @@ export class SendVerifyEmail
       );
     }
 
+    const lastToken = await this.tokenRepository.findLastByUserIdAndType(
+      userDomain.id.toValue(),
+      TokenTypeMap.EMAIL_AUTH,
+    );
+    if (lastToken) {
+      throw new HttpException(
+        {
+          message: SessionUseCaseError.messages.tokenStillValid,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const sessionDomain = sessionDomainOrError.value;
 
     try {
@@ -74,7 +87,6 @@ export class SendVerifyEmail
         }),
       });
 
-      sessionDomainOrError.value.token.getEncryptValue();
       await this.tokenRepository.create(
         this.sessionMapper.toPersistence(sessionDomain),
       );
