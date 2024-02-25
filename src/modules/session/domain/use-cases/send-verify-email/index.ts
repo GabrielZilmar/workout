@@ -44,6 +44,15 @@ export class SendVerifyEmail
       );
     }
 
+    if (userDomain.isEmailVerified) {
+      throw new HttpException(
+        {
+          message: SessionUseCaseError.messages.emailAlreadyVerified,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const sessionDomainOrError = SessionDomain.create({
       userId: userDomain.id.toValue(),
       token: {
