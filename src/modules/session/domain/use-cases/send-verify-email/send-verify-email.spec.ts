@@ -1,6 +1,7 @@
 import { MailerModule, MailerService } from '@nestjs-modules/mailer';
 import { HttpException, HttpStatus, Provider } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { SessionDomainMock } from 'test/utils/session-domain-mock';
 import { UserDomainMock } from 'test/utils/user-domain-mock';
 import SessionMapper from '~/modules/session/domain/mappers/session.mapper';
 import { SessionUseCaseError } from '~/modules/session/domain/use-cases/errors';
@@ -10,6 +11,11 @@ import { UserDomain } from '~/modules/users/domain/users.domain';
 import TokenRepository from '~/services/database/typeorm/repositories/token-repository';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 import EmailSender from '~/services/email-sender';
+
+type GetModuleTestParams = {
+  userRepositoryProvider?: Provider | undefined;
+  tokenRepositoryProvider?: Provider | undefined;
+};
 
 describe('SendVerifyEmail Use Case', () => {
   let tokenRepository: TokenRepository;
@@ -72,10 +78,10 @@ describe('SendVerifyEmail Use Case', () => {
       inject: [MailerService],
     } as Provider);
 
-  const getModuleTest = async (
+  const getModuleTest = async ({
     userRepositoryProvider = getUserRepositoryProvider(),
     tokenRepositoryProvider = getTokenRepositoryProvider(),
-  ) => {
+  }: GetModuleTestParams = {}) => {
     const emailSender = getEmailSenderProvider();
 
     return Test.createTestingModule({
@@ -132,7 +138,7 @@ describe('SendVerifyEmail Use Case', () => {
 
     const userRepositoryProvider =
       getUserRepositoryProvider(userRepositoryMock);
-    const module = await getModuleTest(userRepositoryProvider);
+    const module = await getModuleTest({ userRepositoryProvider });
     const sendVerifyEmail = module.get<SendVerifyEmail>(SendVerifyEmail);
 
     const userId = 'non-existing-id';
@@ -163,7 +169,7 @@ describe('SendVerifyEmail Use Case', () => {
 
     const userRepositoryProvider =
       getUserRepositoryProvider(userRepositoryMock);
-    const module = await getModuleTest(userRepositoryProvider);
+    const module = await getModuleTest({ userRepositoryProvider });
     const sendVerifyEmail = module.get<SendVerifyEmail>(SendVerifyEmail);
 
     await expect(
@@ -175,6 +181,37 @@ describe('SendVerifyEmail Use Case', () => {
       new HttpException(
         {
           message: SessionUseCaseError.messages.emailAlreadyVerified,
+        },
+        HttpStatus.BAD_REQUEST,
+      ),
+    );
+  });
+
+  it('Should not send verify email if the token still valid', async () => {
+    const sessionDomain = SessionDomainMock.mountSessionDomain();
+    const findLastByUserIdAndTypedMock = jest
+      .fn()
+      .mockResolvedValue(sessionDomain);
+    const tokenRepositoryMock = new TokenRepository(
+      new SessionMapper(),
+    ) as jest.Mocked<InstanceType<typeof TokenRepository>>;
+    tokenRepositoryMock.findLastByUserIdAndType = findLastByUserIdAndTypedMock;
+
+    const tokenRepositoryProvider =
+      getTokenRepositoryProvider(tokenRepositoryMock);
+
+    const module = await getModuleTest({ tokenRepositoryProvider });
+    const sendVerifyEmail = module.get<SendVerifyEmail>(SendVerifyEmail);
+
+    await expect(
+      sendVerifyEmail.execute({
+        userId: sessionDomain.userId,
+        baseUrl: 'http://localhost:3000',
+      }),
+    ).rejects.toThrow(
+      new HttpException(
+        {
+          message: SessionUseCaseError.messages.tokenStillValid,
         },
         HttpStatus.BAD_REQUEST,
       ),
