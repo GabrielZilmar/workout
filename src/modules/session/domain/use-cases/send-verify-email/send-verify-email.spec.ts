@@ -17,6 +17,7 @@ describe('SendVerifyEmail Use Case', () => {
   let userDomain: UserDomain;
   let sendVerifyEmail: SendVerifyEmail;
   let module: TestingModule;
+  const userMapper = new UserMapper();
 
   const getTokenRepositoryProvider = (tokenRepositoryMock?: TokenRepository) =>
     ({
@@ -123,7 +124,6 @@ describe('SendVerifyEmail Use Case', () => {
   });
 
   it('Should not send verify email if not find user and repository return null', async () => {
-    const userMapper = new UserMapper();
     const findOneByIdMock = jest.fn().mockResolvedValue(() => null);
     const userRepositoryMock = new UserRepository(userMapper) as jest.Mocked<
       InstanceType<typeof UserRepository>
@@ -151,7 +151,35 @@ describe('SendVerifyEmail Use Case', () => {
     );
   });
 
-  // it('Should not send verify email if user is already verified', () => {});
+  it('Should not send verify email if user is already verified', async () => {
+    const userDomain = await UserDomainMock.mountUserDomain({
+      isEmailVerified: true,
+    });
+    const findOneByIdMock = jest.fn().mockResolvedValue(userDomain);
+    const userRepositoryMock = new UserRepository(userMapper) as jest.Mocked<
+      InstanceType<typeof UserRepository>
+    >;
+    userRepositoryMock.findOneById = findOneByIdMock;
+
+    const userRepositoryProvider =
+      getUserRepositoryProvider(userRepositoryMock);
+    const module = await getModuleTest(userRepositoryProvider);
+    const sendVerifyEmail = module.get<SendVerifyEmail>(SendVerifyEmail);
+
+    await expect(
+      sendVerifyEmail.execute({
+        userId: 'user-id',
+        baseUrl: 'http://localhost:3000',
+      }),
+    ).rejects.toThrow(
+      new HttpException(
+        {
+          message: SessionUseCaseError.messages.emailAlreadyVerified,
+        },
+        HttpStatus.BAD_REQUEST,
+      ),
+    );
+  });
 
   // it('Should not send verify email if email sender fails', () => {});
 });
