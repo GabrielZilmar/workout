@@ -1,7 +1,17 @@
 import {
   UserDomain,
   UserDomainCreateParams,
+  UserDomainProps,
 } from '~/modules/users/domain/users.domain';
+import Age from '~/modules/users/domain/value-objects/age';
+import DeletedAt from '~/modules/users/domain/value-objects/deleted-at';
+import Email from '~/modules/users/domain/value-objects/email';
+import Height from '~/modules/users/domain/value-objects/height';
+import IsAdmin from '~/modules/users/domain/value-objects/is-admin';
+import IsEmailVerified from '~/modules/users/domain/value-objects/is-email-verified';
+import Password from '~/modules/users/domain/value-objects/password';
+import Username from '~/modules/users/domain/value-objects/username';
+import Weight from '~/modules/users/domain/value-objects/weight';
 import { User } from '~/modules/users/entities/user.entity';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 
@@ -11,7 +21,7 @@ type MountUserDomainParams = Partial<UserDomainCreateParams> & {
 };
 
 export class UserDomainMock {
-  public static userMockParams: User = {
+  public static userMockParams: Required<User> = {
     id: '46ccf0f8-ec5c-46f0-ae4e-cff06a4b01fe',
     username: 'User Test 1',
     email: 'username1@email.com',
@@ -25,6 +35,52 @@ export class UserDomainMock {
     createdAt: new Date(),
     updatedAt: new Date(),
   };
+
+  public static async getUserDomainProps({
+    username,
+    email,
+    password,
+    age,
+    weight,
+    height,
+    isEmailVerified = false,
+    isAdmin = false,
+    deletedAt = null,
+  }: Partial<UserDomainCreateParams> = {}) {
+    const usernameVO = Username.create({
+      value: username ?? this.userMockParams.username,
+    });
+    const emailVO = Email.create({ value: email ?? this.userMockParams.email });
+    const passwordVO = await Password.create({
+      value: password?.value ?? this.userMockParams.password,
+    });
+    const ageVO = Age.create({ value: age ?? this.userMockParams.age });
+    const weightVO = Weight.create({
+      value: weight ?? this.userMockParams.weight,
+    });
+    const heightVO = Height.create({
+      value: height ?? this.userMockParams.height,
+    });
+    const isEmailVerifiedVO = IsEmailVerified.create({
+      value: isEmailVerified,
+    });
+    const isAdminVO = IsAdmin.create({ value: isAdmin });
+    const deletedAtVO = DeletedAt.create({ value: deletedAt });
+
+    const userProps: UserDomainProps = {
+      username: usernameVO.value as Username,
+      email: emailVO.value as Email,
+      password: passwordVO.value as Password,
+      age: ageVO.value as Age,
+      weight: weightVO.value as Weight,
+      height: heightVO.value as Height,
+      isEmailVerified: isEmailVerifiedVO,
+      isAdmin: isAdminVO,
+      deletedAt: deletedAtVO,
+    };
+
+    return userProps;
+  }
 
   public static getUserDomainCreateParams(
     props?: Partial<UserDomainCreateParams>,
