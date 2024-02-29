@@ -11,10 +11,14 @@ import { UserDomain } from '~/modules/users/domain/users.domain';
 import TokenRepository from '~/services/database/typeorm/repositories/token-repository';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 import EmailSender from '~/services/email-sender';
+import EmailSenderError from '~/services/email-sender/errors';
+
+const MOCK_ERROR = 'Mock Error';
 
 type GetModuleTestParams = {
-  userRepositoryProvider?: Provider | undefined;
-  tokenRepositoryProvider?: Provider | undefined;
+  userRepositoryProvider?: Provider;
+  tokenRepositoryProvider?: Provider;
+  emailSender?: Provider;
 };
 
 describe('SendVerifyEmail Use Case', () => {
@@ -66,12 +70,20 @@ describe('SendVerifyEmail Use Case', () => {
       inject: [UserMapper],
     } as Provider);
 
-  const getEmailSenderProvider = () =>
+  const getEmailSenderProvider = (rejectValue?: boolean) =>
     ({
       provide: EmailSender,
       useFactory: (mailerService: MailerService) => {
         const emailSender = new EmailSender(mailerService);
-        emailSender.send = jest.fn().mockResolvedValue(void 0);
+        if (rejectValue) {
+          emailSender.send = jest
+            .fn()
+            .mockRejectedValue(
+              EmailSenderError.create({ message: MOCK_ERROR }),
+            );
+        } else {
+          emailSender.send = jest.fn().mockResolvedValue(void 0);
+        }
 
         return emailSender;
       },
@@ -81,9 +93,8 @@ describe('SendVerifyEmail Use Case', () => {
   const getModuleTest = async ({
     userRepositoryProvider = getUserRepositoryProvider(),
     tokenRepositoryProvider = getTokenRepositoryProvider(),
+    emailSender = getEmailSenderProvider(),
   }: GetModuleTestParams = {}) => {
-    const emailSender = getEmailSenderProvider();
-
     return Test.createTestingModule({
       imports: [
         MailerModule.forRoot({
@@ -218,5 +229,24 @@ describe('SendVerifyEmail Use Case', () => {
     );
   });
 
-  // it('Should not send verify email if email sender fails', () => {});
+  it('Should not send verify email if email sender fails', async () => {
+    const module = await getModuleTest({
+      emailSender: getEmailSenderProvider(true),
+    });
+    const sendVerifyEmail = module.get<SendVerifyEmail>(SendVerifyEmail);
+
+    await expect(
+      sendVerifyEmail.execute({
+        userId: 'user-id',
+        baseUrl: 'http://localhost:3000',
+      }),
+    ).rejects.toThrowError(
+      new HttpException(
+        {
+          message: MOCK_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      ),
+    );
+  });
 });
