@@ -108,4 +108,22 @@ describe('Token Value Object', () => {
     expect(encryptedValue).not.toBe(jwtToken);
     expect(decryptValue).toBe(jwtToken);
   });
+
+  it('Should create a token value object with usedAt', () => {
+    const tokenValue = {
+      name: 'token',
+      value: 'token_value',
+    };
+
+    let token = Token.create(tokenValue);
+    expect(token.isRight()).toBeTruthy();
+    expect((token.value as Token).usedAt).toBeNull();
+
+    const usedAt = new Date();
+    token = Token.create(tokenValue, { usedAt });
+    expect(token.isRight()).toBeTruthy();
+    expect((token.value as Token).usedAt).toBe(usedAt);
+  });
+
+  // it('Should use the token', () => {});
 });

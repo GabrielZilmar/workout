@@ -5,12 +5,12 @@ import JwtService from '~/services/jwt/jsonwebtoken';
 import { ValueObject } from '~/shared/domain/value-object';
 import { Either, left, right } from '~/shared/either';
 
-// TODO : Test first with own jwt service, after change to nest
 export type TokenProps = {
   value: string;
   isAuth: boolean;
   isEncrypted: boolean;
   expiry: Date;
+  usedAt: Date | null;
 };
 
 export type TokenCreateProps = Partial<TokenProps> & { value: string };
@@ -18,6 +18,7 @@ export type TokenCreateProps = Partial<TokenProps> & { value: string };
 export type TokenOptions = {
   expiresIn?: string;
   isEncrypted?: boolean;
+  usedAt?: Date | null;
 };
 
 export default class Token extends ValueObject<TokenProps> {
@@ -49,6 +50,12 @@ export default class Token extends ValueObject<TokenProps> {
     return this.props.isEncrypted ?? false;
   }
 
+  get usedAt(): Date | null {
+    return this.props.usedAt;
+  }
+
+  // TODO: Use token
+
   public async getDecodedValue<T>(): Promise<T | null> {
     let tokenValue = this.props.value;
     if (this.isEncrypted) {
@@ -78,6 +85,10 @@ export default class Token extends ValueObject<TokenProps> {
     return Token.decryptValue(this.props.value, this.cryptoService);
   }
 
+  public useToken(): void {
+    this.props.usedAt = new Date();
+  }
+
   private static decryptValue(value: string, cryptoService: Crypto): string {
     return cryptoService.decryptValue(value);
   }
@@ -93,7 +104,7 @@ export default class Token extends ValueObject<TokenProps> {
     props: T | string,
     options = {} as TokenOptions,
   ): Either<SessionDomainError, Token> {
-    const { expiresIn, isEncrypted = false } = options;
+    const { expiresIn, isEncrypted = false, usedAt = null } = options;
     if (!this.isValid<T>(props)) {
       return left(
         SessionDomainError.create(SessionDomainError.messages.invalidToken),
@@ -111,11 +122,11 @@ export default class Token extends ValueObject<TokenProps> {
     }
 
     const isAuth = !jwtService.isTokenExpired(token);
-    const expiry = new Date(jwtService.decodeToken(token)?.exp ?? 0);
+    const expiry = new Date((jwtService.decodeToken(token)?.exp ?? 0) * 1000);
 
     return right(
       new Token(
-        { value: token, isAuth, isEncrypted: false, expiry },
+        { value: token, isAuth, isEncrypted: false, expiry, usedAt },
         jwtService,
         cryptoService,
       ),

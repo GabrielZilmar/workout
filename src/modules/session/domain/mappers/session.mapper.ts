@@ -12,7 +12,7 @@ export default class SessionMapper
   public async toDomain(
     raw: TokenEntity,
   ): Promise<Either<Error, SessionDomain>> {
-    const { id, userId, token, type } = raw;
+    const { id, userId, token, type, usedAt } = raw;
 
     const entityId = new UniqueEntityID(id);
     const sessionOrError = SessionDomain.create(
@@ -21,6 +21,7 @@ export default class SessionMapper
         token: {
           value: token,
           isEncrypted: true,
+          usedAt,
         },
         tokenType: type,
       },
@@ -45,6 +46,7 @@ export default class SessionMapper
       userId,
       token: token.value,
       expiry: token.props.expiry,
+      usedAt: token.props.usedAt,
       type: tokenType.value,
     };
 
