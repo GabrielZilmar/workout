@@ -54,8 +54,6 @@ export default class Token extends ValueObject<TokenProps> {
     return this.props.usedAt;
   }
 
-  // TODO: Use token
-
   public async getDecodedValue<T>(): Promise<T | null> {
     let tokenValue = this.props.value;
     if (this.isEncrypted) {
@@ -85,8 +83,8 @@ export default class Token extends ValueObject<TokenProps> {
     return Token.decryptValue(this.props.value, this.cryptoService);
   }
 
-  public useToken(): void {
-    this.props.usedAt = new Date();
+  public useToken(usedAt: Date = new Date()): void {
+    this.props.usedAt = usedAt;
   }
 
   private static decryptValue(value: string, cryptoService: Crypto): string {

@@ -125,5 +125,23 @@ describe('Token Value Object', () => {
     expect((token.value as Token).usedAt).toBe(usedAt);
   });
 
-  // it('Should use the token', () => {});
+  it('Should use the token', () => {
+    const tokenValue = {
+      name: 'token',
+      value: 'token_value',
+    };
+
+    const token = Token.create(tokenValue);
+    expect(token.isRight()).toBeTruthy();
+
+    const tokenValueObject = token.value as Token;
+    expect(tokenValueObject.usedAt).toBeNull();
+
+    tokenValueObject.useToken();
+    expect(tokenValueObject.usedAt).toBeInstanceOf(Date);
+
+    const usedAt = new Date();
+    tokenValueObject.useToken(usedAt);
+    expect(tokenValueObject.usedAt).toBe(usedAt);
+  });
 });
