@@ -33,6 +33,7 @@ export default class UserMapper
         email,
         password: {
           value: password,
+          isHashed: true,
         },
         age,
         weight,

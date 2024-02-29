@@ -161,9 +161,15 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
       return left(passwordOrError.value);
     }
 
-    const isEmailVerified = IsEmailVerified.create();
-    const isAdmin = IsAdmin.create();
-    const deletedAt = DeletedAt.create();
+    const isEmailVerified = IsEmailVerified.create({
+      value: valueObjects.isEmailVerified ?? false,
+    });
+    const isAdmin = IsAdmin.create({
+      value: valueObjects.isAdmin ?? false,
+    });
+    const deletedAt = DeletedAt.create({
+      value: valueObjects.deletedAt ?? null,
+    });
 
     const userProps: UserDomainProps = {
       username: usernameOrError.value,
