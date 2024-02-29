@@ -26,26 +26,35 @@ export class UserDomainMock {
     updatedAt: new Date(),
   };
 
+  public static getUserDomainCreateParams(
+    props?: Partial<UserDomainCreateParams>,
+  ): UserDomainCreateParams {
+    const user = this.userMockParams;
+
+    return {
+      username: props?.username || user.username,
+      email: props?.email || user.email,
+      password: props?.password || {
+        value: user.password,
+      },
+      age: props?.age || user.age,
+      weight: props?.weight || user.weight,
+      height: props?.height || user.height,
+      isEmailVerified: props?.isEmailVerified || user.isEmailVerified,
+      isAdmin: props?.isAdmin || user.isAdmin,
+      deletedAt: props?.deletedAt || user.deletedAt,
+    };
+  }
+
   public static async mountUserDomain({
     withoutId,
     ...props
   }: MountUserDomainParams = {}): Promise<UserDomain> {
     const user = this.userMockParams;
+    const usersDomainCreateParams = this.getUserDomainCreateParams(props);
 
     const userParams = {
-      params: {
-        username: props.username || user.username,
-        email: props.email || user.email,
-        password: {
-          value: props.password || user.password,
-        },
-        age: props.age || user.age,
-        weight: props.weight || user.weight,
-        height: props.height || user.height,
-        isEmailVerified: props.isEmailVerified || user.isEmailVerified,
-        isAdmin: props.isAdmin || user.isAdmin,
-        deletedAt: props.deletedAt || user.deletedAt,
-      } as UserDomainCreateParams,
+      params: usersDomainCreateParams,
       id: props.id || user.id,
     };
     let id: UniqueEntityID | undefined;
