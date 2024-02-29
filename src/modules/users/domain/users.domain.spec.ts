@@ -14,13 +14,39 @@ describe('UserDomain', () => {
   });
 
   it('should create a User domain', async () => {
-    const userParams = UserDomainMock.getUserDomainCreateParams();
-    const user = await UserDomain.create(userParams);
+    let userParams = UserDomainMock.getUserDomainCreateParams();
+    let user = await UserDomain.create(userParams);
 
     expect(user.isRight).toBeTruthy();
     expect(user.value).toBeInstanceOf(UserDomain);
 
-    const userProps = await UserDomainMock.getUserDomainProps();
+    let userProps = await UserDomainMock.getUserDomainProps();
+    expect(
+      (user.value as UserDomain).password.comparePassword(
+        userParams.password.value,
+      ),
+    ).toBeTruthy();
+    expect({ ...(user.value as UserDomain).props, password: '' }).toEqual({
+      ...userProps,
+      password: '',
+    });
+
+    const additionalUserProps = {
+      isEmailVerified: true,
+      isAdmin: true,
+      deletedAt: new Date(),
+    };
+    userParams = UserDomainMock.getUserDomainCreateParams({
+      ...additionalUserProps,
+    });
+    user = await UserDomain.create(userParams);
+
+    expect(user.isRight).toBeTruthy();
+    expect(user.value).toBeInstanceOf(UserDomain);
+
+    userProps = await UserDomainMock.getUserDomainProps({
+      ...additionalUserProps,
+    });
     expect(
       (user.value as UserDomain).password.comparePassword(
         userParams.password.value,
