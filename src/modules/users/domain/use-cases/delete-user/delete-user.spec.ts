@@ -3,11 +3,11 @@ import {
   HttpStatus,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { UserDomainMock } from 'test/utils/user-domain-mock';
 import { v4 as uuid } from 'uuid';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { DeleteUser } from '~/modules/users/domain/use-cases/delete-user';
 import { UserUseCaseError } from '~/modules/users/domain/use-cases/errors';
-import { GetUserMock } from '~/modules/users/domain/use-cases/get-user/test/get-user.mock';
 import { UserDomain } from '~/modules/users/domain/users.domain';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 
@@ -18,7 +18,7 @@ describe('Delete user use case', () => {
   let deleteUser: DeleteUser;
 
   const mockUserRepository = async () => {
-    const userDomainMock = await GetUserMock.mountUserDomain();
+    const userDomainMock = await UserDomainMock.mountUserDomain();
     userDomain = userDomainMock;
 
     const userRepositoryMock = new UserRepository(userMapper) as jest.Mocked<

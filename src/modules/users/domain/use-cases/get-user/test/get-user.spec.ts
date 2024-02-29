@@ -1,7 +1,7 @@
 import { HttpException, InternalServerErrorException } from '@nestjs/common';
+import { UserDomainMock } from 'test/utils/user-domain-mock';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { GetUser } from '~/modules/users/domain/use-cases/get-user';
-import { GetUserMock } from '~/modules/users/domain/use-cases/get-user/test/get-user.mock';
 import { UserDto } from '~/modules/users/dto/user.dto';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 
@@ -14,7 +14,7 @@ describe('Get user use case', () => {
   });
 
   it('Should get user by id or username', async () => {
-    const userDomain = await GetUserMock.mountUserDomain();
+    const userDomain = await UserDomainMock.mountUserDomain();
     const userRepositoryMock = new UserRepository(userMapper) as jest.Mocked<
       InstanceType<typeof UserRepository>
     >;
@@ -25,13 +25,15 @@ describe('Get user use case', () => {
 
     const userDto = UserDto.domainToDto(userDomain).value;
     const user = await getUser.execute({
-      idOrUsername: GetUserMock.userMock.id,
+      idOrUsername: UserDomainMock.userMockParams.id,
     });
     expect(user).toMatchObject(userDto);
   });
 
   it('Should throw http exception if failed to pass user to dto', async () => {
-    const userDomain = await GetUserMock.mountUserDomain(true);
+    const userDomain = await UserDomainMock.mountUserDomain({
+      withoutId: true,
+    });
     const userRepositoryMock = new UserRepository(userMapper) as jest.Mocked<
       InstanceType<typeof UserRepository>
     >;
@@ -41,7 +43,7 @@ describe('Get user use case', () => {
     const getUser = new GetUser(userRepository);
 
     await expect(
-      getUser.execute({ idOrUsername: GetUserMock.userMock.id }),
+      getUser.execute({ idOrUsername: UserDomainMock.userMockParams.id }),
     ).rejects.toThrowError(HttpException);
   });
 
@@ -55,7 +57,9 @@ describe('Get user use case', () => {
     const getUser = new GetUser(userRepository);
 
     expect(
-      getUser.execute({ idOrUsername: GetUserMock.userMock.id }),
+      getUser.execute({
+        idOrUsername: UserDomainMock.userMockParams.id,
+      }),
     ).rejects.toThrowError(InternalServerErrorException);
   });
 });
