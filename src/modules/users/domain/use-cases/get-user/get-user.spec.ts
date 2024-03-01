@@ -1,5 +1,5 @@
 import { HttpException, InternalServerErrorException } from '@nestjs/common';
-import { UserDomainMock } from 'test/utils/user-domain-mock';
+import { UserDomainMock } from 'test/utils/domains/user-domain-mock';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { GetUser } from '~/modules/users/domain/use-cases/get-user';
 import { UserDto } from '~/modules/users/dto/user.dto';

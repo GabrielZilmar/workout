@@ -1,5 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
-import { v4 as uuid } from 'uuid';
+import { UserDomainMock } from 'test/utils/domains/user-domain-mock';
 import { UserDomainError } from '~/modules/users/domain/errors';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import {
@@ -13,7 +13,6 @@ import {
 import { UserDto } from '~/modules/users/dto/user.dto';
 import { RepositoryError } from '~/services/database/typeorm/repositories/error';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
-import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 import { left, right } from '~/shared/either';
 
 jest.mock('~/modules/users/domain/event/user-created');
@@ -23,30 +22,6 @@ describe('CreateUser', () => {
   let createUser: CreateUser;
   let userParams: UserDomainCreateParams;
   let userDomain: UserDomain;
-
-  const mockUserParams = () => {
-    userParams = {
-      username: 'valid_username',
-      email: 'valid@email.com',
-      password: {
-        value: 'valid_password',
-      },
-      age: 20,
-      weight: 80,
-      height: 180,
-    };
-  };
-
-  const mockUserDomain = async () => {
-    const userDomainOrError = await UserDomain.create(
-      userParams,
-      new UniqueEntityID(uuid()),
-    );
-    if (userDomainOrError.isLeft()) {
-      throw new Error('Invalid user domain');
-    }
-    userDomain = userDomainOrError.value;
-  };
 
   const mockUserRepository = () => {
     const userMapper = new UserMapper();
@@ -67,8 +42,8 @@ describe('CreateUser', () => {
   };
 
   beforeAll(async () => {
-    mockUserParams();
-    await mockUserDomain();
+    userDomain = await UserDomainMock.mountUserDomain();
+    userParams = UserDomainMock.getUserDomainCreateParams();
     mockUserRepository();
     mockCreateUser();
   });

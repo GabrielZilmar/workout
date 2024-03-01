@@ -1,15 +1,9 @@
-import { v4 as uuid } from 'uuid';
+import { SessionDomainMock } from 'test/utils/domains/session-domain-mock';
 import SessionDomainError from '~/modules/session/domain/errors';
 import SessionDomain, {
   SessionDomainCreateParams,
   SessionDomainProps,
 } from '~/modules/session/domain/session.domain';
-import Token from '~/modules/session/domain/value-objects/token';
-import TokenType from '~/modules/session/domain/value-objects/token-type';
-import {
-  TOKEN_TYPES_ENUM,
-  TokenTypes,
-} from '~/modules/session/entities/token.entity';
 import { Either } from '~/shared/either';
 
 describe('SessionDomain', () => {
@@ -24,30 +18,6 @@ describe('SessionDomain', () => {
     isValid(): boolean;
   };
 
-  const sessionParams: SessionDomainCreateParams = {
-    userId: uuid(),
-    token: {
-      value: { token: 'valid_token' },
-    },
-    tokenType: TOKEN_TYPES_ENUM[
-      Math.floor(Math.random() * TOKEN_TYPES_ENUM.length)
-    ] as TokenTypes,
-  };
-
-  const getSessionDomainProps = () => {
-    const userId = sessionParams.userId;
-    const token = Token.create(sessionParams.token.value);
-    const tokenType = TokenType.create(sessionParams.tokenType);
-
-    const props: SessionDomainProps = {
-      userId,
-      token: token.value as Token,
-      tokenType: tokenType.value as TokenType,
-    };
-
-    return props;
-  };
-
   it('Should create a session domain', async () => {
     const isValidSpy = jest.spyOn(
       SessionDomain as unknown as SessionDomainPublicClass,
@@ -58,8 +28,8 @@ describe('SessionDomain', () => {
       'mountValueObject',
     );
 
-    const sessionProps = getSessionDomainProps();
-    const session = SessionDomain.create(sessionParams);
+    const sessionProps = SessionDomainMock.getSessionDomainProps();
+    const session = SessionDomain.create(SessionDomainMock.sessionMockParams);
 
     expect(session.isRight()).toBeTruthy();
     expect(session.value).toBeInstanceOf(SessionDomain);

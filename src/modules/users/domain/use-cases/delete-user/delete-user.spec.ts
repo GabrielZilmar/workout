@@ -3,7 +3,7 @@ import {
   HttpStatus,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { UserDomainMock } from 'test/utils/user-domain-mock';
+import { UserDomainMock } from 'test/utils/domains/user-domain-mock';
 import { v4 as uuid } from 'uuid';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { DeleteUser } from '~/modules/users/domain/use-cases/delete-user';

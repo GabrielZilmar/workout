@@ -1,8 +1,8 @@
 import { MailerModule, MailerService } from '@nestjs-modules/mailer';
 import { HttpException, HttpStatus, Provider } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { SessionDomainMock } from 'test/utils/session-domain-mock';
-import { UserDomainMock } from 'test/utils/user-domain-mock';
+import { SessionDomainMock } from 'test/utils/domains/session-domain-mock';
+import { UserDomainMock } from 'test/utils/domains/user-domain-mock';
 import SessionMapper from '~/modules/session/domain/mappers/session.mapper';
 import { SessionUseCaseError } from '~/modules/session/domain/use-cases/errors';
 import { SendVerifyEmail } from '~/modules/session/domain/use-cases/send-verify-email';
