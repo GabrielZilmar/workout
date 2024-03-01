@@ -1,13 +1,15 @@
 import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
+import { UserDomainMock } from 'test/utils/domains/user-domain-mock';
 import { v4 as uuid } from 'uuid';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { UserUseCaseError } from '~/modules/users/domain/use-cases/errors';
-import { UpdateUser } from '~/modules/users/domain/use-cases/update-user';
-import { UpdateUserMock } from '~/modules/users/domain/use-cases/update-user/test/update-user.mock';
+import {
+  UpdateUser,
+  UpdateUserParams,
+} from '~/modules/users/domain/use-cases/update-user';
 import { UserDomain } from '~/modules/users/domain/users.domain';
 import { RepositoryError } from '~/services/database/typeorm/repositories/error';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
-import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 import { left, right } from '~/shared/either';
 
 describe('Update user use case', () => {
@@ -16,16 +18,23 @@ describe('Update user use case', () => {
   let updateUser: UpdateUser;
   let userDomain: UserDomain;
 
-  const mountUserDomain = async () => {
-    const userDomainOrError = await UserDomain.create(
-      UpdateUserMock.userParams,
-      new UniqueEntityID(uuid()),
-    );
-    if (userDomainOrError.isLeft()) {
-      throw new Error('Invalid user domain');
-    }
-
-    userDomain = userDomainOrError.value;
+  const id = uuid();
+  const updateUserParams: UpdateUserParams = {
+    id: id,
+    username: 'valid_username',
+    age: 20,
+    weight: 80,
+    height: 180,
+  };
+  const userParams = {
+    username: 'valid_username',
+    email: 'valid@email.com',
+    password: {
+      value: 'valid_password',
+    },
+    age: 20,
+    weight: 80,
+    height: 180,
   };
 
   const mockUserRepository = async () => {
@@ -43,15 +52,15 @@ describe('Update user use case', () => {
   };
 
   beforeEach(async () => {
-    await mountUserDomain();
+    userDomain = await UserDomainMock.mountUserDomain({
+      ...userParams,
+    });
     await mockUserRepository();
     updateUser = new UpdateUser(userRepository, userMapper);
   });
 
   it('Should update a user', async () => {
-    const userHasBeenUpdated = await updateUser.execute(
-      UpdateUserMock.updateUserParams,
-    );
+    const userHasBeenUpdated = await updateUser.execute(updateUserParams);
     expect(userHasBeenUpdated).toBeTruthy();
   });
 
@@ -59,7 +68,7 @@ describe('Update user use case', () => {
     const repositoryFindOneByIdMock = jest.fn().mockResolvedValue(null);
     userRepository.findOneById = repositoryFindOneByIdMock;
 
-    const userParams = UpdateUserMock.updateUserParams;
+    const userParams = updateUserParams;
 
     await expect(updateUser.execute(userParams)).rejects.toThrowError(
       new HttpException(
@@ -70,7 +79,7 @@ describe('Update user use case', () => {
   });
 
   it('Should not update a user if the username is duplicated', async () => {
-    const userParams = UpdateUserMock.updateUserParams;
+    const userParams = updateUserParams;
     const itemsDuplicated = {
       username: userParams.username,
     };
@@ -103,9 +112,7 @@ describe('Update user use case', () => {
       .mockResolvedValue(left(updateError));
     userRepository.update = repositoryUpdateUserMock;
 
-    await expect(
-      updateUser.execute(UpdateUserMock.updateUserParams),
-    ).rejects.toThrowError(
+    await expect(updateUser.execute(updateUserParams)).rejects.toThrowError(
       new HttpException(updateError.message, updateError.code),
     );
   });
