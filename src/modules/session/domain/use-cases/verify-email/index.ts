@@ -9,7 +9,7 @@ export type VerifyEmailResult = Promise<boolean>;
 export class VerifyEmail
   implements UseCase<VerifyEmailParams, VerifyEmailResult>
 {
-  execute({ verifyEmailToken }: VerifyEmailParams): VerifyEmailResult {
+  execute({ token }: VerifyEmailParams): VerifyEmailResult {
     throw new Error('Method not implemented.');
   }
 }
