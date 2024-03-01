@@ -39,7 +39,7 @@ export default class SessionMapper
     const { id, userId, token, tokenType } = item;
 
     if (!token.isEncrypted) {
-      token.getEncryptValue();
+      token.encryptValue();
     }
     const tokenEntity: Partial<TokenEntity> = {
       id: id?.toString(),
