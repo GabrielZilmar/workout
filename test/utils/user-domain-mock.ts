@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import {
   UserDomain,
   UserDomainCreateParams,
@@ -22,7 +23,7 @@ type MountUserDomainParams = Partial<UserDomainCreateParams> & {
 
 export class UserDomainMock {
   public static userMockParams: Required<User> = {
-    id: '46ccf0f8-ec5c-46f0-ae4e-cff06a4b01fe',
+    id: uuid(),
     username: 'User Test 1',
     email: 'username1@email.com',
     password: 'password',
