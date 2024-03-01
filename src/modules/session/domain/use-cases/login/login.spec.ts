@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { UserDomainMock } from 'test/utils/user-domain-mock';
+import { UserDomainMock } from 'test/utils/domains/user-domain-mock';
 import { SessionUseCaseError } from '~/modules/session/domain/use-cases/errors';
 import { Login } from '~/modules/session/domain/use-cases/login';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';

@@ -1,4 +1,4 @@
-import { UserDomainMock } from 'test/utils/user-domain-mock';
+import { UserDomainMock } from 'test/utils/domains/user-domain-mock';
 import { v4 as uuid } from 'uuid';
 import { UserDomainError } from '~/modules/users/domain/errors';
 import {

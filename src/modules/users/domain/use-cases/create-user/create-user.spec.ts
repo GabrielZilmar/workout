@@ -1,5 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
-import { UserDomainMock } from 'test/utils/user-domain-mock';
+import { UserDomainMock } from 'test/utils/domains/user-domain-mock';
 import { UserDomainError } from '~/modules/users/domain/errors';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import {
