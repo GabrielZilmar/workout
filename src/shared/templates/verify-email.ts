@@ -10,7 +10,7 @@ export default class VerifyEmailTemplate {
   private static template = `
       <h1>Verify your email</h1>
       <p>Hi, {{username}}! Click in the link below to verify your email</p>
-      <a href="{{baseUrl}}/verify-email?token={{verifyEmailToken}}">Verify email</a>
+      <a href="{{baseUrl}}/api/session/verify-email?token={{verifyEmailToken}}">Verify email</a>
     `;
   public static subject = 'Verify your email';
 
