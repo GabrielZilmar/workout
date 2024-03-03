@@ -33,7 +33,7 @@ export class SessionController {
   }
 
   @Get('/verify-email')
-  verifyEmail(@Req() req: Request, @Query() verifyEmailDto: VerifyEmailDto) {
+  verifyEmail(@Query() verifyEmailDto: VerifyEmailDto) {
     return this.verifyEmailUseCase.execute(verifyEmailDto);
   }
 }
