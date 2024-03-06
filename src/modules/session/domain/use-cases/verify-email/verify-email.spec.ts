@@ -17,10 +17,11 @@ import { VerifyEmail } from '~/modules/session/domain/use-cases/verify-email';
 import Token from '~/modules/session/domain/value-objects/token';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { UserDomain } from '~/modules/users/domain/users.domain';
+import { RepositoryError } from '~/services/database/typeorm/repositories/error';
 import TokenRepository from '~/services/database/typeorm/repositories/token-repository';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 import JwtService from '~/services/jwt/jsonwebtoken';
-import { right } from '~/shared/either';
+import { left, right } from '~/shared/either';
 
 type GetModuleTestParams = {
   userRepositoryProvider?: Provider;
@@ -332,5 +333,66 @@ describe('VerifyEmail Use Case', () => {
     );
     expect(userRepositoryUpdateSpy).not.toHaveBeenCalled();
     expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
+  });
+
+  it('Should not verify user if update user failed', async () => {
+    const updatedUserError = RepositoryError.create(
+      RepositoryError.messages.updateError,
+    );
+
+    const userRepositoryMock = getUserRepositoryMock();
+    userRepositoryMock.update = jest
+      .fn()
+      .mockResolvedValue(left(updatedUserError));
+    const userRepositoryProvider = await getUserRepositoryProvider({
+      userRepositoryMock,
+      userDomain,
+    });
+
+    const module = await getModuleTest({ userRepositoryProvider });
+    const tokenRepositoryUpdateSpy = jest.spyOn(
+      module.get<TokenRepository>(TokenRepository),
+      'update',
+    );
+
+    const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
+
+    await expect(verifyEmail.execute({ token })).rejects.toThrow(
+      new HttpException(
+        {
+          message: updatedUserError.message,
+        },
+        updatedUserError.code,
+      ),
+    );
+    expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
+  });
+
+  it('Should not verify user if update token failed', async () => {
+    const updatedTokenError = RepositoryError.create(
+      RepositoryError.messages.updateError,
+    );
+
+    const tokenRepositoryMock = getTokenRepositoryMock();
+    tokenRepositoryMock.update = jest
+      .fn()
+      .mockResolvedValue(left(updatedTokenError));
+    const tokenRepositoryProvider = getTokenRepositoryProvider({
+      tokenRepositoryMock,
+      sessionDomain,
+    });
+
+    const module = await getModuleTest({ tokenRepositoryProvider });
+
+    const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
+
+    await expect(verifyEmail.execute({ token })).rejects.toThrow(
+      new HttpException(
+        {
+          message: updatedTokenError.message,
+        },
+        updatedTokenError.code,
+      ),
+    );
   });
 });
