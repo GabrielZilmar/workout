@@ -30,7 +30,6 @@ type GetModuleTestParams = {
 describe('VerifyEmail Use Case', () => {
   let userDomain: UserDomain;
   let sessionDomain: SessionDomain;
-  let verifyEmail: VerifyEmail;
   let module: TestingModule;
   const userMapper = new UserMapper();
   let token: string;
@@ -100,7 +99,7 @@ describe('VerifyEmail Use Case', () => {
     }).compile();
   };
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     userDomain = await UserDomainMock.mountUserDomain();
     sessionDomain = SessionDomainMock.mountSessionDomain();
     token = (
@@ -108,12 +107,6 @@ describe('VerifyEmail Use Case', () => {
         .value as Token
     ).value;
     module = await getModuleTest();
-
-    verifyEmail = module.get<VerifyEmail>(VerifyEmail);
-  });
-
-  afterEach(() => {
-    jest.restoreAllMocks();
   });
 
   it('Should verify user email', async () => {
@@ -125,6 +118,7 @@ describe('VerifyEmail Use Case', () => {
       module.get<TokenRepository>(TokenRepository),
       'update',
     );
+    const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
 
     expect(await verifyEmail.execute({ token })).toBe(true);
     expect(userRepositoryUpdateSpy).toHaveBeenCalled();
@@ -141,6 +135,7 @@ describe('VerifyEmail Use Case', () => {
       'update',
     );
 
+    const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
     await expect(
       verifyEmail.execute({ token: 'invalidToken' }),
     ).rejects.toThrow(
@@ -171,6 +166,7 @@ describe('VerifyEmail Use Case', () => {
       '-1h',
     );
 
+    const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
     await expect(verifyEmail.execute({ token: expiredToken })).rejects.toThrow(
       new HttpException(
         {
@@ -197,6 +193,7 @@ describe('VerifyEmail Use Case', () => {
     const token = jwtService.signToken({ userId: userDomain.id?.toValue() });
     jwtService.decodeToken = jest.fn().mockReturnValue(null);
 
+    const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
     await expect(verifyEmail.execute({ token })).rejects.toThrow(
       new InternalServerErrorException(
         SessionUseCaseError.messages.decodeTokenError,
@@ -207,6 +204,14 @@ describe('VerifyEmail Use Case', () => {
   });
 
   it('Should not verify user if user not found', async () => {
+    const userRepositoryMock = getUserRepositoryMock();
+    userRepositoryMock.findOneById = jest.fn().mockResolvedValue(null);
+    const userRepositoryProvider = await getUserRepositoryProvider({
+      userRepositoryMock,
+      userDomain,
+    });
+
+    const module = await getModuleTest({ userRepositoryProvider });
     const userRepositoryUpdateSpy = jest.spyOn(
       module.get<UserRepository>(UserRepository),
       'update',
@@ -216,18 +221,9 @@ describe('VerifyEmail Use Case', () => {
       'update',
     );
 
-    const userRepositoryMock = getUserRepositoryMock();
-    userRepositoryMock.findOneById = jest.fn().mockResolvedValue(null);
-    const userRepositoryProvider = await getUserRepositoryProvider({
-      userRepositoryMock,
-      userDomain,
-    });
-
-    module = await getModuleTest({ userRepositoryProvider });
-
     const jwtService = module.get<JwtService>(JwtService);
     const token = jwtService.signToken({ userId: userDomain.id?.toValue() });
-    verifyEmail = module.get<VerifyEmail>(VerifyEmail);
+    const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
 
     await expect(verifyEmail.execute({ token })).rejects.toThrow(
       new HttpException(
@@ -244,6 +240,14 @@ describe('VerifyEmail Use Case', () => {
   });
 
   it('Should return true if the user is already verified', async () => {
+    userDomain.isEmailVerified.verifyEmail();
+    const userRepositoryMock = getUserRepositoryMock();
+    const userRepositoryProvider = await getUserRepositoryProvider({
+      userRepositoryMock,
+      userDomain,
+    });
+
+    const module = await getModuleTest({ userRepositoryProvider });
     const userRepositoryUpdateSpy = jest.spyOn(
       module.get<UserRepository>(UserRepository),
       'update',
@@ -253,17 +257,35 @@ describe('VerifyEmail Use Case', () => {
       'update',
     );
 
-    userDomain.isEmailVerified.verifyEmail();
-    const userRepositoryMock = getUserRepositoryMock();
-    const userRepositoryProvider = await getUserRepositoryProvider({
-      userRepositoryMock,
-      userDomain,
-    });
-
-    module = await getModuleTest({ userRepositoryProvider });
-    verifyEmail = module.get<VerifyEmail>(VerifyEmail);
+    const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
 
     expect(await verifyEmail.execute({ token })).toBe(true);
+    expect(userRepositoryUpdateSpy).not.toHaveBeenCalled();
+    expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
+  });
+
+  it('Should not verify user if token not found', async () => {
+    const tokenRepositoryProvider = getTokenRepositoryProvider();
+    const module = await getModuleTest({ tokenRepositoryProvider });
+    const userRepositoryUpdateSpy = jest.spyOn(
+      module.get<UserRepository>(UserRepository),
+      'update',
+    );
+    const tokenRepositoryUpdateSpy = jest.spyOn(
+      module.get<TokenRepository>(TokenRepository),
+      'update',
+    );
+
+    const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
+
+    await expect(verifyEmail.execute({ token })).rejects.toThrow(
+      new HttpException(
+        {
+          message: SessionUseCaseError.messages.tokenNotFound,
+        },
+        HttpStatus.BAD_REQUEST,
+      ),
+    );
     expect(userRepositoryUpdateSpy).not.toHaveBeenCalled();
     expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
   });
