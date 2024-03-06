@@ -242,4 +242,29 @@ describe('VerifyEmail Use Case', () => {
     expect(userRepositoryUpdateSpy).not.toHaveBeenCalled();
     expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
   });
+
+  it('Should return true if the user is already verified', async () => {
+    const userRepositoryUpdateSpy = jest.spyOn(
+      module.get<UserRepository>(UserRepository),
+      'update',
+    );
+    const tokenRepositoryUpdateSpy = jest.spyOn(
+      module.get<TokenRepository>(TokenRepository),
+      'update',
+    );
+
+    userDomain.isEmailVerified.verifyEmail();
+    const userRepositoryMock = getUserRepositoryMock();
+    const userRepositoryProvider = await getUserRepositoryProvider({
+      userRepositoryMock,
+      userDomain,
+    });
+
+    module = await getModuleTest({ userRepositoryProvider });
+    verifyEmail = module.get<VerifyEmail>(VerifyEmail);
+
+    expect(await verifyEmail.execute({ token })).toBe(true);
+    expect(userRepositoryUpdateSpy).not.toHaveBeenCalled();
+    expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
+  });
 });
