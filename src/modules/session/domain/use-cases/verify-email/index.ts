@@ -5,11 +5,11 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { SessionUseCaseError } from '~/modules/session/domain/use-cases/errors';
-import Token from '~/modules/session/domain/value-objects/token';
 import { VerifyEmailDto } from '~/modules/session/dto/verify-email.dto';
 import { TokenTypeMap } from '~/modules/session/entities/token.entity';
 import TokenRepository from '~/services/database/typeorm/repositories/token-repository';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
+import JwtService from '~/services/jwt/jsonwebtoken';
 import { UseCase } from '~/shared/core/use-case';
 
 export type VerifyEmailParams = VerifyEmailDto;
@@ -24,21 +24,11 @@ export class VerifyEmail
   constructor(
     private readonly userRepository: UserRepository,
     private readonly tokenRepository: TokenRepository,
+    private readonly jwtService: JwtService,
   ) {}
 
   public async execute({ token }: VerifyEmailParams): VerifyEmailResult {
-    const tokenValueOrError = Token.create({ value: token });
-    if (tokenValueOrError.isLeft()) {
-      throw new HttpException(
-        {
-          message: tokenValueOrError.value.message,
-        },
-        tokenValueOrError.value.code,
-      );
-    }
-
-    const tokenValue = tokenValueOrError.value;
-    const isTokenValid = tokenValue.isAuth;
+    const isTokenValid = this.jwtService.isValidToken(token);
     if (!isTokenValid) {
       throw new HttpException(
         {
@@ -48,7 +38,9 @@ export class VerifyEmail
       );
     }
 
-    const decodedToken = await tokenValue.getDecodedValue<TokenDecoded>();
+    const decodedToken = this.jwtService.decodeToken(
+      token,
+    ) as TokenDecoded | null;
     if (!decodedToken) {
       throw new InternalServerErrorException(
         SessionUseCaseError.messages.decodeTokenError,
