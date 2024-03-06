@@ -1,3 +1,4 @@
+import { GenericCreateDomainParams } from 'test/utils/types/domain';
 import { v4 as uuid } from 'uuid';
 import SessionDomain, {
   SessionDomainCreateParams,
@@ -14,10 +15,8 @@ import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 const USER_ID = uuid();
 const SESSION_ID = uuid();
 
-type MountSessionDomainParams = Partial<SessionDomainCreateParams> & {
-  id?: string;
-  withoutId?: boolean;
-};
+type MountSessionDomainParams = Partial<SessionDomainCreateParams> &
+  GenericCreateDomainParams;
 
 export class SessionDomainMock {
   public static sessionMockParams: SessionDomainCreateParams = {
