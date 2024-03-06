@@ -289,4 +289,40 @@ describe('VerifyEmail Use Case', () => {
     expect(userRepositoryUpdateSpy).not.toHaveBeenCalled();
     expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
   });
+
+  it('Should not verify user if token already used', async () => {
+    const sessionDomain = SessionDomainMock.mountSessionDomain();
+    sessionDomain.token.useToken();
+    const tokenRepositoryMock = getTokenRepositoryMock();
+    tokenRepositoryMock.findLastByUserIdAndType = jest
+      .fn()
+      .mockResolvedValue(sessionDomain);
+    const tokenRepositoryProvider = getTokenRepositoryProvider({
+      tokenRepositoryMock,
+      sessionDomain,
+    });
+
+    const module = await getModuleTest({ tokenRepositoryProvider });
+    const userRepositoryUpdateSpy = jest.spyOn(
+      module.get<UserRepository>(UserRepository),
+      'update',
+    );
+    const tokenRepositoryUpdateSpy = jest.spyOn(
+      module.get<TokenRepository>(TokenRepository),
+      'update',
+    );
+
+    const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
+
+    await expect(verifyEmail.execute({ token })).rejects.toThrow(
+      new HttpException(
+        {
+          message: SessionUseCaseError.messages.tokenAlreadyUsed,
+        },
+        HttpStatus.BAD_REQUEST,
+      ),
+    );
+    expect(userRepositoryUpdateSpy).not.toHaveBeenCalled();
+    expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
+  });
 });
