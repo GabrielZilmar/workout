@@ -149,4 +149,32 @@ describe('VerifyEmail Use Case', () => {
     expect(userRepositoryUpdateSpy).not.toHaveBeenCalled();
     expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
   });
+
+  it('Should not verify user email if token is expired', async () => {
+    const userRepositoryUpdateSpy = jest.spyOn(
+      module.get<UserRepository>(UserRepository),
+      'update',
+    );
+    const tokenRepositoryUpdateSpy = jest.spyOn(
+      module.get<TokenRepository>(TokenRepository),
+      'update',
+    );
+
+    const jwtService = module.get<JwtService>(JwtService);
+    const expiredToken = jwtService.signToken(
+      { userId: userDomain.id?.toValue() },
+      '-1h',
+    );
+
+    await expect(verifyEmail.execute({ token: expiredToken })).rejects.toThrow(
+      new HttpException(
+        {
+          message: SessionUseCaseError.messages.invalidToken,
+        },
+        HttpStatus.UNAUTHORIZED,
+      ),
+    );
+    expect(userRepositoryUpdateSpy).not.toHaveBeenCalled();
+    expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
+  });
 });
