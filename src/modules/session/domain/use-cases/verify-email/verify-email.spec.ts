@@ -205,4 +205,41 @@ describe('VerifyEmail Use Case', () => {
     expect(userRepositoryUpdateSpy).not.toHaveBeenCalled();
     expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
   });
+
+  it('Should not verify user if user not found', async () => {
+    const userRepositoryUpdateSpy = jest.spyOn(
+      module.get<UserRepository>(UserRepository),
+      'update',
+    );
+    const tokenRepositoryUpdateSpy = jest.spyOn(
+      module.get<TokenRepository>(TokenRepository),
+      'update',
+    );
+
+    const userRepositoryMock = getUserRepositoryMock();
+    userRepositoryMock.findOneById = jest.fn().mockResolvedValue(null);
+    const userRepositoryProvider = await getUserRepositoryProvider({
+      userRepositoryMock,
+      userDomain,
+    });
+
+    module = await getModuleTest({ userRepositoryProvider });
+
+    const jwtService = module.get<JwtService>(JwtService);
+    const token = jwtService.signToken({ userId: userDomain.id?.toValue() });
+    verifyEmail = module.get<VerifyEmail>(VerifyEmail);
+
+    await expect(verifyEmail.execute({ token })).rejects.toThrow(
+      new HttpException(
+        {
+          message: SessionUseCaseError.messages.userIdNotFound(
+            userDomain.id?.toValue() as string,
+          ),
+        },
+        HttpStatus.BAD_REQUEST,
+      ),
+    );
+    expect(userRepositoryUpdateSpy).not.toHaveBeenCalled();
+    expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
+  });
 });
