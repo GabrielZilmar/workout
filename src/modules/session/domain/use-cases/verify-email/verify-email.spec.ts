@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Provider } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  InternalServerErrorException,
+  Provider,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import UtilClone from 'test/utils/clone';
 import { SessionDomainMock } from 'test/utils/domains/session-domain-mock';
@@ -172,6 +177,29 @@ describe('VerifyEmail Use Case', () => {
           message: SessionUseCaseError.messages.invalidToken,
         },
         HttpStatus.UNAUTHORIZED,
+      ),
+    );
+    expect(userRepositoryUpdateSpy).not.toHaveBeenCalled();
+    expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
+  });
+
+  it('Should not verify user if decode token failed', async () => {
+    const userRepositoryUpdateSpy = jest.spyOn(
+      module.get<UserRepository>(UserRepository),
+      'update',
+    );
+    const tokenRepositoryUpdateSpy = jest.spyOn(
+      module.get<TokenRepository>(TokenRepository),
+      'update',
+    );
+
+    const jwtService = module.get<JwtService>(JwtService);
+    const token = jwtService.signToken({ userId: userDomain.id?.toValue() });
+    jwtService.decodeToken = jest.fn().mockReturnValue(null);
+
+    await expect(verifyEmail.execute({ token })).rejects.toThrow(
+      new InternalServerErrorException(
+        SessionUseCaseError.messages.decodeTokenError,
       ),
     );
     expect(userRepositoryUpdateSpy).not.toHaveBeenCalled();
