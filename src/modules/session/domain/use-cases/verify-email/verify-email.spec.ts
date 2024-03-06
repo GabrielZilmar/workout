@@ -120,9 +120,17 @@ describe('VerifyEmail Use Case', () => {
     );
     const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
 
+    const verifyEmailSpy = jest.spyOn(
+      userDomain.isEmailVerified,
+      'verifyEmail',
+    );
+    const useTokenSpy = jest.spyOn(sessionDomain.token, 'useToken');
+
     expect(await verifyEmail.execute({ token })).toBe(true);
     expect(userRepositoryUpdateSpy).toHaveBeenCalled();
     expect(tokenRepositoryUpdateSpy).toHaveBeenCalled();
+    expect(verifyEmailSpy).toHaveBeenCalled();
+    expect(useTokenSpy).toHaveBeenCalled();
   });
 
   it('Should not verify user email if token is invalid', async () => {
