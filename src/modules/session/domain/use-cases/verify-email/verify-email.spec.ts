@@ -1,4 +1,4 @@
-import { Provider } from '@nestjs/common';
+import { HttpException, HttpStatus, Provider } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import UtilClone from 'test/utils/clone';
 import { SessionDomainMock } from 'test/utils/domains/session-domain-mock';
@@ -7,6 +7,7 @@ import getTokenRepositoryProvider from 'test/utils/providers/token-repository';
 import getUserRepositoryProvider from 'test/utils/providers/user-repository';
 import SessionMapper from '~/modules/session/domain/mappers/session.mapper';
 import SessionDomain from '~/modules/session/domain/session.domain';
+import { SessionUseCaseError } from '~/modules/session/domain/use-cases/errors';
 import { VerifyEmail } from '~/modules/session/domain/use-cases/verify-email';
 import Token from '~/modules/session/domain/value-objects/token';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
@@ -106,6 +107,10 @@ describe('VerifyEmail Use Case', () => {
     verifyEmail = module.get<VerifyEmail>(VerifyEmail);
   });
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it('Should verify user email', async () => {
     const userRepositoryUpdateSpy = jest.spyOn(
       module.get<UserRepository>(UserRepository),
@@ -119,5 +124,29 @@ describe('VerifyEmail Use Case', () => {
     expect(await verifyEmail.execute({ token })).toBe(true);
     expect(userRepositoryUpdateSpy).toHaveBeenCalled();
     expect(tokenRepositoryUpdateSpy).toHaveBeenCalled();
+  });
+
+  it('Should not verify user email if token is invalid', async () => {
+    const userRepositoryUpdateSpy = jest.spyOn(
+      module.get<UserRepository>(UserRepository),
+      'update',
+    );
+    const tokenRepositoryUpdateSpy = jest.spyOn(
+      module.get<TokenRepository>(TokenRepository),
+      'update',
+    );
+
+    await expect(
+      verifyEmail.execute({ token: 'invalidToken' }),
+    ).rejects.toThrow(
+      new HttpException(
+        {
+          message: SessionUseCaseError.messages.invalidToken,
+        },
+        HttpStatus.UNAUTHORIZED,
+      ),
+    );
+    expect(userRepositoryUpdateSpy).not.toHaveBeenCalled();
+    expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
   });
 });
