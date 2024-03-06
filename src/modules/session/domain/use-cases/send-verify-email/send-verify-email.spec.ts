@@ -1,4 +1,4 @@
-import { MailerModule, MailerService } from '@nestjs-modules/mailer';
+import { MailerModule } from '@nestjs-modules/mailer';
 import { HttpException, HttpStatus, Provider } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { SessionDomainMock } from 'test/utils/domains/session-domain-mock';
@@ -35,7 +35,7 @@ describe('SendVerifyEmail Use Case', () => {
     emailSender = getEmailSenderProvider(),
   }: GetModuleTestParams = {}) => {
     if (!userRepositoryProvider) {
-      userRepositoryProvider = await getUserRepositoryProvider();
+      userRepositoryProvider = await getUserRepositoryProvider({ userDomain });
     }
 
     return Test.createTestingModule({
@@ -146,7 +146,9 @@ describe('SendVerifyEmail Use Case', () => {
   });
 
   it('Should not send verify email if the token still valid', async () => {
-    const sessionDomain = SessionDomainMock.mountSessionDomain();
+    const sessionDomain = SessionDomainMock.mountSessionDomain({
+      withoutId: true,
+    });
     const findLastByUserIdAndTypedMock = jest
       .fn()
       .mockResolvedValue(sessionDomain);
@@ -155,8 +157,9 @@ describe('SendVerifyEmail Use Case', () => {
     ) as jest.Mocked<InstanceType<typeof TokenRepository>>;
     tokenRepositoryMock.findLastByUserIdAndType = findLastByUserIdAndTypedMock;
 
-    const tokenRepositoryProvider =
-      getTokenRepositoryProvider(tokenRepositoryMock);
+    const tokenRepositoryProvider = getTokenRepositoryProvider({
+      tokenRepositoryMock,
+    });
 
     const module = await getModuleTest({ tokenRepositoryProvider });
     const sendVerifyEmail = module.get<SendVerifyEmail>(SendVerifyEmail);
