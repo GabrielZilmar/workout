@@ -17,11 +17,14 @@ import { VerifyEmail } from '~/modules/session/domain/use-cases/verify-email';
 import Token from '~/modules/session/domain/value-objects/token';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { UserDomain } from '~/modules/users/domain/users.domain';
+import { AppDataSource } from '~/services/database/typeorm/config/data-source';
 import { RepositoryError } from '~/services/database/typeorm/repositories/error';
 import TokenRepository from '~/services/database/typeorm/repositories/token-repository';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 import JwtService from '~/services/jwt/jsonwebtoken';
-import { left, right } from '~/shared/either';
+import { right } from '~/shared/either';
+
+jest.mock('~/services/database/typeorm/config/data-source');
 
 type GetModuleTestParams = {
   userRepositoryProvider?: Provider;
@@ -111,16 +114,27 @@ describe('VerifyEmail Use Case', () => {
   });
 
   it('Should verify user email', async () => {
-    const userRepositoryUpdateSpy = jest.spyOn(
-      module.get<UserRepository>(UserRepository),
-      'update',
-    );
-    const tokenRepositoryUpdateSpy = jest.spyOn(
-      module.get<TokenRepository>(TokenRepository),
-      'update',
-    );
-    const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
+    const mockUserRepository = {
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+    };
+    const mockTokenRepository = {
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+    };
 
+    AppDataSource.manager.transaction = jest
+      .fn()
+      .mockImplementation(async (fn) => {
+        const entityManagerMock = {
+          getRepository: jest
+            .fn()
+            .mockReturnValueOnce(mockUserRepository)
+            .mockReturnValueOnce(mockTokenRepository),
+        };
+
+        return fn(entityManagerMock);
+      });
+
+    const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
     const verifyEmailSpy = jest.spyOn(
       userDomain.isEmailVerified,
       'verifyEmail',
@@ -128,21 +142,32 @@ describe('VerifyEmail Use Case', () => {
     const useTokenSpy = jest.spyOn(sessionDomain.token, 'useToken');
 
     expect(await verifyEmail.execute({ token })).toBe(true);
-    expect(userRepositoryUpdateSpy).toHaveBeenCalled();
-    expect(tokenRepositoryUpdateSpy).toHaveBeenCalled();
+    expect(mockUserRepository.update).toHaveBeenCalled();
+    expect(mockTokenRepository.update).toHaveBeenCalled();
     expect(verifyEmailSpy).toHaveBeenCalled();
     expect(useTokenSpy).toHaveBeenCalled();
   });
 
   it('Should not verify user email if token is invalid', async () => {
-    const userRepositoryUpdateSpy = jest.spyOn(
-      module.get<UserRepository>(UserRepository),
-      'update',
-    );
-    const tokenRepositoryUpdateSpy = jest.spyOn(
-      module.get<TokenRepository>(TokenRepository),
-      'update',
-    );
+    const mockUserRepository = {
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+    };
+    const mockTokenRepository = {
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+    };
+
+    AppDataSource.manager.transaction = jest
+      .fn()
+      .mockImplementation(async (fn) => {
+        const entityManagerMock = {
+          getRepository: jest
+            .fn()
+            .mockReturnValueOnce(mockUserRepository)
+            .mockReturnValueOnce(mockTokenRepository),
+        };
+
+        return fn(entityManagerMock);
+      });
 
     const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
     await expect(
@@ -155,19 +180,30 @@ describe('VerifyEmail Use Case', () => {
         HttpStatus.UNAUTHORIZED,
       ),
     );
-    expect(userRepositoryUpdateSpy).not.toHaveBeenCalled();
-    expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
+    expect(mockUserRepository.update).not.toHaveBeenCalled();
+    expect(mockTokenRepository.update).not.toHaveBeenCalled();
   });
 
   it('Should not verify user email if token is expired', async () => {
-    const userRepositoryUpdateSpy = jest.spyOn(
-      module.get<UserRepository>(UserRepository),
-      'update',
-    );
-    const tokenRepositoryUpdateSpy = jest.spyOn(
-      module.get<TokenRepository>(TokenRepository),
-      'update',
-    );
+    const mockUserRepository = {
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+    };
+    const mockTokenRepository = {
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+    };
+
+    AppDataSource.manager.transaction = jest
+      .fn()
+      .mockImplementation(async (fn) => {
+        const entityManagerMock = {
+          getRepository: jest
+            .fn()
+            .mockReturnValueOnce(mockUserRepository)
+            .mockReturnValueOnce(mockTokenRepository),
+        };
+
+        return fn(entityManagerMock);
+      });
 
     const jwtService = module.get<JwtService>(JwtService);
     const expiredToken = jwtService.signToken(
@@ -184,19 +220,30 @@ describe('VerifyEmail Use Case', () => {
         HttpStatus.UNAUTHORIZED,
       ),
     );
-    expect(userRepositoryUpdateSpy).not.toHaveBeenCalled();
-    expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
+    expect(mockUserRepository.update).not.toHaveBeenCalled();
+    expect(mockTokenRepository.update).not.toHaveBeenCalled();
   });
 
   it('Should not verify user if decode token failed', async () => {
-    const userRepositoryUpdateSpy = jest.spyOn(
-      module.get<UserRepository>(UserRepository),
-      'update',
-    );
-    const tokenRepositoryUpdateSpy = jest.spyOn(
-      module.get<TokenRepository>(TokenRepository),
-      'update',
-    );
+    const mockUserRepository = {
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+    };
+    const mockTokenRepository = {
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+    };
+
+    AppDataSource.manager.transaction = jest
+      .fn()
+      .mockImplementation(async (fn) => {
+        const entityManagerMock = {
+          getRepository: jest
+            .fn()
+            .mockReturnValueOnce(mockUserRepository)
+            .mockReturnValueOnce(mockTokenRepository),
+        };
+
+        return fn(entityManagerMock);
+      });
 
     const jwtService = module.get<JwtService>(JwtService);
     const token = jwtService.signToken({ userId: userDomain.id?.toValue() });
@@ -208,8 +255,8 @@ describe('VerifyEmail Use Case', () => {
         SessionUseCaseError.messages.decodeTokenError,
       ),
     );
-    expect(userRepositoryUpdateSpy).not.toHaveBeenCalled();
-    expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
+    expect(mockUserRepository.update).not.toHaveBeenCalled();
+    expect(mockTokenRepository.update).not.toHaveBeenCalled();
   });
 
   it('Should not verify user if user not found', async () => {
@@ -221,14 +268,25 @@ describe('VerifyEmail Use Case', () => {
     });
 
     const module = await getModuleTest({ userRepositoryProvider });
-    const userRepositoryUpdateSpy = jest.spyOn(
-      module.get<UserRepository>(UserRepository),
-      'update',
-    );
-    const tokenRepositoryUpdateSpy = jest.spyOn(
-      module.get<TokenRepository>(TokenRepository),
-      'update',
-    );
+    const mockUserRepository = {
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+    };
+    const mockTokenRepository = {
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+    };
+
+    AppDataSource.manager.transaction = jest
+      .fn()
+      .mockImplementation(async (fn) => {
+        const entityManagerMock = {
+          getRepository: jest
+            .fn()
+            .mockReturnValueOnce(mockUserRepository)
+            .mockReturnValueOnce(mockTokenRepository),
+        };
+
+        return fn(entityManagerMock);
+      });
 
     const jwtService = module.get<JwtService>(JwtService);
     const token = jwtService.signToken({ userId: userDomain.id?.toValue() });
@@ -244,8 +302,8 @@ describe('VerifyEmail Use Case', () => {
         HttpStatus.BAD_REQUEST,
       ),
     );
-    expect(userRepositoryUpdateSpy).not.toHaveBeenCalled();
-    expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
+    expect(mockUserRepository.update).not.toHaveBeenCalled();
+    expect(mockTokenRepository.update).not.toHaveBeenCalled();
   });
 
   it('Should return true if the user is already verified', async () => {
@@ -257,33 +315,55 @@ describe('VerifyEmail Use Case', () => {
     });
 
     const module = await getModuleTest({ userRepositoryProvider });
-    const userRepositoryUpdateSpy = jest.spyOn(
-      module.get<UserRepository>(UserRepository),
-      'update',
-    );
-    const tokenRepositoryUpdateSpy = jest.spyOn(
-      module.get<TokenRepository>(TokenRepository),
-      'update',
-    );
+    const mockUserRepository = {
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+    };
+    const mockTokenRepository = {
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+    };
+
+    AppDataSource.manager.transaction = jest
+      .fn()
+      .mockImplementation(async (fn) => {
+        const entityManagerMock = {
+          getRepository: jest
+            .fn()
+            .mockReturnValueOnce(mockUserRepository)
+            .mockReturnValueOnce(mockTokenRepository),
+        };
+
+        return fn(entityManagerMock);
+      });
 
     const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
 
     expect(await verifyEmail.execute({ token })).toBe(true);
-    expect(userRepositoryUpdateSpy).not.toHaveBeenCalled();
-    expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
+    expect(mockUserRepository.update).not.toHaveBeenCalled();
+    expect(mockTokenRepository.update).not.toHaveBeenCalled();
   });
 
   it('Should not verify user if token not found', async () => {
     const tokenRepositoryProvider = getTokenRepositoryProvider();
     const module = await getModuleTest({ tokenRepositoryProvider });
-    const userRepositoryUpdateSpy = jest.spyOn(
-      module.get<UserRepository>(UserRepository),
-      'update',
-    );
-    const tokenRepositoryUpdateSpy = jest.spyOn(
-      module.get<TokenRepository>(TokenRepository),
-      'update',
-    );
+    const mockUserRepository = {
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+    };
+    const mockTokenRepository = {
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+    };
+
+    AppDataSource.manager.transaction = jest
+      .fn()
+      .mockImplementation(async (fn) => {
+        const entityManagerMock = {
+          getRepository: jest
+            .fn()
+            .mockReturnValueOnce(mockUserRepository)
+            .mockReturnValueOnce(mockTokenRepository),
+        };
+
+        return fn(entityManagerMock);
+      });
 
     const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
 
@@ -295,8 +375,8 @@ describe('VerifyEmail Use Case', () => {
         HttpStatus.BAD_REQUEST,
       ),
     );
-    expect(userRepositoryUpdateSpy).not.toHaveBeenCalled();
-    expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
+    expect(mockUserRepository.update).not.toHaveBeenCalled();
+    expect(mockTokenRepository.update).not.toHaveBeenCalled();
   });
 
   it('Should not verify user if token already used', async () => {
@@ -312,14 +392,25 @@ describe('VerifyEmail Use Case', () => {
     });
 
     const module = await getModuleTest({ tokenRepositoryProvider });
-    const userRepositoryUpdateSpy = jest.spyOn(
-      module.get<UserRepository>(UserRepository),
-      'update',
-    );
-    const tokenRepositoryUpdateSpy = jest.spyOn(
-      module.get<TokenRepository>(TokenRepository),
-      'update',
-    );
+    const mockUserRepository = {
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+    };
+    const mockTokenRepository = {
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+    };
+
+    AppDataSource.manager.transaction = jest
+      .fn()
+      .mockImplementation(async (fn) => {
+        const entityManagerMock = {
+          getRepository: jest
+            .fn()
+            .mockReturnValueOnce(mockUserRepository)
+            .mockReturnValueOnce(mockTokenRepository),
+        };
+
+        return fn(entityManagerMock);
+      });
 
     const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
 
@@ -331,68 +422,69 @@ describe('VerifyEmail Use Case', () => {
         HttpStatus.BAD_REQUEST,
       ),
     );
-    expect(userRepositoryUpdateSpy).not.toHaveBeenCalled();
-    expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
+    expect(mockUserRepository.update).not.toHaveBeenCalled();
+    expect(mockTokenRepository.update).not.toHaveBeenCalled();
   });
 
   it('Should not verify user if update user failed', async () => {
-    const updatedUserError = RepositoryError.create(
-      RepositoryError.messages.updateError,
-    );
+    const mockUserRepository = {
+      update: jest.fn().mockResolvedValue({ affected: 0 }),
+    };
+    const mockTokenRepository = {
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+    };
 
-    const userRepositoryMock = getUserRepositoryMock();
-    userRepositoryMock.update = jest
+    AppDataSource.manager.transaction = jest
       .fn()
-      .mockResolvedValue(left(updatedUserError));
-    const userRepositoryProvider = await getUserRepositoryProvider({
-      userRepositoryMock,
-      userDomain,
-    });
+      .mockImplementation(async (fn) => {
+        const entityManagerMock = {
+          getRepository: jest
+            .fn()
+            .mockReturnValueOnce(mockUserRepository)
+            .mockReturnValueOnce(mockTokenRepository),
+        };
 
-    const module = await getModuleTest({ userRepositoryProvider });
-    const tokenRepositoryUpdateSpy = jest.spyOn(
-      module.get<TokenRepository>(TokenRepository),
-      'update',
-    );
+        return fn(entityManagerMock);
+      });
 
     const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
 
     await expect(verifyEmail.execute({ token })).rejects.toThrow(
-      new HttpException(
-        {
-          message: updatedUserError.message,
-        },
-        updatedUserError.code,
-      ),
+      new InternalServerErrorException({
+        message: RepositoryError.messages.updateError,
+      }),
     );
-    expect(tokenRepositoryUpdateSpy).not.toHaveBeenCalled();
+    expect(mockUserRepository.update).toHaveBeenCalled();
+    expect(mockTokenRepository.update).not.toHaveBeenCalled();
   });
 
   it('Should not verify user if update token failed', async () => {
-    const updatedTokenError = RepositoryError.create(
-      RepositoryError.messages.updateError,
-    );
+    const mockUserRepository = {
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+    };
+    const mockTokenRepository = {
+      update: jest.fn().mockResolvedValue({ affected: 0 }),
+    };
 
-    const tokenRepositoryMock = getTokenRepositoryMock();
-    tokenRepositoryMock.update = jest
+    AppDataSource.manager.transaction = jest
       .fn()
-      .mockResolvedValue(left(updatedTokenError));
-    const tokenRepositoryProvider = getTokenRepositoryProvider({
-      tokenRepositoryMock,
-      sessionDomain,
-    });
+      .mockImplementation(async (fn) => {
+        const entityManagerMock = {
+          getRepository: jest
+            .fn()
+            .mockReturnValueOnce(mockUserRepository)
+            .mockReturnValueOnce(mockTokenRepository),
+        };
 
-    const module = await getModuleTest({ tokenRepositoryProvider });
+        return fn(entityManagerMock);
+      });
 
     const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
 
     await expect(verifyEmail.execute({ token })).rejects.toThrow(
-      new HttpException(
-        {
-          message: updatedTokenError.message,
-        },
-        updatedTokenError.code,
-      ),
+      new InternalServerErrorException({
+        message: RepositoryError.messages.updateError,
+      }),
     );
   });
 });
