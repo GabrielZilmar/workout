@@ -1,6 +1,6 @@
 export default class UtilClone {
   public static deepInstanceClone<T>(originalInstance: T): T {
-    if (typeof originalInstance !== 'object' || originalInstance === null) {
+    if (typeof originalInstance !== 'object' || !originalInstance) {
       return originalInstance;
     }
 
