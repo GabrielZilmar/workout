@@ -17,7 +17,7 @@ export class AuthGuard implements CanActivate {
       return false;
     }
 
-    const user = this.jwtService.decodeToken(request.headers.authorization);
+    const user = this.jwtService.decodeToken(token);
     if (!user) {
       return false;
     }
