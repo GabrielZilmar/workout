@@ -63,16 +63,20 @@ export default class Token extends ValueObject<TokenProps> {
     return this.jwtService.decodeToken(tokenValue) as T | null;
   }
 
+  public encryptValue() {
+    const encryptedData = this.cryptoService.encryptValue(this.props.value);
+    this.props.value = encryptedData;
+    this.props.isEncrypted = true;
+  }
+
   public getEncryptValue(): string {
     if (this.isEncrypted) {
       return this.props.value;
     }
 
-    const encryptedData = this.cryptoService.encryptValue(this.props.value);
-    this.props.value = encryptedData;
-    this.props.isEncrypted = true;
+    this.encryptValue();
 
-    return encryptedData;
+    return this.props.value;
   }
 
   public getDecryptValue(): string {

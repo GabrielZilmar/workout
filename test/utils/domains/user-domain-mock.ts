@@ -1,3 +1,4 @@
+import { GenericCreateDomainParams } from 'test/utils/types/domain';
 import { v4 as uuid } from 'uuid';
 import {
   UserDomain,
@@ -16,10 +17,8 @@ import Weight from '~/modules/users/domain/value-objects/weight';
 import { User } from '~/modules/users/entities/user.entity';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 
-type MountUserDomainParams = Partial<UserDomainCreateParams> & {
-  id?: string;
-  withoutId?: boolean;
-};
+type MountUserDomainParams = Partial<UserDomainCreateParams> &
+  GenericCreateDomainParams;
 
 export class UserDomainMock {
   public static userMockParams: Required<User> = {

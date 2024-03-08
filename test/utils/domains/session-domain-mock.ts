@@ -1,3 +1,4 @@
+import { GenericCreateDomainParams } from 'test/utils/types/domain';
 import { v4 as uuid } from 'uuid';
 import SessionDomain, {
   SessionDomainCreateParams,
@@ -9,10 +10,13 @@ import {
   TOKEN_TYPES_ENUM,
   TokenTypes,
 } from '~/modules/session/entities/token.entity';
+import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 
 const USER_ID = uuid();
+const SESSION_ID = uuid();
 
-type MountSessionDomainParams = Partial<SessionDomainCreateParams>;
+type MountSessionDomainParams = Partial<SessionDomainCreateParams> &
+  GenericCreateDomainParams;
 
 export class SessionDomainMock {
   public static sessionMockParams: SessionDomainCreateParams = {
@@ -47,6 +51,7 @@ export class SessionDomainMock {
   };
 
   public static mountSessionDomain({
+    withoutId,
     ...props
   }: MountSessionDomainParams = {}): SessionDomain {
     const session = this.sessionMockParams;
@@ -57,7 +62,12 @@ export class SessionDomainMock {
       tokenType: props.tokenType ?? session.tokenType,
     };
 
-    const sessionDomain = SessionDomain.create(sessionParams);
+    let id: UniqueEntityID | undefined;
+    if (!withoutId) {
+      id = new UniqueEntityID(props.id || SESSION_ID);
+    }
+
+    const sessionDomain = SessionDomain.create(sessionParams, id);
     return sessionDomain.value as SessionDomain;
   }
 }

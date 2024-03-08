@@ -7,6 +7,7 @@ import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import TokenRepository from '~/services/database/typeorm/repositories/token-repository';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 import EmailSender from '~/services/email-sender';
+import JwtService from '~/services/jwt/jsonwebtoken';
 
 describe('SessionController', () => {
   let controller: SessionController;
@@ -33,6 +34,7 @@ describe('SessionController', () => {
         EmailSender,
         SessionMapper,
         TokenRepository,
+        JwtService,
         ...SessionUseCaseProviders,
       ],
     }).compile();

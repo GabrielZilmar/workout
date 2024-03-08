@@ -7,6 +7,7 @@ import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import TokenRepository from '~/services/database/typeorm/repositories/token-repository';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 import EmailSender from '~/services/email-sender';
+import JwtService from '~/services/jwt/jsonwebtoken';
 import Env from '~/shared/env';
 
 @Module({
@@ -30,6 +31,7 @@ import Env from '~/shared/env';
     UserMapper,
     SessionMapper,
     EmailSender,
+    JwtService,
     ...SessionUseCaseProviders,
   ],
 })

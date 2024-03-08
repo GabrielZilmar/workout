@@ -1,8 +1,13 @@
-import { MailerModule, MailerService } from '@nestjs-modules/mailer';
+import { MailerModule } from '@nestjs-modules/mailer';
 import { HttpException, HttpStatus, Provider } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { SessionDomainMock } from 'test/utils/domains/session-domain-mock';
 import { UserDomainMock } from 'test/utils/domains/user-domain-mock';
+import getEmailSenderProvider, {
+  EMAIL_SENDER_MOCK_ERROR,
+} from 'test/utils/providers/email-sender';
+import getTokenRepositoryProvider from 'test/utils/providers/token-repository';
+import getUserRepositoryProvider from 'test/utils/providers/user-repository';
 import SessionMapper from '~/modules/session/domain/mappers/session.mapper';
 import { SessionUseCaseError } from '~/modules/session/domain/use-cases/errors';
 import { SendVerifyEmail } from '~/modules/session/domain/use-cases/send-verify-email';
@@ -11,9 +16,6 @@ import { UserDomain } from '~/modules/users/domain/users.domain';
 import TokenRepository from '~/services/database/typeorm/repositories/token-repository';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 import EmailSender from '~/services/email-sender';
-import EmailSenderError from '~/services/email-sender/errors';
-
-const MOCK_ERROR = 'Mock Error';
 
 type GetModuleTestParams = {
   userRepositoryProvider?: Provider;
@@ -22,79 +24,20 @@ type GetModuleTestParams = {
 };
 
 describe('SendVerifyEmail Use Case', () => {
-  let tokenRepository: TokenRepository;
-  let userRepository: UserRepository;
   let userDomain: UserDomain;
   let sendVerifyEmail: SendVerifyEmail;
   let module: TestingModule;
   const userMapper = new UserMapper();
 
-  const getTokenRepositoryProvider = (tokenRepositoryMock?: TokenRepository) =>
-    ({
-      provide: TokenRepository,
-      useFactory: (sessionMapper: SessionMapper) => {
-        if (!tokenRepositoryMock) {
-          const findLastByUserIdAndTypedMock = jest
-            .fn()
-            .mockResolvedValue(null);
-          tokenRepositoryMock = new TokenRepository(
-            sessionMapper,
-          ) as jest.Mocked<InstanceType<typeof TokenRepository>>;
-          tokenRepositoryMock.findLastByUserIdAndType =
-            findLastByUserIdAndTypedMock;
-        }
-
-        tokenRepository = tokenRepositoryMock;
-
-        return tokenRepository;
-      },
-      inject: [SessionMapper],
-    } as Provider);
-
-  const getUserRepositoryProvider = (userRepositoryMock?: UserRepository) =>
-    ({
-      provide: UserRepository,
-      useFactory: (userMapper: UserMapper) => {
-        if (!userRepositoryMock) {
-          const findOneByIdMock = jest.fn().mockResolvedValue(userDomain);
-          userRepositoryMock = new UserRepository(userMapper) as jest.Mocked<
-            InstanceType<typeof UserRepository>
-          >;
-          userRepositoryMock.findOneById = findOneByIdMock;
-        }
-
-        userRepository = userRepositoryMock;
-
-        return userRepository;
-      },
-      inject: [UserMapper],
-    } as Provider);
-
-  const getEmailSenderProvider = (rejectValue?: boolean) =>
-    ({
-      provide: EmailSender,
-      useFactory: (mailerService: MailerService) => {
-        const emailSender = new EmailSender(mailerService);
-        if (rejectValue) {
-          emailSender.send = jest
-            .fn()
-            .mockRejectedValue(
-              EmailSenderError.create({ message: MOCK_ERROR }),
-            );
-        } else {
-          emailSender.send = jest.fn().mockResolvedValue(void 0);
-        }
-
-        return emailSender;
-      },
-      inject: [MailerService],
-    } as Provider);
-
   const getModuleTest = async ({
-    userRepositoryProvider = getUserRepositoryProvider(),
+    userRepositoryProvider,
     tokenRepositoryProvider = getTokenRepositoryProvider(),
     emailSender = getEmailSenderProvider(),
   }: GetModuleTestParams = {}) => {
+    if (!userRepositoryProvider) {
+      userRepositoryProvider = await getUserRepositoryProvider({ userDomain });
+    }
+
     return Test.createTestingModule({
       imports: [
         MailerModule.forRoot({
@@ -147,8 +90,10 @@ describe('SendVerifyEmail Use Case', () => {
     >;
     userRepositoryMock.findOneById = findOneByIdMock;
 
-    const userRepositoryProvider =
-      getUserRepositoryProvider(userRepositoryMock);
+    const userRepositoryProvider = await getUserRepositoryProvider({
+      userRepositoryMock: userRepositoryMock,
+      userDomain,
+    });
     const module = await getModuleTest({ userRepositoryProvider });
     const sendVerifyEmail = module.get<SendVerifyEmail>(SendVerifyEmail);
 
@@ -178,8 +123,10 @@ describe('SendVerifyEmail Use Case', () => {
     >;
     userRepositoryMock.findOneById = findOneByIdMock;
 
-    const userRepositoryProvider =
-      getUserRepositoryProvider(userRepositoryMock);
+    const userRepositoryProvider = await getUserRepositoryProvider({
+      userRepositoryMock,
+      userDomain,
+    });
     const module = await getModuleTest({ userRepositoryProvider });
     const sendVerifyEmail = module.get<SendVerifyEmail>(SendVerifyEmail);
 
@@ -199,7 +146,9 @@ describe('SendVerifyEmail Use Case', () => {
   });
 
   it('Should not send verify email if the token still valid', async () => {
-    const sessionDomain = SessionDomainMock.mountSessionDomain();
+    const sessionDomain = SessionDomainMock.mountSessionDomain({
+      withoutId: true,
+    });
     const findLastByUserIdAndTypedMock = jest
       .fn()
       .mockResolvedValue(sessionDomain);
@@ -208,8 +157,9 @@ describe('SendVerifyEmail Use Case', () => {
     ) as jest.Mocked<InstanceType<typeof TokenRepository>>;
     tokenRepositoryMock.findLastByUserIdAndType = findLastByUserIdAndTypedMock;
 
-    const tokenRepositoryProvider =
-      getTokenRepositoryProvider(tokenRepositoryMock);
+    const tokenRepositoryProvider = getTokenRepositoryProvider({
+      tokenRepositoryMock,
+    });
 
     const module = await getModuleTest({ tokenRepositoryProvider });
     const sendVerifyEmail = module.get<SendVerifyEmail>(SendVerifyEmail);
@@ -243,7 +193,7 @@ describe('SendVerifyEmail Use Case', () => {
     ).rejects.toThrowError(
       new HttpException(
         {
-          message: MOCK_ERROR,
+          message: EMAIL_SENDER_MOCK_ERROR,
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       ),

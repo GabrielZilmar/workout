@@ -9,6 +9,10 @@ export class SessionUseCaseError extends Error {
     userIdNotFound: (id: string) => `User with id "${id}" was not found.`,
     tokenStillValid: 'Token still valid, check your email.',
     emailAlreadyVerified: 'Email is already verified.',
+    invalidToken: 'Token is not valid, token expired.',
+    decodeTokenError: 'Error to decode token.',
+    tokenNotFound: 'Token not found.',
+    tokenAlreadyUsed: 'Token already used.',
   };
 
   constructor(message: string, code: number, payload?: unknown) {

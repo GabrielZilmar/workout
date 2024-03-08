@@ -24,8 +24,12 @@ export default class UserRepository extends BaseRepository<User, UserDomain> {
     username,
     email,
   }: PreventDuplicatedParams): Promise<Either<RepositoryError, boolean>> {
+    const whereCriteria = {
+      ...(username && { username }),
+      ...(email && { email }),
+    };
     const itemExist = await this.findOne({
-      where: [{ username }, { email }],
+      where: whereCriteria,
       withDeleted: true,
     });
 
@@ -96,6 +100,7 @@ export default class UserRepository extends BaseRepository<User, UserDomain> {
     const preventDuplicated = await this.preventDuplicatedUser({
       id,
       username: item.username,
+      email: item.email,
     });
     if (preventDuplicated.isLeft()) {
       return left(preventDuplicated.value);
