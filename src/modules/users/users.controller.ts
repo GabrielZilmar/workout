@@ -7,7 +7,9 @@ import {
   Delete,
   Query,
   Put,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '~/guards/auth.guard';
 import { CreateUser } from '~/modules/users/domain/use-cases/create-user';
 import { DeleteUser } from '~/modules/users/domain/use-cases/delete-user';
 import { GetUser } from '~/modules/users/domain/use-cases/get-user';
@@ -48,6 +50,7 @@ export class UsersController {
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard)
   update(
     @Param() id: CreateUserParamsDto,
     @Body() updateUserDto: UpdateUserBodyDto,
@@ -59,6 +62,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   remove(@Param() params: DeleteUserParamsDto) {
     return this.deleteUser.execute(params);
   }

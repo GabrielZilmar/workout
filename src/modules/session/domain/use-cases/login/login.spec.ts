@@ -48,10 +48,9 @@ describe('Login Use Case', () => {
     expect(decodedToken).toEqual({
       id: userDomainParams.id,
       email: userDomainParams.email,
-      age: userDomainParams.age,
-      weight: userDomainParams.weight,
-      height: userDomainParams.height,
       username: userDomainParams.username,
+      isAdmin: userDomainParams.isAdmin,
+      isEmailVerified: userDomainParams.isEmailVerified,
       iat: expect.any(Number),
       exp: expect.any(Number),
     });

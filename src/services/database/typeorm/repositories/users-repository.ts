@@ -24,12 +24,8 @@ export default class UserRepository extends BaseRepository<User, UserDomain> {
     username,
     email,
   }: PreventDuplicatedParams): Promise<Either<RepositoryError, boolean>> {
-    const whereCriteria = {
-      ...(username && { username }),
-      ...(email && { email }),
-    };
     const itemExist = await this.findOne({
-      where: whereCriteria,
+      where: [{ username }, { email }],
       withDeleted: true,
     });
 

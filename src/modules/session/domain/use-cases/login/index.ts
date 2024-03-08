@@ -9,7 +9,7 @@ import { SessionUseCaseError } from '~/modules/session/domain/use-cases/errors';
 import { SessionLoginDto } from '~/modules/session/dto/login.dto';
 import { SessionDto } from '~/modules/session/dto/session.dto';
 import { TokenTypeMap } from '~/modules/session/entities/token.entity';
-import { UserDto } from '~/modules/users/dto/user.dto';
+import { UserTokenDataDto } from '~/modules/users/dto/user-token-data.dto';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 import { UseCase } from '~/shared/core/use-case';
 
@@ -48,7 +48,7 @@ export class Login implements UseCase<LoginParams, LoginResult> {
       );
     }
 
-    const userDto = UserDto.domainToDto(userDomain);
+    const userDto = UserTokenDataDto.domainToDto(userDomain);
     if (userDto.isLeft()) {
       throw new HttpException(
         {
@@ -74,7 +74,7 @@ export class Login implements UseCase<LoginParams, LoginResult> {
       );
     }
 
-    const sessionDto = SessionDto.domainToDto(sessionDomainOrError.value);
+    const sessionDto = sessionDomainOrError.value.toDto();
     if (sessionDto.isLeft()) {
       throw new HttpException(
         {
