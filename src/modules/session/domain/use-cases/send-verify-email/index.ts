@@ -44,7 +44,7 @@ export class SendVerifyEmail
       );
     }
 
-    if (userDomain.isEmailVerified.value) {
+    if (userDomain.emailVerification.isVerified) {
       throw new HttpException(
         {
           message: SessionUseCaseError.messages.emailAlreadyVerified,

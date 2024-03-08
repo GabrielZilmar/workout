@@ -8,7 +8,7 @@ import DeletedAt from '~/modules/users/domain/value-objects/deleted-at';
 import Email from '~/modules/users/domain/value-objects/email';
 import Height from '~/modules/users/domain/value-objects/height';
 import IsAdmin from '~/modules/users/domain/value-objects/is-admin';
-import IsEmailVerified from '~/modules/users/domain/value-objects/is-email-verified';
+import EmailVerification from '~/modules/users/domain/value-objects/email-verification';
 import Password from '~/modules/users/domain/value-objects/password';
 import Username from '~/modules/users/domain/value-objects/username';
 import Weight from '~/modules/users/domain/value-objects/weight';
@@ -46,7 +46,7 @@ export type UserDomainProps = {
   age?: Age;
   weight?: Weight;
   height?: Height;
-  isEmailVerified: IsEmailVerified;
+  emailVerification: EmailVerification;
   isAdmin: IsAdmin;
   deletedAt: DeletedAt;
 };
@@ -76,8 +76,8 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
     return this.props.height;
   }
 
-  get isEmailVerified(): IsEmailVerified {
-    return this.props.isEmailVerified;
+  get emailVerification(): EmailVerification {
+    return this.props.emailVerification;
   }
 
   get isAdmin(): IsAdmin {
@@ -161,7 +161,7 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
       return left(passwordOrError.value);
     }
 
-    const isEmailVerified = IsEmailVerified.create({
+    const emailVerification = EmailVerification.create({
       value: valueObjects.isEmailVerified ?? false,
     });
     const isAdmin = IsAdmin.create({
@@ -175,7 +175,7 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
       username: usernameOrError.value,
       email: emailOrError.value,
       password: passwordOrError.value,
-      isEmailVerified,
+      emailVerification,
       isAdmin,
       deletedAt,
     };

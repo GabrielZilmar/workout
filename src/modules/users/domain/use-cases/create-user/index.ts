@@ -51,7 +51,7 @@ export class CreateUser implements UseCase<CreateUserParams, CreateUserResult> {
       age: userDomainOrError.value.age?.value,
       weight: userDomainOrError.value.weight?.value,
       height: userDomainOrError.value.height?.value,
-      isEmailVerified: userDomainOrError.value.isEmailVerified.value,
+      isEmailVerified: userDomainOrError.value.emailVerification.isVerified,
       isAdmin: userDomainOrError.value.isAdmin.value,
       deletedAt: userDomainOrError.value.deletedAt.value,
     };

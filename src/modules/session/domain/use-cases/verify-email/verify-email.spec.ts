@@ -46,7 +46,7 @@ describe('VerifyEmail Use Case', () => {
     userRepositoryMock.findOneById = findOneByIdMock;
 
     const userDomainClone = UtilClone.deepInstanceClone(userDomain);
-    userDomainClone.isEmailVerified.verifyEmail();
+    userDomainClone.emailVerification.verifyEmail();
     userRepositoryMock.update = jest
       .fn()
       .mockResolvedValue(right(userDomainClone));
@@ -136,7 +136,7 @@ describe('VerifyEmail Use Case', () => {
 
     const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
     const verifyEmailSpy = jest.spyOn(
-      userDomain.isEmailVerified,
+      userDomain.emailVerification,
       'verifyEmail',
     );
     const useTokenSpy = jest.spyOn(sessionDomain.token, 'useToken');
@@ -307,7 +307,7 @@ describe('VerifyEmail Use Case', () => {
   });
 
   it('Should return true if the user is already verified', async () => {
-    userDomain.isEmailVerified.verifyEmail();
+    userDomain.emailVerification.verifyEmail();
     const userRepositoryMock = getUserRepositoryMock();
     const userRepositoryProvider = await getUserRepositoryProvider({
       userRepositoryMock,

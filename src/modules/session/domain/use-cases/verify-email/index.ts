@@ -65,7 +65,7 @@ export class VerifyEmail
       );
     }
 
-    if (userDomain.isEmailVerified.value) {
+    if (userDomain.emailVerification.isVerified) {
       return true;
     }
 
@@ -94,11 +94,11 @@ export class VerifyEmail
 
     await AppDataSource.manager.transaction(
       async (transactionalEntityManager) => {
-        userDomain.isEmailVerified.verifyEmail();
+        userDomain.emailVerification.verifyEmail();
         const userRepository = transactionalEntityManager.getRepository(User);
         const updatedUser = await userRepository.update(
           (userDomain.id as UniqueEntityID).toValue(),
-          { isEmailVerified: userDomain.isEmailVerified.value },
+          { isEmailVerified: userDomain.emailVerification.isVerified },
         );
 
         if (!updatedUser.affected) {
