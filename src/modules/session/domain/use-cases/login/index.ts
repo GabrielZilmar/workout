@@ -74,7 +74,7 @@ export class Login implements UseCase<LoginParams, LoginResult> {
       );
     }
 
-    const sessionDto = SessionDto.domainToDto(sessionDomainOrError.value);
+    const sessionDto = sessionDomainOrError.value.toDto();
     if (sessionDto.isLeft()) {
       throw new HttpException(
         {

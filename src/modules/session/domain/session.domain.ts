@@ -4,6 +4,7 @@ import { validate } from 'uuid';
 import SessionDomainError from '~/modules/session/domain/errors';
 import Token from '~/modules/session/domain/value-objects/token';
 import TokenType from '~/modules/session/domain/value-objects/token-type';
+import { SessionDto } from '~/modules/session/dto/session.dto';
 import { TokenTypes } from '~/modules/session/entities/token.entity';
 import { AggregateRoot } from '~/shared/domain/aggregate-root';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
@@ -63,6 +64,10 @@ export default class SessionDomain extends AggregateRoot<SessionDomainProps> {
       tokenType: tokenType.value,
     };
     return right(sessionProps);
+  }
+
+  public toDto() {
+    return SessionDto.domainToDto(this);
   }
 
   private static isValid(props: SessionDomainCreateParams): boolean {
