@@ -10,7 +10,7 @@ import DeletedAt from '~/modules/users/domain/value-objects/deleted-at';
 import Email from '~/modules/users/domain/value-objects/email';
 import Height from '~/modules/users/domain/value-objects/height';
 import IsAdmin from '~/modules/users/domain/value-objects/is-admin';
-import IsEmailVerified from '~/modules/users/domain/value-objects/is-email-verified';
+import EmailVerification from '~/modules/users/domain/value-objects/email-verification';
 import Password from '~/modules/users/domain/value-objects/password';
 import Username from '~/modules/users/domain/value-objects/username';
 import Weight from '~/modules/users/domain/value-objects/weight';
@@ -61,7 +61,7 @@ export class UserDomainMock {
     const heightVO = Height.create({
       value: height ?? this.userMockParams.height,
     });
-    const isEmailVerifiedVO = IsEmailVerified.create({
+    const emailVerifiedVO = EmailVerification.create({
       value: isEmailVerified,
     });
     const isAdminVO = IsAdmin.create({ value: isAdmin });
@@ -74,7 +74,7 @@ export class UserDomainMock {
       age: ageVO.value as Age,
       weight: weightVO.value as Weight,
       height: heightVO.value as Height,
-      isEmailVerified: isEmailVerifiedVO,
+      emailVerification: emailVerifiedVO,
       isAdmin: isAdminVO,
       deletedAt: deletedAtVO,
     };

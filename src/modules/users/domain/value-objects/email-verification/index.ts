@@ -1,15 +1,19 @@
 import { ValueObject } from '~/shared/domain/value-object';
 
-export type IsEmailVerifiedProps = {
+export type EmailVerificationProps = {
   value: boolean;
 };
 
-export default class IsEmailVerified extends ValueObject<IsEmailVerifiedProps> {
-  private constructor(props: IsEmailVerifiedProps) {
+export default class EmailVerification extends ValueObject<EmailVerificationProps> {
+  private constructor(props: EmailVerificationProps) {
     super(props);
   }
 
   get value(): boolean {
+    return this.props.value;
+  }
+
+  get isVerified(): boolean {
     return this.props.value;
   }
 
@@ -23,8 +27,8 @@ export default class IsEmailVerified extends ValueObject<IsEmailVerifiedProps> {
     return this;
   }
 
-  public static create(props?: IsEmailVerifiedProps): IsEmailVerified {
+  public static create(props?: EmailVerificationProps): EmailVerification {
     const value = props?.value ?? false;
-    return new IsEmailVerified({ value });
+    return new EmailVerification({ value });
   }
 }

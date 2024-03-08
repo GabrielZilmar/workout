@@ -53,7 +53,16 @@ export default class UserMapper
   }
 
   public toPersistence(item: UserDomain): Partial<UserEntity> {
-    const { id, username, age, weight, height, email } = item;
+    const {
+      id,
+      username,
+      age,
+      weight,
+      height,
+      email,
+      isAdmin,
+      emailVerification,
+    } = item;
 
     const userEntity: Partial<UserEntity> = {
       id: id?.toString(),
@@ -62,6 +71,8 @@ export default class UserMapper
       age: age?.value,
       weight: weight?.value,
       height: height?.value,
+      isAdmin: isAdmin?.value,
+      isEmailVerified: emailVerification?.isVerified,
     };
 
     return userEntity;
