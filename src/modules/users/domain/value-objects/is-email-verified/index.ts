@@ -13,6 +13,10 @@ export default class EmailVerification extends ValueObject<EmailVerificationProp
     return this.props.value;
   }
 
+  get isVerified(): boolean {
+    return this.props.value;
+  }
+
   public verifyEmail(): this {
     this.props.value = true;
     return this;
