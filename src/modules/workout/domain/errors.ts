@@ -4,6 +4,7 @@ export class WorkoutDomainError extends Error {
   public readonly code: number;
   public static messages = {
     emptyWorkoutName: 'Workout name cannot be empty',
+    missingProps: 'Missing props to create workout. Required: name, userId',
   };
 
   constructor(message: string, code: number) {
