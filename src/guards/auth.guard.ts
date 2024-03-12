@@ -22,11 +22,6 @@ export class AuthGuard implements CanActivate {
       return false;
     }
 
-    const canContinue = user.isAdmin || user.id === request.params.id;
-    if (!canContinue) {
-      return false;
-    }
-
     request.user = user;
     return true;
   }
