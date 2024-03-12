@@ -1,20 +1,9 @@
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateWorkoutDto {
   @IsString()
   @IsNotEmpty()
   name: string;
-
-  @IsString()
-  @IsUUID()
-  @IsNotEmpty()
-  userId: string;
 
   @IsBoolean()
   @IsOptional()
