@@ -72,12 +72,7 @@ export default class WorkoutRepository extends BaseRepository<
 
       return newWorkoutDomain;
     } catch (err) {
-      return left(
-        RepositoryError.create(
-          RepositoryError.messages.createError,
-          (err as Error).message,
-        ),
-      );
+      return left(RepositoryError.create((err as Error).message));
     }
   }
 }
