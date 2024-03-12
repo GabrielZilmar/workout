@@ -5,11 +5,13 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '~/modules/users/entities/user.entity';
 
 @Entity('workouts')
+@Unique(['userId', 'name'])
 export class Workout {
   @PrimaryGeneratedColumn('uuid')
   id: string;
