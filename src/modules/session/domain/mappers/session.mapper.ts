@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import SessionDomainError from '~/modules/session/domain/errors';
 import SessionDomain from '~/modules/session/domain/session.domain';
 import { Token as TokenEntity } from '~/modules/session/entities/token.entity';
 import { Mapper } from '~/shared/domain/mapper';
@@ -9,9 +10,7 @@ import { Either, left, right } from '~/shared/either';
 export default class SessionMapper
   implements Mapper<SessionDomain, Partial<TokenEntity>>
 {
-  public async toDomain(
-    raw: TokenEntity,
-  ): Promise<Either<Error, SessionDomain>> {
+  public toDomain(raw: TokenEntity): Either<SessionDomainError, SessionDomain> {
     const { id, userId, token, type, usedAt } = raw;
 
     const entityId = new UniqueEntityID(id);
