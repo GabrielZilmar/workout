@@ -11,6 +11,8 @@ import WorkoutDomain from '~/modules/workout/domain/workout.domain';
 import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
 import { CreateWorkout } from '~/modules/workout/use-cases/create-workout';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
+import WorkoutRepository from '~/services/database/typeorm/repositories/workout-repository';
+import { left } from '~/shared/either';
 
 type GetModuleTestParams = {
   userRepositoryProvider?: Provider;
@@ -129,5 +131,44 @@ describe('CreateWorkout use case', () => {
         userId: userDomain.id?.toString() as string,
       }),
     ).rejects.toThrowError(HttpException);
+  });
+
+  it('Should not create a workout if workout repository fails', async () => {
+    const mockErrorMessage = 'Mock error';
+    const mockErrorCode = 500;
+
+    const workoutRepositoryMock = new WorkoutRepository(
+      new WorkoutMapper(),
+    ) as jest.Mocked<InstanceType<typeof WorkoutRepository>>;
+    workoutRepositoryMock.create = jest.fn().mockResolvedValue(
+      left({
+        message: mockErrorMessage,
+        code: mockErrorCode,
+      }),
+    );
+
+    module = await getModuleTest({
+      workoutRepositoryProvider: getWorkoutRepositoryProvider({
+        workoutRepositoryMock,
+        workoutDomain,
+      }),
+    });
+
+    const createWorkoutUseCase = module.get<CreateWorkout>(CreateWorkout);
+    const createWorkoutParams = WorkoutDomainMock.getWorkoutCreateParams();
+
+    await expect(
+      createWorkoutUseCase.execute({
+        ...createWorkoutParams,
+        userId: userDomain.id?.toString() as string,
+      }),
+    ).rejects.toThrowError(
+      new HttpException(
+        {
+          message: mockErrorMessage,
+        },
+        mockErrorCode,
+      ),
+    );
   });
 });
