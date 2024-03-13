@@ -1,4 +1,4 @@
-import { BadRequestException, Provider } from '@nestjs/common';
+import { BadRequestException, HttpException, Provider } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserDomainMock } from 'test/utils/domains/user-domain-mock';
 import { WorkoutDomainMock } from 'test/utils/domains/workout-domain-mock';
@@ -23,7 +23,7 @@ describe('CreateWorkout use case', () => {
   const userMapper = new UserMapper();
   let module: TestingModule;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     userDomain = await UserDomainMock.mountUserDomain();
     workoutDomain = WorkoutDomainMock.mountWorkoutDomain({
       userId: userDomain.id?.toString(),
@@ -115,5 +115,19 @@ describe('CreateWorkout use case', () => {
         ),
       }),
     );
+  });
+
+  it('Should not create a workout if workout domain is invalid', async () => {
+    const createWorkoutUseCase = module.get<CreateWorkout>(CreateWorkout);
+    const createWorkoutParams = WorkoutDomainMock.getWorkoutCreateParams({
+      name: '',
+    });
+
+    await expect(
+      createWorkoutUseCase.execute({
+        ...createWorkoutParams,
+        userId: userDomain.id?.toString() as string,
+      }),
+    ).rejects.toThrowError(HttpException);
   });
 });
