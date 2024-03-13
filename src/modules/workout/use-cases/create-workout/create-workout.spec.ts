@@ -1,4 +1,9 @@
-import { BadRequestException, HttpException, Provider } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Provider,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserDomainMock } from 'test/utils/domains/user-domain-mock';
 import { WorkoutDomainMock } from 'test/utils/domains/workout-domain-mock';
@@ -8,11 +13,12 @@ import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { UserDomain } from '~/modules/users/domain/users.domain';
 import { WorkoutDomainError } from '~/modules/workout/domain/errors';
 import WorkoutDomain from '~/modules/workout/domain/workout.domain';
+import { WorkoutDtoError } from '~/modules/workout/dto/errors/workout-dto-errors';
 import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
 import { CreateWorkout } from '~/modules/workout/use-cases/create-workout';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 import WorkoutRepository from '~/services/database/typeorm/repositories/workout-repository';
-import { left } from '~/shared/either';
+import { left, right } from '~/shared/either';
 
 type GetModuleTestParams = {
   userRepositoryProvider?: Provider;
@@ -168,6 +174,41 @@ describe('CreateWorkout use case', () => {
           message: mockErrorMessage,
         },
         mockErrorCode,
+      ),
+    );
+  });
+
+  it('Should not create a workout if workout dto fails', async () => {
+    const workoutDomainWithoutId = WorkoutDomainMock.mountWorkoutDomain({
+      withoutId: true,
+    });
+
+    const workoutRepositoryMock = new WorkoutRepository(
+      new WorkoutMapper(),
+    ) as jest.Mocked<InstanceType<typeof WorkoutRepository>>;
+    workoutRepositoryMock.create = jest
+      .fn()
+      .mockResolvedValue(right(workoutDomainWithoutId));
+
+    module = await getModuleTest({
+      workoutRepositoryProvider: getWorkoutRepositoryProvider({
+        workoutRepositoryMock,
+        workoutDomain,
+      }),
+    });
+
+    const createWorkoutUseCase = module.get<CreateWorkout>(CreateWorkout);
+    const createWorkoutParams = WorkoutDomainMock.getWorkoutCreateParams();
+
+    await expect(
+      createWorkoutUseCase.execute({
+        ...createWorkoutParams,
+        userId: userDomain.id?.toString() as string,
+      }),
+    ).rejects.toThrowError(
+      new HttpException(
+        WorkoutDtoError.messages.missingId,
+        HttpStatus.BAD_REQUEST,
       ),
     );
   });
