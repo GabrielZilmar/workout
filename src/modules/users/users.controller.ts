@@ -10,6 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '~/guards/auth.guard';
+import { UserDataGuard } from '~/guards/user-data.guard';
 import { CreateUser } from '~/modules/users/domain/use-cases/create-user';
 import { DeleteUser } from '~/modules/users/domain/use-cases/delete-user';
 import { GetUser } from '~/modules/users/domain/use-cases/get-user';
@@ -40,17 +41,19 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(AuthGuard)
   findAll(@Query() query: FindAllUsersDto) {
     return this.listUsers.execute(query);
   }
 
   @Get(':idOrUsername')
+  @UseGuards(AuthGuard)
   findOne(@Param() idOrUsername: GetUserDto) {
     return this.getUser.execute(idOrUsername);
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, UserDataGuard)
   update(
     @Param() id: CreateUserParamsDto,
     @Body() updateUserDto: UpdateUserBodyDto,
@@ -62,7 +65,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, UserDataGuard)
   remove(@Param() params: DeleteUserParamsDto) {
     return this.deleteUser.execute(params);
   }

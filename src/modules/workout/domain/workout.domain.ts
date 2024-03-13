@@ -3,6 +3,7 @@ import { WorkoutDomainError } from '~/modules/workout/domain/errors';
 import WorkoutName from '~/modules/workout/domain/value-objects/name';
 import PrivateStatus from '~/modules/workout/domain/value-objects/private-status';
 import RoutineStatus from '~/modules/workout/domain/value-objects/routine-status';
+import { WorkoutDto } from '~/modules/workout/dto/workout.dto';
 import { AggregateRoot } from '~/shared/domain/aggregate-root';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 import { Either, left, right } from '~/shared/either';
@@ -36,6 +37,10 @@ export default class WorkoutDomain extends AggregateRoot<WorkoutDomainProps> {
 
   get routineStatus(): RoutineStatus {
     return this.props.routineStatus;
+  }
+
+  public toDto() {
+    return WorkoutDto.domainToDto(this);
   }
 
   private static mountValueObjects(
