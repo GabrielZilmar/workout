@@ -1,4 +1,4 @@
-import { Provider } from '@nestjs/common';
+import { BadRequestException, Provider } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserDomainMock } from 'test/utils/domains/user-domain-mock';
 import { WorkoutDomainMock } from 'test/utils/domains/workout-domain-mock';
@@ -6,6 +6,7 @@ import getUserRepositoryProvider from 'test/utils/providers/user-repository';
 import getWorkoutRepositoryProvider from 'test/utils/providers/workout-repository';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { UserDomain } from '~/modules/users/domain/users.domain';
+import { WorkoutDomainError } from '~/modules/workout/domain/errors';
 import WorkoutDomain from '~/modules/workout/domain/workout.domain';
 import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
 import { CreateWorkout } from '~/modules/workout/use-cases/create-workout';
@@ -24,7 +25,9 @@ describe('CreateWorkout use case', () => {
 
   beforeAll(async () => {
     userDomain = await UserDomainMock.mountUserDomain();
-    workoutDomain = WorkoutDomainMock.mountWorkoutDomain();
+    workoutDomain = WorkoutDomainMock.mountWorkoutDomain({
+      userId: userDomain.id?.toString(),
+    });
     module = await getModuleTest();
   });
 
@@ -82,5 +85,35 @@ describe('CreateWorkout use case', () => {
     });
 
     expect(workoutCreated).toEqual(workoutDomain.toDto().value);
+  });
+
+  it('Should not create a workout if user does not exist', async () => {
+    const userRepositoryMock = getUserRepositoryMock();
+    userRepositoryMock.findOneById.mockResolvedValue(null);
+    module = await getModuleTest({
+      userRepositoryProvider: await getUserRepositoryProvider({
+        userRepositoryMock,
+        userDomain,
+      }),
+    });
+
+    const userId = userDomain.id?.toString() as string;
+    const createWorkoutUseCase = module.get<CreateWorkout>(CreateWorkout);
+    const createWorkoutParams = WorkoutDomainMock.getWorkoutCreateParams({
+      userId,
+    });
+
+    await expect(
+      createWorkoutUseCase.execute({
+        ...createWorkoutParams,
+        userId,
+      }),
+    ).rejects.toThrowError(
+      new BadRequestException({
+        message: WorkoutDomainError.messages.userNotFound(
+          createWorkoutParams.userId,
+        ),
+      }),
+    );
   });
 });
