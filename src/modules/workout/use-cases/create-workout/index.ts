@@ -1,4 +1,5 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
+import { WorkoutDomainError } from '~/modules/workout/domain/errors';
 import WorkoutDomain from '~/modules/workout/domain/workout.domain';
 import { CreateWorkoutDto } from '~/modules/workout/dto/create-workout.dto';
 import { WorkoutDto } from '~/modules/workout/dto/workout.dto';
@@ -26,6 +27,13 @@ export class CreateWorkout
     isPrivate,
     isRoutine,
   }: CreateWorkoutParams): Promise<CreateWorkoutResult> {
+    const userExists = await this.userRepository.findOneById(userId);
+    if (!userExists) {
+      throw new BadRequestException({
+        message: WorkoutDomainError.messages.userNotFound(userId),
+      });
+    }
+
     const workoutDomainOrError = WorkoutDomain.create({
       name,
       userId,
