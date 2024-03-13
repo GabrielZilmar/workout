@@ -71,4 +71,16 @@ describe('CreateWorkout use case', () => {
       ],
     }).compile();
   };
+
+  it('Should create a workout', async () => {
+    const createWorkoutUseCase = module.get<CreateWorkout>(CreateWorkout);
+    const createWorkoutParams = WorkoutDomainMock.getWorkoutCreateParams();
+
+    const workoutCreated = await createWorkoutUseCase.execute({
+      ...createWorkoutParams,
+      userId: userDomain.id?.toString() as string,
+    });
+
+    expect(workoutCreated).toEqual(workoutDomain.toDto().value);
+  });
 });
