@@ -1,14 +1,15 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 import JwtService from '~/services/jwt/jsonwebtoken';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly userRepository: UserRepository,
+  ) {}
 
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
     const token = request.headers.authorization;
 
@@ -19,6 +20,11 @@ export class AuthGuard implements CanActivate {
 
     const user = this.jwtService.decodeToken(token);
     if (!user) {
+      return false;
+    }
+
+    const userExists = await this.userRepository.findOneById(user.id);
+    if (!userExists) {
       return false;
     }
 
