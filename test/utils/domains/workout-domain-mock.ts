@@ -12,7 +12,7 @@ type MountWorkoutDomainParams = Partial<WorkoutDomainCreateParams> &
   GenericCreateDomainParams;
 
 export class WorkoutDomainMock {
-  public static workoutMockCreateParams: WorkoutDomainCreateParams = {
+  public static readonly workoutMockCreateParams: WorkoutDomainCreateParams = {
     name: 'Workout Test 1',
     userId: uuid(),
     isPrivate: false,
