@@ -27,6 +27,12 @@ const getWorkoutRepositoryProvider = ({
           new WorkoutMapper(),
         ) as jest.Mocked<InstanceType<typeof WorkoutRepository>>;
         workoutRepositoryMock.create = createMock;
+
+        const findMock = jest.fn().mockResolvedValue({
+          items: [workoutDomain],
+          count: 1,
+        });
+        workoutRepositoryMock.find = findMock;
       }
 
       return workoutRepositoryMock;
