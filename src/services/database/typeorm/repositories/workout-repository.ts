@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { DeepPartial } from 'typeorm';
+import { DeepPartial, FindManyOptions } from 'typeorm';
 import WorkoutDomain from '~/modules/workout/domain/workout.domain';
 import { Workout } from '~/modules/workout/entities/workout.entity';
 import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
@@ -74,5 +74,14 @@ export default class WorkoutRepository extends BaseRepository<
     } catch (err) {
       return left(RepositoryError.create((err as Error).message));
     }
+  }
+
+  public async findPublicWorkouts(
+    options: FindManyOptions<Workout>,
+  ): Promise<Promise<{ items: WorkoutDomain[]; count: number }>> {
+    return this.find({
+      ...options,
+      where: { ...options.where, isPrivate: false },
+    });
   }
 }
