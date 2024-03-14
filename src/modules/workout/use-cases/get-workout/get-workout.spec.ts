@@ -5,8 +5,9 @@ import { WorkoutDomainMock } from 'test/utils/domains/workout-domain-mock';
 import getWorkoutRepositoryProvider from 'test/utils/providers/workout-repository';
 import { UserDomain } from '~/modules/users/domain/users.domain';
 import WorkoutDomain from '~/modules/workout/domain/workout.domain';
+import { WorkoutDto } from '~/modules/workout/dto/workout.dto';
 import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
-import { ListPublicWorkouts } from '~/modules/workout/use-cases/list-public-workouts';
+import { GetWorkout } from '~/modules/workout/use-cases/get-workout';
 
 type GetModuleTestParams = {
   workoutRepositoryProvider?: Provider;
@@ -41,7 +42,19 @@ describe('GetWorkout use case', () => {
 
     return Test.createTestingModule({
       imports: [],
-      providers: [workoutRepositoryProvider, WorkoutMapper, ListPublicWorkouts],
+      providers: [workoutRepositoryProvider, WorkoutMapper, GetWorkout],
     }).compile();
   };
+
+  it('Should get workout', async () => {
+    const getWorkoutUseCase = module.get<GetWorkout>(GetWorkout);
+    const getWorkoutParams = {
+      id: workoutDomain.id?.toString() as string,
+      userId: userDomain.id?.toString() as string,
+    };
+
+    const workout = await getWorkoutUseCase.execute(getWorkoutParams);
+    expect(workout.id).toBe(workoutDomain.id?.toString());
+    expect(workout).toBeInstanceOf(WorkoutDto);
+  });
 });

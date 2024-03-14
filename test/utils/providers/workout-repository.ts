@@ -42,6 +42,9 @@ const getWorkoutRepositoryProvider = ({
           count: publicWorkouts.length ? 1 : 0,
         });
         workoutRepositoryMock.findPublicWorkouts = findPublicWorkoutsMock;
+
+        const findOneByIdMock = jest.fn().mockResolvedValue(workoutDomain);
+        workoutRepositoryMock.findOneById = findOneByIdMock;
       }
 
       return workoutRepositoryMock;
