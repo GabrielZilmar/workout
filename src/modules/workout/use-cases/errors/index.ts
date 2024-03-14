@@ -6,6 +6,7 @@ export class WorkoutUseCaseError extends Error {
   public static messages = {
     workoutNotFound: (id: string) => `Workout with id: ${id} was not found`,
     workoutIsPrivate: 'Workout is private.',
+    cannotUpdateOthersWorkout: 'Cannot update others workout.',
   };
 
   constructor(message: string, code: number, payload?: unknown) {
