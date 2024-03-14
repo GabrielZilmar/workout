@@ -1,6 +1,8 @@
 import {
   BadRequestException,
   ForbiddenException,
+  HttpException,
+  HttpStatus,
   Provider,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -9,6 +11,7 @@ import { WorkoutDomainMock } from 'test/utils/domains/workout-domain-mock';
 import getWorkoutRepositoryProvider from 'test/utils/providers/workout-repository';
 import { UserDomain } from '~/modules/users/domain/users.domain';
 import WorkoutDomain from '~/modules/workout/domain/workout.domain';
+import { WorkoutDtoError } from '~/modules/workout/dto/errors/workout-dto-errors';
 import { WorkoutDto } from '~/modules/workout/dto/workout.dto';
 import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
 import { WorkoutUseCaseError } from '~/modules/workout/use-cases/errors';
@@ -116,6 +119,40 @@ describe('GetWorkout use case', () => {
 
     await expect(getWorkoutUseCase.execute(workoutParams)).rejects.toThrow(
       new ForbiddenException(WorkoutUseCaseError.messages.workoutIsPrivate),
+    );
+  });
+
+  it('Should not get workout if it is workout dto fails', async () => {
+    const workoutDomainWithoutId = WorkoutDomainMock.mountWorkoutDomain({
+      withoutId: true,
+    });
+
+    const workoutRepositoryMock = new WorkoutRepository(
+      new WorkoutMapper(),
+    ) as jest.Mocked<InstanceType<typeof WorkoutRepository>>;
+    const findOneByIdWorkoutsMock = jest
+      .fn()
+      .mockResolvedValue(workoutDomainWithoutId);
+    workoutRepositoryMock.findOneById = findOneByIdWorkoutsMock;
+
+    module = await getModuleTest({
+      workoutRepositoryProvider: getWorkoutRepositoryProvider({
+        workoutRepositoryMock,
+        workoutDomain: workoutDomainWithoutId,
+      }),
+    });
+
+    const getWorkoutUseCase = module.get<GetWorkout>(GetWorkout);
+    const workoutParams = {
+      id: workoutDomainWithoutId.id?.toString() as string,
+      userId: userDomain.id?.toString() as string,
+    };
+
+    await expect(getWorkoutUseCase.execute(workoutParams)).rejects.toThrow(
+      new HttpException(
+        WorkoutDtoError.messages.missingId,
+        HttpStatus.BAD_REQUEST,
+      ),
     );
   });
 });
