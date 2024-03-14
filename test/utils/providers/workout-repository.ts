@@ -33,6 +33,15 @@ const getWorkoutRepositoryProvider = ({
           count: 1,
         });
         workoutRepositoryMock.find = findMock;
+
+        const publicWorkouts = workoutDomain?.privateStatus.isPrivate()
+          ? []
+          : [workoutDomain];
+        const findPublicWorkoutsMock = jest.fn().mockResolvedValue({
+          items: publicWorkouts,
+          count: publicWorkouts.length ? 1 : 0,
+        });
+        workoutRepositoryMock.findPublicWorkouts = findPublicWorkoutsMock;
       }
 
       return workoutRepositoryMock;
