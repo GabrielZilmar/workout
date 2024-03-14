@@ -1,4 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
+import { ILike } from 'typeorm';
 import { ListWorkoutsDto } from '~/modules/workout/dto/list-workouts.dto';
 import { WorkoutDto } from '~/modules/workout/dto/workout.dto';
 import WorkoutRepository from '~/services/database/typeorm/repositories/workout-repository';
@@ -18,12 +19,13 @@ export class ListWorkouts
 
   public async execute({
     userId,
+    name,
     isRoutine,
     skip,
     take,
   }: ListWorkoutsParams): Promise<ListWorkoutsResult> {
     const { items, count } = await this.workoutRepository.find({
-      where: { userId, isRoutine },
+      where: { userId, isRoutine, name: name && ILike(`%${name}%`) },
       skip,
       take,
     });

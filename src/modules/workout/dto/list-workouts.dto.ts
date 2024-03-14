@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsOptional } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 import { PaginatedDto } from '~/shared/dto/paginated';
 
 export class ListWorkoutsDto extends PaginatedDto {
@@ -7,4 +7,8 @@ export class ListWorkoutsDto extends PaginatedDto {
   @Type(() => Boolean)
   @IsOptional()
   isRoutine?: boolean;
+
+  @IsString()
+  @IsOptional()
+  name?: string;
 }

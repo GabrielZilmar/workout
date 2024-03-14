@@ -9,7 +9,6 @@ import { WorkoutDtoError } from '~/modules/workout/dto/errors/workout-dto-errors
 import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
 import { ListWorkouts } from '~/modules/workout/use-cases/list-workouts';
 import WorkoutRepository from '~/services/database/typeorm/repositories/workout-repository';
-import { right } from '~/shared/either';
 
 type GetModuleTestParams = {
   workoutRepositoryProvider?: Provider;
