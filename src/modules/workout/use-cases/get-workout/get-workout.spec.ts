@@ -1,4 +1,8 @@
-import { BadRequestException, Provider } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Provider,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserDomainMock } from 'test/utils/domains/user-domain-mock';
 import { WorkoutDomainMock } from 'test/utils/domains/workout-domain-mock';
@@ -83,6 +87,35 @@ describe('GetWorkout use case', () => {
       new BadRequestException({
         message: WorkoutUseCaseError.messages.workoutNotFound(workoutParams.id),
       }),
+    );
+  });
+
+  it('Should not get workout if it is private and user is not the owner', async () => {
+    const privateWorkoutDomain = WorkoutDomainMock.mountWorkoutDomain({
+      isPrivate: true,
+    });
+    const workoutRepositoryMock = new WorkoutRepository(
+      new WorkoutMapper(),
+    ) as jest.Mocked<InstanceType<typeof WorkoutRepository>>;
+    const findOneByIdWorkoutsMock = jest
+      .fn()
+      .mockResolvedValue(privateWorkoutDomain);
+    workoutRepositoryMock.findOneById = findOneByIdWorkoutsMock;
+
+    module = await getModuleTest({
+      workoutRepositoryProvider: getWorkoutRepositoryProvider({
+        workoutRepositoryMock,
+        workoutDomain: privateWorkoutDomain,
+      }),
+    });
+    const getWorkoutUseCase = module.get<GetWorkout>(GetWorkout);
+    const workoutParams = {
+      id: privateWorkoutDomain.id?.toString() as string,
+      userId: 'not-owner-user-id',
+    };
+
+    await expect(getWorkoutUseCase.execute(workoutParams)).rejects.toThrow(
+      new ForbiddenException(WorkoutUseCaseError.messages.workoutIsPrivate),
     );
   });
 });
