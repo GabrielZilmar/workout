@@ -84,4 +84,27 @@ export default class WorkoutRepository extends BaseRepository<
       where: { ...options.where, isPrivate: false },
     });
   }
+
+  public async update(
+    id: string,
+    item: DeepPartial<Workout>,
+  ): Promise<Either<RepositoryError, boolean>> {
+    const { userId, name } = item;
+    const isDuplicated = await this.preventDuplicatedUser({
+      id,
+      userId,
+      name,
+    });
+
+    if (isDuplicated.isLeft()) {
+      return left(isDuplicated.value);
+    }
+
+    try {
+      await this.repository.update(id, item);
+      return right(true);
+    } catch (err) {
+      return left(RepositoryError.create((err as Error).message));
+    }
+  }
 }
