@@ -72,6 +72,26 @@ describe('WorkoutDomain', () => {
     );
   });
 
+  it('Should update a Workout domain', () => {
+    const workoutParams = WorkoutDomainMock.getWorkoutCreateParams();
+    const workout = WorkoutDomain.create(workoutParams);
+
+    expect(workout.isRight).toBeTruthy();
+    expect(workout.value).toBeInstanceOf(WorkoutDomain);
+
+    const workoutProps = WorkoutDomainMock.getWorkoutDomainProps();
+    expect({ ...(workout.value as WorkoutDomain).props }).toEqual(workoutProps);
+    expect((workout.value as WorkoutDomain).name.value).toBe(
+      workoutParams.name,
+    );
+
+    const updateName = 'new name updated';
+    (workout.value as WorkoutDomain).update({
+      name: updateName,
+    });
+    expect((workout.value as WorkoutDomain).name.value).toBe(updateName);
+  });
+
   it('Should not create a Workout with invalid value object', () => {
     WorkoutName.create = jest
       .fn()

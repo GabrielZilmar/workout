@@ -22,6 +22,12 @@ export type WorkoutDomainCreateParams = {
   isRoutine?: boolean;
 };
 
+export type WorkoutDomainUpdateParams = {
+  name?: string;
+  isPrivate?: boolean;
+  isRoutine?: boolean;
+};
+
 export default class WorkoutDomain extends AggregateRoot<WorkoutDomainProps> {
   get name(): WorkoutName {
     return this.props.name;
@@ -65,6 +71,33 @@ export default class WorkoutDomain extends AggregateRoot<WorkoutDomainProps> {
       routineStatus,
     };
     return right(workoutProps);
+  }
+
+  public update({
+    name,
+    isPrivate,
+    isRoutine,
+  }: WorkoutDomainUpdateParams): Either<WorkoutDomainError, this> {
+    if (name) {
+      const nameOrError = WorkoutName.create({ value: name });
+      if (nameOrError.isLeft()) {
+        return left(nameOrError.value);
+      }
+
+      this.props.name = nameOrError.value;
+    }
+
+    if (isPrivate !== undefined) {
+      const privateStatus = PrivateStatus.create({ value: isPrivate });
+      this.props.privateStatus = privateStatus;
+    }
+
+    if (isRoutine !== undefined) {
+      const routineStatus = RoutineStatus.create({ value: isRoutine });
+      this.props.routineStatus = routineStatus;
+    }
+
+    return right(this);
   }
 
   private static isValid(props: WorkoutDomainCreateParams): boolean {
