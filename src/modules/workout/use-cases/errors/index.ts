@@ -7,6 +7,7 @@ export class WorkoutUseCaseError extends Error {
     workoutNotFound: (id: string) => `Workout with id: ${id} was not found`,
     workoutIsPrivate: 'Workout is private.',
     cannotUpdateOthersWorkout: 'Cannot update others workout.',
+    cannotDeleteOthersWorkout: 'Cannot delete others workout.',
   };
 
   constructor(message: string, code: number, payload?: unknown) {

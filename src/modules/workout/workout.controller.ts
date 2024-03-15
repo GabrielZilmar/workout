@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -19,6 +20,7 @@ import {
   UpdateWorkoutParamsDto,
 } from '~/modules/workout/dto/update-workout.dto';
 import { CreateWorkout } from '~/modules/workout/use-cases/create-workout';
+import DeleteWorkout from '~/modules/workout/use-cases/delete-workout';
 import { GetWorkout } from '~/modules/workout/use-cases/get-workout';
 import { ListPublicWorkouts } from '~/modules/workout/use-cases/list-public-workouts';
 import { ListWorkouts } from '~/modules/workout/use-cases/list-workouts';
@@ -34,6 +36,7 @@ export class WorkoutsController {
     private readonly listPublicWorkouts: ListPublicWorkouts,
     private readonly getWorkout: GetWorkout,
     private readonly updateWorkout: UpdateWorkout,
+    private readonly deleteWorkout: DeleteWorkout,
   ) {}
 
   @Post()
@@ -70,5 +73,11 @@ export class WorkoutsController {
   ) {
     const userId = req.user.id;
     return this.updateWorkout.execute({ ...param, ...body, userId });
+  }
+
+  @Delete(':id')
+  delete(@Req() req: RequestWithUser, @Param() param: UpdateWorkoutParamsDto) {
+    const userId = req.user.id;
+    return this.deleteWorkout.execute({ ...param, userId: userId });
   }
 }
