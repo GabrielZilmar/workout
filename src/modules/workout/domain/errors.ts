@@ -11,7 +11,7 @@ export class WorkoutDomainError extends Error {
 
   constructor(message: string, code: number) {
     super(message);
-    this.name = 'user-domain';
+    this.name = 'workout-domain';
     this.code = code;
   }
 
