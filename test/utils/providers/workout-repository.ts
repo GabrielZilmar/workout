@@ -45,6 +45,9 @@ const getWorkoutRepositoryProvider = ({
 
         const findOneByIdMock = jest.fn().mockResolvedValue(workoutDomain);
         workoutRepositoryMock.findOneById = findOneByIdMock;
+
+        const updateMock = jest.fn().mockResolvedValue(right(true));
+        workoutRepositoryMock.update = updateMock;
       }
 
       return workoutRepositoryMock;
