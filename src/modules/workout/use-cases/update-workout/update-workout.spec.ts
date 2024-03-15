@@ -3,6 +3,7 @@ import {
   ForbiddenException,
   HttpException,
   HttpStatus,
+  NotFoundException,
   Provider,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -93,7 +94,7 @@ describe('UpdateWorkout use case', () => {
     await expect(
       updateWorkoutUseCase.execute(updateWorkoutParams),
     ).rejects.toThrow(
-      new BadRequestException(
+      new NotFoundException(
         WorkoutUseCaseError.messages.workoutNotFound(updateWorkoutParams.id),
       ),
     );

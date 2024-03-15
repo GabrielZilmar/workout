@@ -4,6 +4,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import {
   UpdateWorkoutBodyDto,
@@ -34,7 +35,7 @@ export class UpdateWorkout
   }: UpdateWorkoutParams): UpdateWorkoutResult {
     const workout = await this.workoutRepository.findOneById(id);
     if (!workout) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         WorkoutUseCaseError.messages.workoutNotFound(id),
       );
     }
