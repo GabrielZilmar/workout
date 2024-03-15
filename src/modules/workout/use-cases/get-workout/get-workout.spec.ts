@@ -1,8 +1,8 @@
 import {
-  BadRequestException,
   ForbiddenException,
   HttpException,
   HttpStatus,
+  NotFoundException,
   Provider,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -87,7 +87,7 @@ describe('GetWorkout use case', () => {
       userId: userDomain.id?.toString() as string,
     };
     await expect(getWorkoutUseCase.execute(workoutParams)).rejects.toThrow(
-      new BadRequestException({
+      new NotFoundException({
         message: WorkoutUseCaseError.messages.workoutNotFound(workoutParams.id),
       }),
     );

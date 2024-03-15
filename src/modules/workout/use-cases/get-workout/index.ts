@@ -1,8 +1,8 @@
 import {
-  BadRequestException,
   ForbiddenException,
   HttpException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import GetWorkoutDto from '~/modules/workout/dto/get-workout.dto';
 import { WorkoutDto } from '~/modules/workout/dto/workout.dto';
@@ -24,7 +24,7 @@ export class GetWorkout implements UseCase<GetWorkoutParams, GetWorkoutResult> {
     const workout = await this.workoutRepository.findOneById(id);
 
     if (!workout) {
-      throw new BadRequestException({
+      throw new NotFoundException({
         message: WorkoutUseCaseError.messages.workoutNotFound(id),
       });
     }
