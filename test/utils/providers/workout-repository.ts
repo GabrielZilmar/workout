@@ -48,6 +48,9 @@ const getWorkoutRepositoryProvider = ({
 
         const updateMock = jest.fn().mockResolvedValue(right(true));
         workoutRepositoryMock.update = updateMock;
+
+        const deleteMock = jest.fn().mockResolvedValue(right(true));
+        workoutRepositoryMock.delete = deleteMock;
       }
 
       return workoutRepositoryMock;
