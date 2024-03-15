@@ -15,6 +15,7 @@ import WorkoutDomain from '~/modules/workout/domain/workout.domain';
 import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
 import { WorkoutUseCaseError } from '~/modules/workout/use-cases/errors';
 import { UpdateWorkout } from '~/modules/workout/use-cases/update-workout';
+import { RepositoryError } from '~/services/database/typeorm/repositories/error';
 import WorkoutRepository from '~/services/database/typeorm/repositories/workout-repository';
 import { left } from '~/shared/either';
 
@@ -164,13 +165,17 @@ describe('UpdateWorkout use case', () => {
     workoutRepositoryMock.findOneById = jest
       .fn()
       .mockResolvedValue(workoutDomain);
+    const payloadError = {
+      name: workoutDomain.name.value,
+    };
     workoutRepositoryMock.update = jest
       .fn()
       .mockResolvedValue(
         left(
-          new WorkoutDomainError(
-            WorkoutDomainError.messages.missingProps,
+          new RepositoryError(
+            RepositoryError.messages.itemDuplicated,
             HttpStatus.BAD_REQUEST,
+            payloadError,
           ),
         ),
       );
@@ -181,7 +186,7 @@ describe('UpdateWorkout use case', () => {
         workoutDomain,
       }),
     });
-    const updateWorkoutUseCase = module.get<UpdateWorkout>(UpdateWorkout);
+    let updateWorkoutUseCase = module.get<UpdateWorkout>(UpdateWorkout);
 
     const updateWorkoutParams = {
       id: workoutDomain.id?.toString() as string,
@@ -193,7 +198,38 @@ describe('UpdateWorkout use case', () => {
     ).rejects.toThrow(
       new BadRequestException({
         statusCode: HttpStatus.BAD_REQUEST,
-        message: WorkoutDomainError.messages.missingProps,
+        message: RepositoryError.messages.itemDuplicated,
+        payload: payloadError,
+      }),
+    );
+
+    workoutRepositoryMock.update = jest
+      .fn()
+      .mockResolvedValue(
+        left(
+          new RepositoryError(
+            RepositoryError.messages.updateError,
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            payloadError,
+          ),
+        ),
+      );
+
+    module = await getModuleTest({
+      workoutRepositoryProvider: getWorkoutRepositoryProvider({
+        workoutRepositoryMock,
+        workoutDomain,
+      }),
+    });
+    updateWorkoutUseCase = module.get<UpdateWorkout>(UpdateWorkout);
+
+    await expect(
+      updateWorkoutUseCase.execute(updateWorkoutParams),
+    ).rejects.toThrow(
+      new BadRequestException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: RepositoryError.messages.updateError,
+        payload: undefined,
       }),
     );
   });
