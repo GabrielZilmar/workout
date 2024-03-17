@@ -5,6 +5,7 @@ export class MuscleDomainError extends Error {
   public readonly code: number;
   public static messages = {
     invalidMuscleName: `Invalid Username, must be at least ${MIN_MUSCLE_NAME_LENGTH} characters`,
+    missingProps: 'Missing the muscle name to create it',
   };
 
   constructor(message: string, code: number) {
