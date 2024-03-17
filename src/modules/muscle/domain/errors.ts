@@ -10,7 +10,7 @@ export class MuscleDomainError extends Error {
 
   constructor(message: string, code: number) {
     super(message);
-    this.name = 'exercise-domain';
+    this.name = 'muscle-domain';
     this.code = code;
   }
 
