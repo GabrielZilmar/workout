@@ -1,6 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from '~/modules/database/database.module';
+import MuscleMapper from '~/modules/muscle/mappers/muscle.mapper';
 import SessionMapper from '~/modules/session/domain/mappers/session.mapper';
 import { SessionModule } from '~/modules/session/session.module';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
@@ -10,7 +11,12 @@ import { WorkoutModule } from '~/modules/workout/workout.module';
 import repositoriesProviders from '~/services/database/typeorm/repositories/providers';
 import JwtService from '~/services/jwt/jsonwebtoken';
 
-const mappersProviders = [UserMapper, SessionMapper, WorkoutMapper];
+const mappersProviders = [
+  UserMapper,
+  SessionMapper,
+  WorkoutMapper,
+  MuscleMapper,
+];
 const servicesProviders = [JwtService];
 
 const allProviders = [
