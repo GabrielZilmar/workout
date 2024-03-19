@@ -72,4 +72,26 @@ export default class MuscleRepository extends BaseRepository<
       return left(RepositoryError.create((err as Error).message));
     }
   }
+
+  public async update(
+    id: string,
+    item: DeepPartial<Muscle>,
+  ): Promise<Either<RepositoryError, boolean>> {
+    const { name } = item;
+    const isDuplicated = await this.preventDuplicateMuscle({
+      id,
+      name,
+    });
+
+    if (isDuplicated.isLeft()) {
+      return left(isDuplicated.value);
+    }
+
+    try {
+      await this.repository.update(id, item);
+      return right(true);
+    } catch (err) {
+      return left(RepositoryError.create((err as Error).message));
+    }
+  }
 }
