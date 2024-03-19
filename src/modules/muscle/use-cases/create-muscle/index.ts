@@ -7,7 +7,7 @@ import MuscleRepository from '~/services/database/typeorm/repositories/muscle-re
 import { UseCase } from '~/shared/core/use-case';
 
 export type CreateMuscleParams = CreateMuscleDto;
-export type CreateMuscleResult = Promise<MuscleDto>;
+export type CreateMuscleResult = MuscleDto;
 
 @Injectable()
 export class CreateMuscle
@@ -18,7 +18,7 @@ export class CreateMuscle
     private readonly muscleMapper: MuscleMapper,
   ) {}
 
-  async execute({ name }: CreateMuscleParams): CreateMuscleResult {
+  async execute({ name }: CreateMuscleParams): Promise<CreateMuscleResult> {
     const muscle = MuscleDomain.create({ name });
     if (muscle.isLeft()) {
       throw new HttpException(
