@@ -37,7 +37,7 @@ export class MuscleDomainMock {
   public static mountMuscleDomain({
     withoutId,
     ...props
-  }: MountMuscleDomainParams) {
+  }: MountMuscleDomainParams = {}) {
     const createParams = this.getMuscleCreateParams(props);
 
     const muscleParams = {
