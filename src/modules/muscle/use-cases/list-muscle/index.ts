@@ -1,4 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
+import { ILike } from 'typeorm';
 import { ListMusclesDto } from '~/modules/muscle/dto/list-muscles.dto';
 import { MuscleDto } from '~/modules/muscle/dto/muscle.dto';
 import MuscleRepository from '~/services/database/typeorm/repositories/muscle-repository';
@@ -20,7 +21,7 @@ export class ListMuscle implements UseCase<ListMuscleParams, ListMuscleResult> {
     take,
   }: ListMuscleParams): Promise<ListMuscleResult> {
     const { items, count } = await this.muscleRepository.find({
-      where: { name },
+      where: { name: name && ILike(`%${name}%`) },
       skip,
       take,
     });
