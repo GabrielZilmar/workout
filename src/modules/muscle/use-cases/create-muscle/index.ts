@@ -4,18 +4,21 @@ import { CreateMuscleDto } from '~/modules/muscle/dto/create-muscle.dto';
 import { MuscleDto } from '~/modules/muscle/dto/muscle.dto';
 import MuscleMapper from '~/modules/muscle/mappers/muscle.mapper';
 import MuscleRepository from '~/services/database/typeorm/repositories/muscle-repository';
+import { UseCase } from '~/shared/core/use-case';
 
 export type CreateMuscleParams = CreateMuscleDto;
-export type CreateMuscleResult = MuscleDto;
+export type CreateMuscleResult = Promise<MuscleDto>;
 
 @Injectable()
-export class CreateMuscleUseCase {
+export class CreateMuscleUseCase
+  implements UseCase<CreateMuscleParams, CreateMuscleResult>
+{
   constructor(
     private muscleRepository: MuscleRepository,
     private readonly muscleMapper: MuscleMapper,
   ) {}
 
-  async execute({ name }: CreateMuscleParams): Promise<CreateMuscleResult> {
+  async execute({ name }: CreateMuscleParams): CreateMuscleResult {
     const muscle = MuscleDomain.create({ name });
     if (muscle.isLeft()) {
       throw new HttpException(
