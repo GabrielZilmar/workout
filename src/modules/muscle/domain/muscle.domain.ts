@@ -25,6 +25,21 @@ export default class MuscleDomain extends AggregateRoot<MuscleDomainProps> {
     return MuscleDto.domainToDto(this);
   }
 
+  public update({
+    name,
+  }: MuscleDomainUpdateParams): Either<MuscleDomainError, MuscleDomain> {
+    if (name) {
+      const nameOrError = MuscleName.create({ value: name });
+      if (nameOrError.isLeft()) {
+        return left(nameOrError.value);
+      }
+
+      this.props.name = nameOrError.value;
+    }
+
+    return right(this);
+  }
+
   private static mountValueObjects(
     props: MuscleDomainCreateParams,
   ): Either<MuscleDomainError, MuscleDomainProps> {
