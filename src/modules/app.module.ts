@@ -2,6 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from '~/modules/database/database.module';
 import MuscleMapper from '~/modules/muscle/mappers/muscle.mapper';
+import { MuscleModule } from '~/modules/muscle/muscle.module';
 import SessionMapper from '~/modules/session/domain/mappers/session.mapper';
 import { SessionModule } from '~/modules/session/session.module';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
@@ -31,6 +32,7 @@ const allProviders = [
     UsersModule,
     SessionModule,
     WorkoutModule,
+    MuscleModule,
     DatabaseModule,
     ConfigModule.forRoot({
       isGlobal: true,
