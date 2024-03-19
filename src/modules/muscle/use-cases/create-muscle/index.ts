@@ -10,7 +10,7 @@ export type CreateMuscleParams = CreateMuscleDto;
 export type CreateMuscleResult = Promise<MuscleDto>;
 
 @Injectable()
-export class CreateMuscleUseCase
+export class CreateMuscle
   implements UseCase<CreateMuscleParams, CreateMuscleResult>
 {
   constructor(

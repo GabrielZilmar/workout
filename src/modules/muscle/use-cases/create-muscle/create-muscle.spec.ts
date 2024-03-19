@@ -6,7 +6,7 @@ import { MuscleDomainError } from '~/modules/muscle/domain/errors';
 import MuscleDomain from '~/modules/muscle/domain/muscle.domain';
 import { MuscleDtoError } from '~/modules/muscle/dto/errors';
 import MuscleMapper from '~/modules/muscle/mappers/muscle.mapper';
-import { CreateMuscleUseCase } from '~/modules/muscle/use-cases/create-muscle';
+import { CreateMuscle } from '~/modules/muscle/use-cases/create-muscle';
 import MuscleRepository from '~/services/database/typeorm/repositories/muscle-repository';
 import { left, right } from '~/shared/either';
 
@@ -39,13 +39,12 @@ describe('CreateMuscle', () => {
 
     return Test.createTestingModule({
       imports: [],
-      providers: [muscleRepositoryProvider, MuscleMapper, CreateMuscleUseCase],
+      providers: [muscleRepositoryProvider, MuscleMapper, CreateMuscle],
     }).compile();
   };
 
   it('Should create a muscle', async () => {
-    const createMuscleUseCase =
-      module.get<CreateMuscleUseCase>(CreateMuscleUseCase);
+    const createMuscleUseCase = module.get<CreateMuscle>(CreateMuscle);
     const createMuscleParams = MuscleDomainMock.getMuscleCreateParams();
 
     const muscleCreated = await createMuscleUseCase.execute(createMuscleParams);
@@ -54,8 +53,7 @@ describe('CreateMuscle', () => {
   });
 
   it('Should not create a muscle with invalid params', async () => {
-    const createMuscleUseCase =
-      module.get<CreateMuscleUseCase>(CreateMuscleUseCase);
+    const createMuscleUseCase = module.get<CreateMuscle>(CreateMuscle);
     const createMuscleParams = MuscleDomainMock.getMuscleCreateParams({
       name: '',
     });
@@ -74,8 +72,7 @@ describe('CreateMuscle', () => {
     const mockErrorMessage = 'Error';
     const mockErrorCode = 500;
 
-    const createMuscleUseCase =
-      module.get<CreateMuscleUseCase>(CreateMuscleUseCase);
+    const createMuscleUseCase = module.get<CreateMuscle>(CreateMuscle);
     const createMuscleParams = MuscleDomainMock.getMuscleCreateParams();
 
     jest
@@ -109,8 +106,7 @@ describe('CreateMuscle', () => {
         muscleDomain: muscleDomainWithoutId,
       }),
     });
-    const createMuscleUseCase =
-      module.get<CreateMuscleUseCase>(CreateMuscleUseCase);
+    const createMuscleUseCase = module.get<CreateMuscle>(CreateMuscle);
 
     const createMuscleParams = MuscleDomainMock.getMuscleCreateParams();
     await expect(

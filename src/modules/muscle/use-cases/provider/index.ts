@@ -1,5 +1,5 @@
-import { CreateMuscleUseCase } from '~/modules/muscle/use-cases/create-muscle';
+import { CreateMuscle } from '~/modules/muscle/use-cases/create-muscle';
 
-const useCaseProviders = [CreateMuscleUseCase];
+const useCaseProviders = [CreateMuscle];
 
 export default useCaseProviders;
