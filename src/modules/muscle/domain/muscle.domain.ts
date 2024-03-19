@@ -1,3 +1,4 @@
+import { HttpStatus } from '@nestjs/common';
 import { MuscleDomainError } from '~/modules/muscle/domain/errors';
 import MuscleName from '~/modules/muscle/domain/value-objects/name';
 import { MuscleDto } from '~/modules/muscle/dto/muscle.dto';
@@ -49,7 +50,10 @@ export default class MuscleDomain extends AggregateRoot<MuscleDomainProps> {
     const isValid = this.isValid(props);
     if (!isValid) {
       return left(
-        MuscleDomainError.create(MuscleDomainError.messages.missingProps),
+        MuscleDomainError.create(
+          MuscleDomainError.messages.missingProps,
+          HttpStatus.BAD_REQUEST,
+        ),
       );
     }
 

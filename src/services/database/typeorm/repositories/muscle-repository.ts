@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { DeepPartial } from 'typeorm';
 import MuscleDomain from '~/modules/muscle/domain/muscle.domain';
 import { Muscle } from '~/modules/muscle/entities/muscle.entity';
@@ -36,9 +36,13 @@ export default class MuscleRepository extends BaseRepository<
       }
 
       return left(
-        RepositoryError.create(RepositoryError.messages.itemAlreadyExists, {
-          name,
-        }),
+        RepositoryError.create(
+          RepositoryError.messages.itemAlreadyExists,
+          {
+            name,
+          },
+          HttpStatus.BAD_REQUEST,
+        ),
       );
     }
 
