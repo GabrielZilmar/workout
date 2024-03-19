@@ -28,6 +28,10 @@ const getMuscleRepositoryProvider = ({
         muscleRepository.create = jest
           .fn()
           .mockResolvedValue(right(muscleDomain));
+
+        muscleRepository.find = jest
+          .fn()
+          .mockResolvedValue({ items: [muscleDomain], count: 1 });
       }
 
       return muscleRepository;
