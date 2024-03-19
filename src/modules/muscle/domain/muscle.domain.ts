@@ -1,5 +1,6 @@
 import { MuscleDomainError } from '~/modules/muscle/domain/errors';
 import MuscleName from '~/modules/muscle/domain/value-objects/name';
+import { MuscleDto } from '~/modules/muscle/dto/muscle.dto';
 import { AggregateRoot } from '~/shared/domain/aggregate-root';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 import { Either, left, right } from '~/shared/either';
@@ -17,6 +18,10 @@ export type MuscleDomainUpdateParams = Partial<MuscleDomainCreateParams>;
 export default class MuscleDomain extends AggregateRoot<MuscleDomainProps> {
   get name(): MuscleName {
     return this.props.name;
+  }
+
+  public toDto() {
+    return MuscleDto.domainToDto(this);
   }
 
   private static mountValueObjects(
