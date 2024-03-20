@@ -1,10 +1,10 @@
 import { HttpStatus } from '@nestjs/common';
+import { MIN_EXERCISE_NAME_LENGTH } from '~/modules/exercise/domain/value-objects/name';
 
 export class ExerciseDomainError extends Error {
   public readonly code: number;
   public static messages = {
-    invalidNumReps:
-      'Invalid number of repetitions, it must be a positive number',
+    invalidExerciseName: `Invalid exercise name, must be at least ${MIN_EXERCISE_NAME_LENGTH} characters`,
   };
 
   constructor(message: string, code: number) {
