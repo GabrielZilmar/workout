@@ -19,8 +19,8 @@ export default class ExerciseName extends ValueObject<ExerciseNameProps> {
     return this.props.value;
   }
 
-  private static isValid(exercise: string): boolean {
-    return exercise.length >= MIN_EXERCISE_NAME_LENGTH;
+  private static isValid(name: string): boolean {
+    return name.length >= MIN_EXERCISE_NAME_LENGTH;
   }
 
   public static create(
