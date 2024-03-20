@@ -5,6 +5,7 @@ export class ExerciseDomainError extends Error {
   public readonly code: number;
   public static messages = {
     invalidExerciseName: `Invalid exercise name, must be at least ${MIN_EXERCISE_NAME_LENGTH} characters`,
+    invalidExerciseInfo: 'Exercise info cannot be an empty string',
   };
 
   constructor(message: string, code: number) {
