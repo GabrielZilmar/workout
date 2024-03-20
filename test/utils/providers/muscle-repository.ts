@@ -7,14 +7,14 @@ import { right } from '~/shared/either';
 
 type GetMuscleRepositoryProviderParams = {
   muscleRepository?: MuscleRepository;
-  muscleDomain?: MuscleDomain;
+  muscleDomain?: MuscleDomain | null;
 };
 
 const getMuscleRepositoryProvider = ({
   muscleRepository,
   muscleDomain,
 }: GetMuscleRepositoryProviderParams = {}) => {
-  if (!muscleDomain) {
+  if (muscleDomain === undefined) {
     muscleDomain = MuscleDomainMock.mountMuscleDomain();
   }
 
@@ -32,6 +32,12 @@ const getMuscleRepositoryProvider = ({
         muscleRepository.find = jest
           .fn()
           .mockResolvedValue({ items: [muscleDomain], count: 1 });
+
+        muscleRepository.findOneById = jest
+          .fn()
+          .mockResolvedValue(muscleDomain);
+
+        muscleRepository.update = jest.fn().mockResolvedValue(right(true));
       }
 
       return muscleRepository;
