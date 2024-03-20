@@ -6,6 +6,7 @@ export class ExerciseDomainError extends Error {
   public static messages = {
     invalidExerciseName: `Invalid exercise name, must be at least ${MIN_EXERCISE_NAME_LENGTH} characters`,
     invalidExerciseInfo: 'Exercise info cannot be an empty string',
+    invalidTutorialUrl: 'Exercise tutorial URL need to be a valid URL',
   };
 
   constructor(message: string, code: number) {
