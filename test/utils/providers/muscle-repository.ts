@@ -38,6 +38,8 @@ const getMuscleRepositoryProvider = ({
           .mockResolvedValue(muscleDomain);
 
         muscleRepository.update = jest.fn().mockResolvedValue(right(true));
+
+        muscleRepository.delete = jest.fn().mockResolvedValue(right(true));
       }
 
       return muscleRepository;
