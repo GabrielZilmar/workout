@@ -176,7 +176,11 @@ export abstract class BaseRepository<T extends { id: string }, D>
   async find(
     options?: FindManyOptions<T>,
   ): Promise<{ items: D[]; count: number }> {
-    const [items, count] = await this.repository.findAndCount(options);
+    const [items, count] = await this.repository.findAndCount({
+      ...options,
+      skip: options?.skip || 0,
+      take: options?.take || 10,
+    });
 
     const itemsToDomain: D[] = [];
     for await (const item of items) {

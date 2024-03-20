@@ -1,5 +1,7 @@
+import { HttpStatus } from '@nestjs/common';
 import { MuscleDomainError } from '~/modules/muscle/domain/errors';
 import MuscleName from '~/modules/muscle/domain/value-objects/name';
+import { MuscleDto } from '~/modules/muscle/dto/muscle.dto';
 import { AggregateRoot } from '~/shared/domain/aggregate-root';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 import { Either, left, right } from '~/shared/either';
@@ -17,6 +19,25 @@ export type MuscleDomainUpdateParams = Partial<MuscleDomainCreateParams>;
 export default class MuscleDomain extends AggregateRoot<MuscleDomainProps> {
   get name(): MuscleName {
     return this.props.name;
+  }
+
+  public toDto() {
+    return MuscleDto.domainToDto(this);
+  }
+
+  public update({
+    name,
+  }: MuscleDomainUpdateParams): Either<MuscleDomainError, MuscleDomain> {
+    if (name) {
+      const nameOrError = MuscleName.create({ value: name });
+      if (nameOrError.isLeft()) {
+        return left(nameOrError.value);
+      }
+
+      this.props.name = nameOrError.value;
+    }
+
+    return right(this);
   }
 
   private static mountValueObjects(
@@ -44,7 +65,10 @@ export default class MuscleDomain extends AggregateRoot<MuscleDomainProps> {
     const isValid = this.isValid(props);
     if (!isValid) {
       return left(
-        MuscleDomainError.create(MuscleDomainError.messages.missingProps),
+        MuscleDomainError.create(
+          MuscleDomainError.messages.missingProps,
+          HttpStatus.BAD_REQUEST,
+        ),
       );
     }
 

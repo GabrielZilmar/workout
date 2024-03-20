@@ -78,4 +78,31 @@ describe('MuscleDomain', () => {
       ),
     );
   });
+
+  it('Should update a Muscle', () => {
+    const muscle = MuscleDomainMock.mountMuscleDomain();
+    const updateParams = { name: 'New Name' };
+    const muscleUpdated = muscle.update(updateParams);
+
+    expect(muscleUpdated.isRight()).toBeTruthy();
+    expect(muscleUpdated.value).toBeInstanceOf(MuscleDomain);
+    expect((muscleUpdated.value as MuscleDomain).name.value).toBe(
+      updateParams.name,
+    );
+  });
+
+  it('Should not update a Muscle if name is invalid', () => {
+    const muscle = MuscleDomainMock.mountMuscleDomain();
+    const updateParams = { name: 'a' };
+    const muscleUpdated = muscle.update(updateParams);
+
+    expect(muscleUpdated.isLeft()).toBeTruthy();
+    expect(muscleUpdated.value).toBeInstanceOf(MuscleDomainError);
+    expect(muscleUpdated.value as MuscleDomainError).toEqual(
+      MuscleDomainError.create(
+        MuscleDomainError.messages.invalidMuscleName,
+        HttpStatus.BAD_REQUEST,
+      ),
+    );
+  });
 });
