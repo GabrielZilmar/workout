@@ -4,6 +4,7 @@ export class SetsDomainError extends Error {
   public readonly code: number;
   public static messages = {
     invalidNumReps: 'Num reps must be positive number',
+    invalidSetsWeight: 'Sets weight must be positive number',
   };
 
   constructor(message: string, code: number) {
