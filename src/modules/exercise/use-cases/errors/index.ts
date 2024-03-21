@@ -5,6 +5,8 @@ export class ExerciseUseCaseError extends Error {
   public readonly payload?: unknown;
   public static messages = {
     exerciseNotFound: (id: string) => `Exercise with id: ${id} was not found`,
+    exerciseByNameNotFound: (name: string) =>
+      `Exercise with name: ${name} was not found`,
     muscleNotFound: (id: string) =>
       `Muscle with id: ${id} was not found. Insert a valid muscle id`,
   };
