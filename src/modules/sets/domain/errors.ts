@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 
-export class SeriesDomainError extends Error {
+export class SetsDomainError extends Error {
   public readonly code: number;
   public static messages = {
     invalidNumReps: 'Num reps must be positive number',
@@ -8,7 +8,7 @@ export class SeriesDomainError extends Error {
 
   constructor(message: string, code: number) {
     super(message);
-    this.name = 'series-domain';
+    this.name = 'sets-domain';
     this.code = code;
   }
 
@@ -16,6 +16,6 @@ export class SeriesDomainError extends Error {
     message: string,
     code = HttpStatus.INTERNAL_SERVER_ERROR,
   ) {
-    return new SeriesDomainError(message, code);
+    return new SetsDomainError(message, code);
   }
 }
