@@ -15,11 +15,11 @@ export class ExerciseDto {
 
   @IsUrl()
   @IsOptional()
-  tutorialUrl?: string;
+  tutorialUrl?: string | null;
 
   @IsString()
   @IsOptional()
-  info?: string;
+  info?: string | null;
 
   public static domainToDto(
     domain: ExerciseDomain,
@@ -34,8 +34,8 @@ export class ExerciseDto {
     exerciseDto.id = id.toString();
     exerciseDto.name = name.value;
     exerciseDto.muscleId = muscleId;
-    exerciseDto.tutorialUrl = tutorialUrl?.value;
-    exerciseDto.info = info?.value;
+    exerciseDto.tutorialUrl = tutorialUrl?.value ?? null;
+    exerciseDto.info = info?.value ?? null;
 
     return right(exerciseDto);
   }
