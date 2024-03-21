@@ -1,7 +1,7 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import ExerciseDomain from '~/modules/exercise/domain/exercise.domain';
 import { CreateExerciseDto } from '~/modules/exercise/dto/create-exercise.dto';
-import { ExerciseDto } from '~/modules/exercise/dto/execise.dto';
+import { ExerciseDto } from '~/modules/exercise/dto/exercise.dto';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
 import { ExerciseUseCaseError } from '~/modules/exercise/use-cases/errors';
 import ExerciseRepository from '~/services/database/typeorm/repositories/exercise-repository';
