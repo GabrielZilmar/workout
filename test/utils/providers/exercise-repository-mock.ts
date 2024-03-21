@@ -38,6 +38,10 @@ const getExerciseRepositoryProvider = ({
           .fn()
           .mockResolvedValue(exerciseDomain);
 
+        exerciseRepository.findOne = jest
+          .fn()
+          .mockResolvedValue(exerciseDomain);
+
         exerciseRepository.update = jest.fn().mockResolvedValue(right(true));
 
         exerciseRepository.delete = jest.fn().mockResolvedValue(right(true));
