@@ -1,3 +1,4 @@
+import ExerciseRepository from '~/services/database/typeorm/repositories/exercise-repository';
 import MuscleRepository from '~/services/database/typeorm/repositories/muscle-repository';
 import TokenRepository from '~/services/database/typeorm/repositories/token-repository';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
@@ -8,6 +9,7 @@ const repositoriesProviders = [
   TokenRepository,
   WorkoutRepository,
   MuscleRepository,
+  ExerciseRepository,
 ];
 
 export default repositoriesProviders;

@@ -3,6 +3,8 @@ import { ExerciseDomainError } from '~/modules/exercise/domain/errors';
 import ExerciseInfo from '~/modules/exercise/domain/value-objects/info';
 import ExerciseName from '~/modules/exercise/domain/value-objects/name';
 import ExerciseTutorialUrl from '~/modules/exercise/domain/value-objects/tutorial-url';
+import { ExerciseDto } from '~/modules/exercise/dto/exercise.dto';
+import { SimpleExerciseDto } from '~/modules/exercise/dto/simple-exercise.dto';
 import { AggregateRoot } from '~/shared/domain/aggregate-root';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 import { Either, left, right } from '~/shared/either';
@@ -38,6 +40,14 @@ export default class ExerciseDomain extends AggregateRoot<ExerciseDomainProps> {
 
   get muscleId(): string {
     return this.props.muscleId;
+  }
+
+  public toDto() {
+    return ExerciseDto.domainToDto(this);
+  }
+
+  public toSimpleDto() {
+    return SimpleExerciseDto.domainToDto(this);
   }
 
   public update({
