@@ -32,7 +32,7 @@ describe('NumReps value object', () => {
       'isValid',
     );
 
-    const numRepsValue = 0;
+    const numRepsValue = -1;
     const numReps = NumReps.create({ value: numRepsValue });
 
     expect(numReps.isLeft()).toBeTruthy();

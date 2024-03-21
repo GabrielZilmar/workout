@@ -17,7 +17,7 @@ export default class NumReps extends ValueObject<NumRepsProps> {
   }
 
   private static isValid(numReps: number): boolean {
-    return numReps > 0;
+    return numReps >= 0;
   }
 
   public static create(props: NumRepsProps): Either<SetsDomainError, NumReps> {
