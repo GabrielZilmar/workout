@@ -1,29 +1,29 @@
 import { HttpStatus } from '@nestjs/common';
-import { SetsDomainError } from '~/modules/sets/domain/errors';
-import NumDrops from '~/modules/sets/domain/value-objects/num-drops';
-import NumReps from '~/modules/sets/domain/value-objects/num-reps';
-import SetsWeight from '~/modules/sets/domain/value-objects/sets-weight';
+import { SetDomainError } from '~/modules/set/domain/errors';
+import NumDrops from '~/modules/set/domain/value-objects/num-drops';
+import NumReps from '~/modules/set/domain/value-objects/num-reps';
+import SetWeight from '~/modules/set/domain/value-objects/set-weight';
 import { AggregateRoot } from '~/shared/domain/aggregate-root';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 import { Either, left, right } from '~/shared/either';
 
-export type SetsDomainProps = {
+export type SetDomainProps = {
   workoutExerciseId: string;
   numReps: NumReps;
-  setsWeight: SetsWeight;
+  setWeight: SetWeight;
   numDrops: NumDrops;
 };
 
-export type SetsDomainCreateParams = {
+export type SetDomainCreateParams = {
   workoutExerciseId: string;
   numReps?: number;
-  setsWeight?: number;
+  setWeight?: number;
   numDrops?: number;
 };
 
-export type SetDomainUpdateParams = Partial<SetsDomainCreateParams>;
+export type SetDomainUpdateParams = Partial<SetDomainCreateParams>;
 
-export default class SetsDomain extends AggregateRoot<SetsDomainProps> {
+export default class SetDomain extends AggregateRoot<SetDomainProps> {
   get workoutExerciseId(): string {
     return this.props.workoutExerciseId;
   }
@@ -32,8 +32,8 @@ export default class SetsDomain extends AggregateRoot<SetsDomainProps> {
     return this.props.numReps;
   }
 
-  get setsWeight(): SetsWeight {
-    return this.props.setsWeight;
+  get setWeight(): SetWeight {
+    return this.props.setWeight;
   }
 
   get numDrops(): NumDrops {
@@ -42,9 +42,9 @@ export default class SetsDomain extends AggregateRoot<SetsDomainProps> {
 
   public update({
     numReps,
-    setsWeight,
+    setWeight,
     numDrops,
-  }: SetDomainUpdateParams): Either<SetsDomainError, SetsDomain> {
+  }: SetDomainUpdateParams): Either<SetDomainError, SetDomain> {
     if (numReps) {
       const numRepsOrError = NumReps.create({ value: numReps });
       if (numRepsOrError.isLeft()) {
@@ -53,13 +53,13 @@ export default class SetsDomain extends AggregateRoot<SetsDomainProps> {
       this.props.numReps = numRepsOrError.value;
     }
 
-    if (setsWeight) {
-      const setsWeightOrError = SetsWeight.create({ value: setsWeight });
-      if (setsWeightOrError.isLeft()) {
-        return left(setsWeightOrError.value);
+    if (setWeight) {
+      const setWeightOrError = SetWeight.create({ value: setWeight });
+      if (setWeightOrError.isLeft()) {
+        return left(setWeightOrError.value);
       }
 
-      this.props.setsWeight = setsWeightOrError.value;
+      this.props.setWeight = setWeightOrError.value;
     }
 
     if (numDrops) {
@@ -75,18 +75,18 @@ export default class SetsDomain extends AggregateRoot<SetsDomainProps> {
   }
 
   private static mountValueObjects(
-    props: SetsDomainCreateParams,
-  ): Either<SetsDomainError, SetsDomainProps> {
+    props: SetDomainCreateParams,
+  ): Either<SetDomainError, SetDomainProps> {
     const numRepsOrError = NumReps.create({ value: props.numReps ?? 0 });
     if (numRepsOrError.isLeft()) {
       return left(numRepsOrError.value);
     }
 
-    const setsWeightOrError = SetsWeight.create({
-      value: props.setsWeight ?? 0,
+    const setWeightOrError = SetWeight.create({
+      value: props.setWeight ?? 0,
     });
-    if (setsWeightOrError.isLeft()) {
-      return left(setsWeightOrError.value);
+    if (setWeightOrError.isLeft()) {
+      return left(setWeightOrError.value);
     }
 
     const numDropsOrError = NumDrops.create({ value: props.numDrops ?? 0 });
@@ -94,29 +94,29 @@ export default class SetsDomain extends AggregateRoot<SetsDomainProps> {
       return left(numDropsOrError.value);
     }
 
-    const setsDomainProps: SetsDomainProps = {
+    const setDomainProps: SetDomainProps = {
       workoutExerciseId: props.workoutExerciseId,
       numReps: numRepsOrError.value,
-      setsWeight: setsWeightOrError.value,
+      setWeight: setWeightOrError.value,
       numDrops: numDropsOrError.value,
     };
-    return right(setsDomainProps);
+    return right(setDomainProps);
   }
 
   private static isValid({
     workoutExerciseId,
-  }: SetsDomainCreateParams): boolean {
+  }: SetDomainCreateParams): boolean {
     return !!workoutExerciseId;
   }
 
   public static create(
-    props: SetsDomainCreateParams,
+    props: SetDomainCreateParams,
     id?: UniqueEntityID,
-  ): Either<SetsDomainError, SetsDomain> {
-    if (!SetsDomain.isValid(props)) {
+  ): Either<SetDomainError, SetDomain> {
+    if (!SetDomain.isValid(props)) {
       return left(
-        SetsDomainError.create(
-          SetsDomainError.messages.invalidSetsWeight,
+        SetDomainError.create(
+          SetDomainError.messages.invalidSetWeight,
           HttpStatus.BAD_REQUEST,
         ),
       );
@@ -127,7 +127,7 @@ export default class SetsDomain extends AggregateRoot<SetsDomainProps> {
       return left(valueObjectsOrError.value);
     }
 
-    const setsDomain = new SetsDomain(valueObjectsOrError.value, id);
-    return right(setsDomain);
+    const setDomain = new SetDomain(valueObjectsOrError.value, id);
+    return right(setDomain);
   }
 }

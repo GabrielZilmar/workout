@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
-import { SetsDomainError } from '~/modules/sets/domain/errors';
-import NumReps from '~/modules/sets/domain/value-objects/num-reps';
+import { SetDomainError } from '~/modules/set/domain/errors';
+import NumReps from '~/modules/set/domain/value-objects/num-reps';
 
 type NumRepsPublicClass = NumReps & {
   isValid(): boolean;
@@ -37,8 +37,8 @@ describe('NumReps value object', () => {
 
     expect(numReps.isLeft()).toBeTruthy();
     expect(numReps.value).toEqual(
-      SetsDomainError.create(
-        SetsDomainError.messages.invalidNumReps,
+      SetDomainError.create(
+        SetDomainError.messages.invalidNumReps,
         HttpStatus.BAD_REQUEST,
       ),
     );

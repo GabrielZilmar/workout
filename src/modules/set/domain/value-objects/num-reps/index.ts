@@ -1,5 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
-import { SetsDomainError } from '~/modules/sets/domain/errors';
+import { SetDomainError } from '~/modules/set/domain/errors';
 import { ValueObject } from '~/shared/domain/value-object';
 import { Either, left, right } from '~/shared/either';
 
@@ -20,12 +20,12 @@ export default class NumReps extends ValueObject<NumRepsProps> {
     return numReps >= 0;
   }
 
-  public static create(props: NumRepsProps): Either<SetsDomainError, NumReps> {
+  public static create(props: NumRepsProps): Either<SetDomainError, NumReps> {
     const isValid = this.isValid(props.value);
     if (!isValid) {
       return left(
-        SetsDomainError.create(
-          SetsDomainError.messages.invalidNumReps,
+        SetDomainError.create(
+          SetDomainError.messages.invalidNumReps,
           HttpStatus.BAD_REQUEST,
         ),
       );

@@ -1,13 +1,13 @@
 import { HttpStatus } from '@nestjs/common';
-import { SetsDomainError } from '~/modules/sets/domain/errors';
+import { SetDomainError } from '~/modules/set/domain/errors';
 import { ValueObject } from '~/shared/domain/value-object';
 import { Either, left, right } from '~/shared/either';
 
-export type SetsWeightProps = {
+export type SetWeightProps = {
   value: number; // In Kg.
 };
 
-export default class SetsWeight extends ValueObject<SetsWeightProps> {
+export default class SetWeight extends ValueObject<SetWeightProps> {
   get value() {
     return this.props.value;
   }
@@ -17,18 +17,18 @@ export default class SetsWeight extends ValueObject<SetsWeightProps> {
   }
 
   public static create(
-    props: SetsWeightProps,
-  ): Either<SetsDomainError, SetsWeight> {
+    props: SetWeightProps,
+  ): Either<SetDomainError, SetWeight> {
     const isValid = this.isValid(props.value);
     if (!isValid) {
       return left(
-        SetsDomainError.create(
-          SetsDomainError.messages.invalidSetsWeight,
+        SetDomainError.create(
+          SetDomainError.messages.invalidSetWeight,
           HttpStatus.BAD_REQUEST,
         ),
       );
     }
 
-    return right(new SetsWeight(props));
+    return right(new SetWeight(props));
   }
 }
