@@ -3,6 +3,8 @@ import { HttpStatus } from '@nestjs/common';
 export class WorkoutExerciseDomainError extends Error {
   public readonly code: number;
   public static messages = {
+    missingProps:
+      'Missing workout exercises props. Required: WorkoutId and ExerciseId',
     invalidOrder: 'The order must be greater than 0',
   };
 
