@@ -4,11 +4,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '~/modules/users/entities/user.entity';
+import { WorkoutExercise } from '~/modules/workout-exercise/entities/workout-exercise.entity';
 
 @Entity('workouts')
 @Unique(['userId', 'name'])
@@ -31,6 +33,12 @@ export class Workout {
 
   @Column({ default: false })
   isRoutine: boolean;
+
+  @OneToMany(
+    () => WorkoutExercise,
+    (workoutExercise) => workoutExercise.workout,
+  )
+  workoutExercises: WorkoutExercise[];
 
   @CreateDateColumn()
   createdAt: Date;
