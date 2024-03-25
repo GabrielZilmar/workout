@@ -9,6 +9,8 @@ import SessionMapper from '~/modules/session/domain/mappers/session.mapper';
 import { SessionModule } from '~/modules/session/session.module';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { UsersModule } from '~/modules/users/users.module';
+import WorkoutExerciseMapper from '~/modules/workout-exercise/mappers/workout-exercise.mapper';
+import { WorkoutExerciseModule } from '~/modules/workout-exercise/workout-exercise.module';
 import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
 import { WorkoutModule } from '~/modules/workout/workout.module';
 import repositoriesProviders from '~/services/database/typeorm/repositories/providers';
@@ -20,6 +22,7 @@ const mappersProviders = [
   WorkoutMapper,
   MuscleMapper,
   ExerciseMapper,
+  WorkoutExerciseMapper,
 ];
 const servicesProviders = [JwtService];
 
@@ -37,6 +40,7 @@ const allProviders = [
     WorkoutModule,
     MuscleModule,
     ExerciseModule,
+    WorkoutExerciseModule,
     DatabaseModule,
     ConfigModule.forRoot({
       isGlobal: true,
