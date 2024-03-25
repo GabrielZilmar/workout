@@ -3,6 +3,7 @@ import { WorkoutExerciseDomainMock } from 'test/utils/domains/workout-exercise-d
 import WorkoutExerciseDomain from '~/modules/workout-exercise/domain/workout-exercise.domain';
 import WorkoutExerciseMapper from '~/modules/workout-exercise/mappers/workout-exercise.mapper';
 import WorkoutExerciseRepository from '~/services/database/typeorm/repositories/workout-exercise-repository';
+import { right } from '~/shared/either';
 
 type GetWorkoutExerciseRepositoryProviderParams = {
   workoutExerciseRepository?: WorkoutExerciseRepository;
@@ -28,7 +29,7 @@ const getWorkoutExerciseRepositoryProvider = ({
 
         workoutExerciseRepository.create = jest
           .fn()
-          .mockResolvedValue(workoutExerciseDomain);
+          .mockResolvedValue(right(workoutExerciseDomain));
 
         workoutExerciseRepository.find = jest
           .fn()
@@ -42,9 +43,13 @@ const getWorkoutExerciseRepositoryProvider = ({
           .fn()
           .mockResolvedValue(workoutExerciseDomain);
 
-        workoutExerciseRepository.update = jest.fn().mockResolvedValue(true);
+        workoutExerciseRepository.update = jest
+          .fn()
+          .mockResolvedValue(right(true));
 
-        workoutExerciseRepository.delete = jest.fn().mockResolvedValue(true);
+        workoutExerciseRepository.delete = jest
+          .fn()
+          .mockResolvedValue(right(true));
       }
 
       return workoutExerciseRepository;
