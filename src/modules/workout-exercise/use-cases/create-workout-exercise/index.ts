@@ -49,7 +49,6 @@ export class CreateWorkoutExercise
       );
     }
 
-    // Todo: Create a pipe for Workout and Exercise checks
     const workoutExists = await this.workoutRepository.findOneById(workoutId);
     if (!workoutExists) {
       throw new NotFoundException({
