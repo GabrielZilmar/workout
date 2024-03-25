@@ -9,7 +9,7 @@ import { Either, left, right } from '~/shared/either';
 export type WorkoutExerciseDomainProps = {
   workoutId: string;
   exerciseId: string;
-  order: WorkoutExerciseOrder | null;
+  order: WorkoutExerciseOrder;
 };
 
 export type WorkoutExerciseDomainCreateParams = {
@@ -30,7 +30,7 @@ export default class WorkoutExerciseDomain extends AggregateRoot<WorkoutExercise
     return this.props.exerciseId;
   }
 
-  get order(): WorkoutExerciseOrder | null {
+  get order(): WorkoutExerciseOrder {
     return this.props.order;
   }
 
