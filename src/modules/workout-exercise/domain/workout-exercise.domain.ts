@@ -1,6 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 import { WorkoutExerciseDomainError } from '~/modules/workout-exercise/domain/errors';
 import WorkoutExerciseOrder from '~/modules/workout-exercise/domain/value-objects/order';
+import { WorkoutExerciseDto } from '~/modules/workout-exercise/dto/workout-exercise.dto';
 import { WorkoutDomainError } from '~/modules/workout/domain/errors';
 import { AggregateRoot } from '~/shared/domain/aggregate-root';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
@@ -15,7 +16,7 @@ export type WorkoutExerciseDomainProps = {
 export type WorkoutExerciseDomainCreateParams = {
   workoutId: string;
   exerciseId: string;
-  order?: number | null;
+  order: number | null;
 };
 
 export type WorkoutExerciseDomainUpdateParams =
@@ -32,6 +33,10 @@ export default class WorkoutExerciseDomain extends AggregateRoot<WorkoutExercise
 
   get order(): WorkoutExerciseOrder {
     return this.props.order;
+  }
+
+  public toDto() {
+    return WorkoutExerciseDto.domainToDto(this);
   }
 
   public update({
