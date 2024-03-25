@@ -26,8 +26,8 @@ export class WorkoutExercise {
   @Column({ type: 'uuid' })
   exerciseId: string;
 
-  @Column({ default: 0 })
-  order: number;
+  @Column({ type: 'integer', nullable: true })
+  order: number | null;
 
   @CreateDateColumn()
   createdAt: Date;
