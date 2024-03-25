@@ -4,10 +4,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Muscle } from '~/modules/muscle/entities/muscle.entity';
+import { WorkoutExercise } from '~/modules/workout-exercise/entities/workout-exercise.entity';
 
 @Entity('exercises')
 export class Exercise {
@@ -29,6 +31,12 @@ export class Exercise {
 
   @Column({ nullable: true })
   tutorialUrl: string;
+
+  @OneToMany(
+    () => WorkoutExercise,
+    (workoutExercise) => workoutExercise.exercise,
+  )
+  workoutExercises: WorkoutExercise[];
 
   @CreateDateColumn()
   createdAt: Date;
