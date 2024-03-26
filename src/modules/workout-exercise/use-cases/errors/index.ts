@@ -12,6 +12,8 @@ export class WorkoutExerciseUseCaseError extends Error {
       `Workout with id: ${workoutId} does not belong to the user`,
     workoutExerciseNotFound: (id: string) =>
       `Workout Exercise with id: ${id} was not found. Insert a valid workout exercise id`,
+    cannotDeleteOthersWorkoutExercise:
+      'You cannot delete workout exercise from workouts that do not belong to you',
   };
 
   constructor(message: string, code: number, payload?: unknown) {
