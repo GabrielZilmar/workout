@@ -21,6 +21,13 @@ type UsersWorkoutExerciseFindResult = {
   count: number;
 };
 
+type FindOneByIdRelationsParams = 'workout' | 'exercise';
+type FindOneByIdParams = {
+  id: string;
+  relations?: FindOneByIdRelationsParams[];
+};
+type FindOneByIdResult = Promise<WorkoutExerciseDomain | null>;
+
 @Injectable()
 export default class WorkoutExerciseRepository extends BaseRepository<
   WorkoutExercise,
@@ -58,5 +65,21 @@ export default class WorkoutExerciseRepository extends BaseRepository<
     }
 
     return { items: itemsToDomain, count };
+  }
+
+  async findOneByIdWithRelations({
+    id,
+    relations = [],
+  }: FindOneByIdParams): FindOneByIdResult {
+    const item = await this.repository.findOne({
+      where: { id },
+      relations,
+    });
+    if (!item) {
+      return null;
+    }
+
+    const itemToDomain = this.mapper.toDomain(item);
+    return itemToDomain.isRight() ? itemToDomain.value : null;
   }
 }
