@@ -57,6 +57,8 @@ export default class WorkoutExerciseDomain extends AggregateRoot<WorkoutExercise
     workoutId,
     exerciseId,
     order,
+    workoutDomain,
+    exerciseDomain,
   }: WorkoutExerciseDomainUpdateParams): Either<
     WorkoutExerciseDomainError,
     WorkoutExerciseDomain
@@ -69,12 +71,50 @@ export default class WorkoutExerciseDomain extends AggregateRoot<WorkoutExercise
       this.props.order = orderOrError.value;
     }
 
+    if (workoutDomain?.id?.toValue()) {
+      if (workoutId && workoutId !== workoutDomain.id.toValue()) {
+        return left(
+          WorkoutExerciseDomainError.create(
+            WorkoutExerciseDomainError.messages
+              .workoutDomainAndWorkoutIdDoNotMatch,
+            HttpStatus.BAD_REQUEST,
+          ),
+        );
+      }
+
+      this.props.workoutDomain = workoutDomain;
+      this.props.workoutId = workoutDomain.id.toValue();
+    }
     if (workoutId) {
       this.props.workoutId = workoutId;
+      if (!workoutDomain && this.workoutDomain?.id?.toValue() !== workoutId) {
+        this.props.workoutDomain = undefined;
+      }
     }
 
+    if (exerciseDomain?.id?.toValue()) {
+      if (exerciseId && exerciseId !== exerciseDomain.id.toValue()) {
+        return left(
+          WorkoutExerciseDomainError.create(
+            WorkoutExerciseDomainError.messages
+              .exerciseDomainAndExerciseIdDoNotMatch,
+            HttpStatus.BAD_REQUEST,
+          ),
+        );
+      }
+
+      this.props.exerciseDomain = exerciseDomain;
+      this.props.exerciseId = exerciseDomain.id.toValue();
+    }
     if (exerciseId) {
       this.props.exerciseId = exerciseId;
+
+      if (
+        !exerciseDomain &&
+        this.exerciseDomain?.id?.toValue() !== exerciseId
+      ) {
+        this.props.exerciseDomain = undefined;
+      }
     }
 
     return right(this);
@@ -109,8 +149,43 @@ export default class WorkoutExerciseDomain extends AggregateRoot<WorkoutExercise
   private static isValid({
     workoutId,
     exerciseId,
-  }: WorkoutExerciseDomainCreateParams): boolean {
-    return !!workoutId && !!exerciseId;
+    workoutDomain,
+    exerciseDomain,
+  }: WorkoutExerciseDomainCreateParams): Either<
+    WorkoutExerciseDomainError,
+    boolean
+  > {
+    if (workoutDomain && workoutDomain.id?.toValue() !== workoutId) {
+      return left(
+        WorkoutExerciseDomainError.create(
+          WorkoutExerciseDomainError.messages
+            .workoutDomainAndWorkoutIdDoNotMatch,
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    }
+
+    if (exerciseDomain && exerciseDomain.id?.toValue() !== exerciseId) {
+      return left(
+        WorkoutExerciseDomainError.create(
+          WorkoutExerciseDomainError.messages
+            .exerciseDomainAndExerciseIdDoNotMatch,
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    }
+
+    const isMissingProps = !workoutId && !exerciseId;
+    if (isMissingProps) {
+      return left(
+        WorkoutExerciseDomainError.create(
+          WorkoutExerciseDomainError.messages.missingProps,
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    }
+
+    return right(true);
   }
 
   public static create(
@@ -118,13 +193,8 @@ export default class WorkoutExerciseDomain extends AggregateRoot<WorkoutExercise
     id?: UniqueEntityID,
   ): Either<WorkoutExerciseDomainError, WorkoutExerciseDomain> {
     const isValid = this.isValid(props);
-    if (!isValid) {
-      return left(
-        WorkoutExerciseDomainError.create(
-          WorkoutExerciseDomainError.messages.missingProps,
-          HttpStatus.BAD_REQUEST,
-        ),
-      );
+    if (isValid.isLeft()) {
+      return left(isValid.value);
     }
 
     const valueObjectsOrError = this.mountValueObjects(props);

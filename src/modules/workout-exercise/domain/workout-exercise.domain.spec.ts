@@ -1,11 +1,12 @@
 import { HttpStatus } from '@nestjs/common';
+import { ExerciseDomainMock } from 'test/utils/domains/exercise-domain-mock';
+import { WorkoutDomainMock } from 'test/utils/domains/workout-domain-mock';
 import { WorkoutExerciseDomainMock } from 'test/utils/domains/workout-exercise-domain.mock';
 import { WorkoutExerciseDomainError } from '~/modules/workout-exercise/domain/errors';
 import WorkoutExerciseDomain, {
   WorkoutExerciseDomainCreateParams,
   WorkoutExerciseDomainProps,
 } from '~/modules/workout-exercise/domain/workout-exercise.domain';
-
 import { Either } from '~/shared/either';
 
 type WorkoutExerciseDomainPublicClass = WorkoutExerciseDomain & {
@@ -150,6 +151,154 @@ describe('WorkoutExerciseDomain', () => {
     expect(updatedWorkoutExercise.value).toEqual(
       WorkoutExerciseDomainError.create(
         WorkoutExerciseDomainError.messages.invalidOrder,
+        HttpStatus.BAD_REQUEST,
+      ),
+    );
+  });
+
+  it('Should not update a workout exercise domain if workoutId and workoutDomain do not match', () => {
+    const workoutDomain = WorkoutDomainMock.mountWorkoutDomain();
+    const exerciseDomain = ExerciseDomainMock.mountExerciseDomain();
+    const workoutExerciseDomain =
+      WorkoutExerciseDomainMock.mountWorkoutExerciseDomain({
+        workoutDomain,
+        exerciseDomain,
+        workoutId: workoutDomain.id?.toValue() as string,
+        exerciseId: exerciseDomain.id?.toValue() as string,
+      });
+
+    const updatedWorkoutExercise = workoutExerciseDomain.update({
+      workoutId: 'new-workout-id',
+      workoutDomain: workoutExerciseDomain.workoutDomain,
+    });
+
+    expect(updatedWorkoutExercise.isLeft()).toBeTruthy();
+    expect(updatedWorkoutExercise.value).toEqual(
+      WorkoutExerciseDomainError.create(
+        WorkoutExerciseDomainError.messages.workoutDomainAndWorkoutIdDoNotMatch,
+        HttpStatus.BAD_REQUEST,
+      ),
+    );
+  });
+
+  it('Should not update a workout exercise domain if exerciseId and exerciseDomain do not match', () => {
+    const workoutDomain = WorkoutDomainMock.mountWorkoutDomain();
+    const exerciseDomain = ExerciseDomainMock.mountExerciseDomain();
+    const workoutExerciseDomain =
+      WorkoutExerciseDomainMock.mountWorkoutExerciseDomain({
+        workoutDomain,
+        exerciseDomain,
+        workoutId: workoutDomain.id?.toValue() as string,
+        exerciseId: exerciseDomain.id?.toValue() as string,
+      });
+
+    const updatedWorkoutExercise = workoutExerciseDomain.update({
+      exerciseId: 'new-exercise-id',
+      exerciseDomain: workoutExerciseDomain.exerciseDomain,
+    });
+
+    expect(updatedWorkoutExercise.isLeft()).toBeTruthy();
+    expect(updatedWorkoutExercise.value).toEqual(
+      WorkoutExerciseDomainError.create(
+        WorkoutExerciseDomainError.messages
+          .exerciseDomainAndExerciseIdDoNotMatch,
+        HttpStatus.BAD_REQUEST,
+      ),
+    );
+  });
+
+  it('Should update a workout exercise domain domains', () => {
+    const workoutDomain = WorkoutDomainMock.mountWorkoutDomain();
+    const exerciseDomain = ExerciseDomainMock.mountExerciseDomain();
+    const workoutExerciseDomain =
+      WorkoutExerciseDomainMock.mountWorkoutExerciseDomain({
+        workoutDomain,
+        exerciseDomain,
+        workoutId: workoutDomain.id?.toValue() as string,
+        exerciseId: exerciseDomain.id?.toValue() as string,
+      });
+
+    expect(workoutExerciseDomain.workoutId).toBe(workoutDomain.id?.toValue());
+    expect(workoutExerciseDomain.exerciseId).toBe(exerciseDomain.id?.toValue());
+
+    const newWorkoutDomain = WorkoutDomainMock.mountWorkoutDomain({
+      id: 'new-workout-id',
+    });
+    const newExerciseDomain = ExerciseDomainMock.mountExerciseDomain({
+      id: 'new-exercise-id',
+    });
+    workoutExerciseDomain.update({
+      workoutDomain: newWorkoutDomain,
+      exerciseDomain: newExerciseDomain,
+    });
+
+    expect(workoutExerciseDomain.workoutDomain).toEqual(newWorkoutDomain);
+    expect(workoutExerciseDomain.workoutId).toBe(
+      newWorkoutDomain.id?.toValue(),
+    );
+    expect(workoutExerciseDomain.exerciseDomain).toEqual(newExerciseDomain);
+    expect(workoutExerciseDomain.exerciseId).toBe(
+      newExerciseDomain.id?.toValue(),
+    );
+  });
+
+  it('Should update a workout exercise domain ids', () => {
+    const workoutDomain = WorkoutDomainMock.mountWorkoutDomain();
+    const exerciseDomain = ExerciseDomainMock.mountExerciseDomain();
+    const workoutExerciseDomain =
+      WorkoutExerciseDomainMock.mountWorkoutExerciseDomain({
+        workoutDomain,
+        exerciseDomain,
+        workoutId: workoutDomain.id?.toValue() as string,
+        exerciseId: exerciseDomain.id?.toValue() as string,
+      });
+
+    expect(workoutExerciseDomain.workoutId).toBe(workoutDomain.id?.toValue());
+    expect(workoutExerciseDomain.workoutDomain).toEqual(workoutDomain);
+    expect(workoutExerciseDomain.exerciseId).toBe(exerciseDomain.id?.toValue());
+    expect(workoutExerciseDomain.exerciseDomain).toEqual(exerciseDomain);
+
+    const updateParams = {
+      workoutId: 'new-workout-id',
+      exerciseId: 'new-exercise-id',
+    };
+    workoutExerciseDomain.update(updateParams);
+    expect(workoutExerciseDomain.workoutId).toBe(updateParams.workoutId);
+    expect(workoutExerciseDomain.workoutDomain).toBeUndefined();
+    expect(workoutExerciseDomain.exerciseId).toBe(updateParams.exerciseId);
+    expect(workoutExerciseDomain.exerciseDomain).toBeUndefined();
+  });
+
+  it('Should not create a workout exercise domain if ids do not match with domains', () => {
+    const workoutDomain = WorkoutDomainMock.mountWorkoutDomain();
+    const exerciseDomain = ExerciseDomainMock.mountExerciseDomain();
+    const workoutExerciseParams = {
+      workoutDomain,
+      exerciseDomain,
+      workoutId: 'not-match-workout-id',
+      exerciseId: 'not-match-exercise-id',
+      order: 0,
+    };
+
+    let workoutExercise = WorkoutExerciseDomain.create(workoutExerciseParams);
+    expect(workoutExercise.isLeft()).toBeTruthy();
+    expect(workoutExercise.value).toEqual(
+      WorkoutExerciseDomainError.create(
+        WorkoutExerciseDomainError.messages.workoutDomainAndWorkoutIdDoNotMatch,
+        HttpStatus.BAD_REQUEST,
+      ),
+    );
+
+    workoutExercise = WorkoutExerciseDomain.create({
+      ...workoutExerciseParams,
+      workoutDomain: undefined,
+      exerciseId: 'not-match-exercise-id',
+    });
+    expect(workoutExercise.isLeft()).toBeTruthy();
+    expect(workoutExercise.value).toEqual(
+      WorkoutExerciseDomainError.create(
+        WorkoutExerciseDomainError.messages
+          .exerciseDomainAndExerciseIdDoNotMatch,
         HttpStatus.BAD_REQUEST,
       ),
     );
