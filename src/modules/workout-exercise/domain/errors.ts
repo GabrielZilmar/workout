@@ -5,7 +5,11 @@ export class WorkoutExerciseDomainError extends Error {
   public static messages = {
     missingProps:
       'Missing workout exercises props. Required: WorkoutId and ExerciseId',
-    invalidOrder: 'The order must be greater than 0',
+    invalidOrder: 'The order must be greater than or equal 0',
+    workoutDomainAndWorkoutIdDoNotMatch:
+      'The workout domain and workout id do not match',
+    exerciseDomainAndExerciseIdDoNotMatch:
+      'The exercise domain and exercise id do not match',
   };
 
   constructor(message: string, code: number) {

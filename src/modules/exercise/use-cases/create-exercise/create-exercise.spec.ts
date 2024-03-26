@@ -5,7 +5,6 @@ import {
   Provider,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import UtilClone from 'test/utils/clone';
 import { ExerciseDomainMock } from 'test/utils/domains/exercise-domain-mock';
 import { MuscleDomainMock } from 'test/utils/domains/muscle-domain-mock';
 import getExerciseRepositoryProvider from 'test/utils/providers/exercise-repository-mock';
@@ -17,8 +16,7 @@ import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
 import { CreateExercise } from '~/modules/exercise/use-cases/create-exercise';
 import { ExerciseUseCaseError } from '~/modules/exercise/use-cases/errors';
 import MuscleDomain from '~/modules/muscle/domain/muscle.domain';
-import ExerciseRepository from '~/services/database/typeorm/repositories/exercise-repository';
-import { left, right } from '~/shared/either';
+import { left } from '~/shared/either';
 
 type GetModuleTestParams = {
   exerciseRepositoryProvider?: Provider;

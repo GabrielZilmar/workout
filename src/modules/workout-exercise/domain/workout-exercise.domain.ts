@@ -1,7 +1,10 @@
 import { HttpStatus } from '@nestjs/common';
+import ExerciseDomain from '~/modules/exercise/domain/exercise.domain';
 import { WorkoutExerciseDomainError } from '~/modules/workout-exercise/domain/errors';
 import WorkoutExerciseOrder from '~/modules/workout-exercise/domain/value-objects/order';
+import { WorkoutExerciseDto } from '~/modules/workout-exercise/dto/workout-exercise.dto';
 import { WorkoutDomainError } from '~/modules/workout/domain/errors';
+import WorkoutDomain from '~/modules/workout/domain/workout.domain';
 import { AggregateRoot } from '~/shared/domain/aggregate-root';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 import { Either, left, right } from '~/shared/either';
@@ -10,12 +13,16 @@ export type WorkoutExerciseDomainProps = {
   workoutId: string;
   exerciseId: string;
   order: WorkoutExerciseOrder;
+  workoutDomain?: WorkoutDomain;
+  exerciseDomain?: ExerciseDomain;
 };
 
 export type WorkoutExerciseDomainCreateParams = {
   workoutId: string;
   exerciseId: string;
-  order?: number | null;
+  order: number | null;
+  workoutDomain?: WorkoutDomain;
+  exerciseDomain?: ExerciseDomain;
 };
 
 export type WorkoutExerciseDomainUpdateParams =
@@ -34,10 +41,24 @@ export default class WorkoutExerciseDomain extends AggregateRoot<WorkoutExercise
     return this.props.order;
   }
 
+  get workoutDomain(): WorkoutDomain | undefined {
+    return this.props.workoutDomain;
+  }
+
+  get exerciseDomain(): ExerciseDomain | undefined {
+    return this.props.exerciseDomain;
+  }
+
+  public toDto() {
+    return WorkoutExerciseDto.domainToDto(this);
+  }
+
   public update({
     workoutId,
     exerciseId,
     order,
+    workoutDomain,
+    exerciseDomain,
   }: WorkoutExerciseDomainUpdateParams): Either<
     WorkoutExerciseDomainError,
     WorkoutExerciseDomain
@@ -50,12 +71,50 @@ export default class WorkoutExerciseDomain extends AggregateRoot<WorkoutExercise
       this.props.order = orderOrError.value;
     }
 
+    if (workoutDomain?.id?.toValue()) {
+      if (workoutId && workoutId !== workoutDomain.id.toValue()) {
+        return left(
+          WorkoutExerciseDomainError.create(
+            WorkoutExerciseDomainError.messages
+              .workoutDomainAndWorkoutIdDoNotMatch,
+            HttpStatus.BAD_REQUEST,
+          ),
+        );
+      }
+
+      this.props.workoutDomain = workoutDomain;
+      this.props.workoutId = workoutDomain.id.toValue();
+    }
     if (workoutId) {
       this.props.workoutId = workoutId;
+      if (!workoutDomain && this.workoutDomain?.id?.toValue() !== workoutId) {
+        this.props.workoutDomain = undefined;
+      }
     }
 
+    if (exerciseDomain?.id?.toValue()) {
+      if (exerciseId && exerciseId !== exerciseDomain.id.toValue()) {
+        return left(
+          WorkoutExerciseDomainError.create(
+            WorkoutExerciseDomainError.messages
+              .exerciseDomainAndExerciseIdDoNotMatch,
+            HttpStatus.BAD_REQUEST,
+          ),
+        );
+      }
+
+      this.props.exerciseDomain = exerciseDomain;
+      this.props.exerciseId = exerciseDomain.id.toValue();
+    }
     if (exerciseId) {
       this.props.exerciseId = exerciseId;
+
+      if (
+        !exerciseDomain &&
+        this.exerciseDomain?.id?.toValue() !== exerciseId
+      ) {
+        this.props.exerciseDomain = undefined;
+      }
     }
 
     return right(this);
@@ -65,6 +124,8 @@ export default class WorkoutExerciseDomain extends AggregateRoot<WorkoutExercise
     workoutId,
     exerciseId,
     order = null,
+    workoutDomain,
+    exerciseDomain,
   }: WorkoutExerciseDomainCreateParams): Either<
     WorkoutDomainError,
     WorkoutExerciseDomainProps
@@ -79,6 +140,8 @@ export default class WorkoutExerciseDomain extends AggregateRoot<WorkoutExercise
       order: orderOrError.value,
       workoutId,
       exerciseId,
+      workoutDomain,
+      exerciseDomain,
     };
     return right(workoutExerciseProps);
   }
@@ -86,8 +149,43 @@ export default class WorkoutExerciseDomain extends AggregateRoot<WorkoutExercise
   private static isValid({
     workoutId,
     exerciseId,
-  }: WorkoutExerciseDomainCreateParams): boolean {
-    return !!workoutId && !!exerciseId;
+    workoutDomain,
+    exerciseDomain,
+  }: WorkoutExerciseDomainCreateParams): Either<
+    WorkoutExerciseDomainError,
+    boolean
+  > {
+    if (workoutDomain && workoutDomain.id?.toValue() !== workoutId) {
+      return left(
+        WorkoutExerciseDomainError.create(
+          WorkoutExerciseDomainError.messages
+            .workoutDomainAndWorkoutIdDoNotMatch,
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    }
+
+    if (exerciseDomain && exerciseDomain.id?.toValue() !== exerciseId) {
+      return left(
+        WorkoutExerciseDomainError.create(
+          WorkoutExerciseDomainError.messages
+            .exerciseDomainAndExerciseIdDoNotMatch,
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    }
+
+    const isMissingProps = !workoutId && !exerciseId;
+    if (isMissingProps) {
+      return left(
+        WorkoutExerciseDomainError.create(
+          WorkoutExerciseDomainError.messages.missingProps,
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    }
+
+    return right(true);
   }
 
   public static create(
@@ -95,13 +193,8 @@ export default class WorkoutExerciseDomain extends AggregateRoot<WorkoutExercise
     id?: UniqueEntityID,
   ): Either<WorkoutExerciseDomainError, WorkoutExerciseDomain> {
     const isValid = this.isValid(props);
-    if (!isValid) {
-      return left(
-        WorkoutExerciseDomainError.create(
-          WorkoutExerciseDomainError.messages.missingProps,
-          HttpStatus.BAD_REQUEST,
-        ),
-      );
+    if (isValid.isLeft()) {
+      return left(isValid.value);
     }
 
     const valueObjectsOrError = this.mountValueObjects(props);

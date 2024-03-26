@@ -11,7 +11,7 @@ type MountWorkoutExerciseDomainParams =
   Partial<WorkoutExerciseDomainCreateParams> & GenericCreateDomainParams;
 
 export class WorkoutExerciseDomainMock {
-  public static readonly workoutExerciseMockCreateParams: Required<WorkoutExerciseDomainCreateParams> =
+  public static readonly workoutExerciseMockCreateParams: WorkoutExerciseDomainCreateParams =
     {
       workoutId: 'workout-id',
       exerciseId: 'exercise-id',
