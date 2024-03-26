@@ -1,4 +1,6 @@
 import { Provider } from '@nestjs/common';
+import { ExerciseDomainMock } from 'test/utils/domains/exercise-domain-mock';
+import { WorkoutDomainMock } from 'test/utils/domains/workout-domain-mock';
 import { WorkoutExerciseDomainMock } from 'test/utils/domains/workout-exercise-domain.mock';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
 import WorkoutExerciseDomain from '~/modules/workout-exercise/domain/workout-exercise.domain';
@@ -17,8 +19,16 @@ const getWorkoutExerciseRepositoryProvider = ({
   workoutExerciseDomain,
 }: GetWorkoutExerciseRepositoryProviderParams = {}) => {
   if (workoutExerciseDomain === undefined) {
+    const workoutDomain = WorkoutDomainMock.mountWorkoutDomain();
+    const exerciseDomain = ExerciseDomainMock.mountExerciseDomain();
+
     workoutExerciseDomain =
-      WorkoutExerciseDomainMock.mountWorkoutExerciseDomain();
+      WorkoutExerciseDomainMock.mountWorkoutExerciseDomain({
+        workoutDomain,
+        exerciseDomain,
+        workoutId: workoutDomain.id?.toValue() as string,
+        exerciseId: exerciseDomain.id?.toValue() as string,
+      });
   }
 
   return {
@@ -56,6 +66,10 @@ const getWorkoutExerciseRepositoryProvider = ({
         workoutExerciseRepository.delete = jest
           .fn()
           .mockResolvedValue(right(true));
+
+        workoutExerciseRepository.findOneByIdWithRelations = jest
+          .fn()
+          .mockResolvedValue(workoutExerciseDomain);
       }
 
       return workoutExerciseRepository;
