@@ -10,6 +10,8 @@ export class WorkoutExerciseUseCaseError extends Error {
       `Exercise with id: ${id} was not found. Insert a valid exercise id`,
     workoutNotBelongToUser: (workoutId: string) =>
       `Workout with id: ${workoutId} does not belong to the user`,
+    workoutExerciseNotFound: (id: string) =>
+      `Workout Exercise with id: ${id} was not found. Insert a valid workout exercise id`,
   };
 
   constructor(message: string, code: number, payload?: unknown) {
