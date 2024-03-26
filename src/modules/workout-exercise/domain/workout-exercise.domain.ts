@@ -1,8 +1,10 @@
 import { HttpStatus } from '@nestjs/common';
+import ExerciseDomain from '~/modules/exercise/domain/exercise.domain';
 import { WorkoutExerciseDomainError } from '~/modules/workout-exercise/domain/errors';
 import WorkoutExerciseOrder from '~/modules/workout-exercise/domain/value-objects/order';
 import { WorkoutExerciseDto } from '~/modules/workout-exercise/dto/workout-exercise.dto';
 import { WorkoutDomainError } from '~/modules/workout/domain/errors';
+import WorkoutDomain from '~/modules/workout/domain/workout.domain';
 import { AggregateRoot } from '~/shared/domain/aggregate-root';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 import { Either, left, right } from '~/shared/either';
@@ -11,12 +13,16 @@ export type WorkoutExerciseDomainProps = {
   workoutId: string;
   exerciseId: string;
   order: WorkoutExerciseOrder;
+  workoutDomain?: WorkoutDomain;
+  exerciseDomain?: ExerciseDomain;
 };
 
 export type WorkoutExerciseDomainCreateParams = {
   workoutId: string;
   exerciseId: string;
   order: number | null;
+  workoutDomain?: WorkoutDomain;
+  exerciseDomain?: ExerciseDomain;
 };
 
 export type WorkoutExerciseDomainUpdateParams =
@@ -33,6 +39,14 @@ export default class WorkoutExerciseDomain extends AggregateRoot<WorkoutExercise
 
   get order(): WorkoutExerciseOrder {
     return this.props.order;
+  }
+
+  get workoutDomain(): WorkoutDomain | undefined {
+    return this.props.workoutDomain;
+  }
+
+  get exerciseDomain(): ExerciseDomain | undefined {
+    return this.props.exerciseDomain;
   }
 
   public toDto() {
@@ -70,6 +84,8 @@ export default class WorkoutExerciseDomain extends AggregateRoot<WorkoutExercise
     workoutId,
     exerciseId,
     order = null,
+    workoutDomain,
+    exerciseDomain,
   }: WorkoutExerciseDomainCreateParams): Either<
     WorkoutDomainError,
     WorkoutExerciseDomainProps
@@ -84,6 +100,8 @@ export default class WorkoutExerciseDomain extends AggregateRoot<WorkoutExercise
       order: orderOrError.value,
       workoutId,
       exerciseId,
+      workoutDomain,
+      exerciseDomain,
     };
     return right(workoutExerciseProps);
   }

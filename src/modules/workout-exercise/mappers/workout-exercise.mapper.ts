@@ -1,17 +1,48 @@
+import { Injectable } from '@nestjs/common';
+import ExerciseDomain from '~/modules/exercise/domain/exercise.domain';
+import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
+import { WorkoutExerciseDomainError } from '~/modules/workout-exercise/domain/errors';
 import WorkoutExerciseDomain from '~/modules/workout-exercise/domain/workout-exercise.domain';
 import { WorkoutExercise as WorkoutExerciseEntity } from '~/modules/workout-exercise/entities/workout-exercise.entity';
-import { WorkoutDomainError } from '~/modules/workout/domain/errors';
+import WorkoutDomain from '~/modules/workout/domain/workout.domain';
+import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
 import { Mapper } from '~/shared/domain/mapper';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
-import { Either } from '~/shared/either';
+import { Either, left } from '~/shared/either';
 
+@Injectable()
 export default class WorkoutExerciseMapper
   implements Mapper<WorkoutExerciseDomain, Partial<WorkoutExerciseEntity>>
 {
+  constructor(
+    private readonly workoutMapper: WorkoutMapper,
+    private readonly exerciseMapper: ExerciseMapper,
+  ) {}
+
   public toDomain(
     raw: WorkoutExerciseEntity,
-  ): Either<WorkoutDomainError, WorkoutExerciseDomain> {
-    const { id, workoutId, exerciseId, order } = raw;
+  ): Either<WorkoutExerciseDomainError, WorkoutExerciseDomain> {
+    const { id, workoutId, exerciseId, order, workout, exercise } = raw;
+
+    let workoutDomain: WorkoutDomain | undefined;
+    if (workout) {
+      const workoutOrError = this.workoutMapper.toDomain(workout);
+      if (workoutOrError.isLeft()) {
+        return left(workoutOrError.value);
+      }
+
+      workoutDomain = workoutOrError.value;
+    }
+
+    let exerciseDomain: ExerciseDomain | undefined;
+    if (exercise) {
+      const exerciseOrError = this.exerciseMapper.toDomain(exercise);
+      if (exerciseOrError.isLeft()) {
+        return left(exerciseOrError.value);
+      }
+
+      exerciseDomain = exerciseOrError.value;
+    }
 
     const entityId = new UniqueEntityID(id);
     const workoutExerciseDomainOrError = WorkoutExerciseDomain.create(
@@ -19,6 +50,8 @@ export default class WorkoutExerciseMapper
         workoutId,
         exerciseId,
         order,
+        workoutDomain,
+        exerciseDomain,
       },
       entityId,
     );
