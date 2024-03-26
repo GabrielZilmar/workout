@@ -43,7 +43,7 @@ export default class WorkoutExerciseRepository extends BaseRepository<
       .from(WorkoutExercise, 'we')
       .leftJoin('we.workout', 'w')
       .where('we.workoutId = :workoutId', { workoutId })
-      .andWhere('w.userId = :userId OR w.isPrivate = false', { userId })
+      .andWhere('(w.userId = :userId OR w.isPrivate = false)', { userId })
       .skip(skip)
       .take(take)
       .getManyAndCount();
