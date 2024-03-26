@@ -51,6 +51,7 @@ export default class WorkoutExerciseRepository extends BaseRepository<
       .leftJoin('we.workout', 'w')
       .where('we.workoutId = :workoutId', { workoutId })
       .andWhere('(w.userId = :userId OR w.isPrivate = false)', { userId })
+      .orderBy('we.order', 'ASC')
       .skip(skip)
       .take(take)
       .getManyAndCount();
