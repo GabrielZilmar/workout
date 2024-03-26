@@ -35,6 +35,10 @@ const getWorkoutExerciseRepositoryProvider = ({
           .fn()
           .mockResolvedValue({ items: [workoutExerciseDomain], count: 1 });
 
+        workoutExerciseRepository.findUsersWorkoutExercises = jest
+          .fn()
+          .mockResolvedValue({ items: [workoutExerciseDomain], count: 1 });
+
         workoutExerciseRepository.findOneById = jest
           .fn()
           .mockResolvedValue(workoutExerciseDomain);
