@@ -8,7 +8,7 @@ import { PaginatedDto } from '~/shared/dto/paginated';
 type FindByWorkoutIdParams = FindByWorkoutIdDto &
   PaginatedDto & { userId: string };
 type FindByWorkoutIdResponse = Promise<{
-  item: WorkoutExerciseDto[];
+  items: WorkoutExerciseDto[];
   count: number;
 }>;
 
@@ -48,7 +48,7 @@ export class FindByWorkoutId
     });
 
     return {
-      item: workoutsExercisesDto,
+      items: workoutsExercisesDto,
       count,
     };
   }
