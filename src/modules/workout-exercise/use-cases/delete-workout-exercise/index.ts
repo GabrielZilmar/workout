@@ -7,7 +7,6 @@ import {
 import { DeleteWorkoutExerciseDto } from '~/modules/workout-exercise/dto/delete-workout-exercise.dto';
 import { WorkoutExerciseUseCaseError } from '~/modules/workout-exercise/use-cases/errors';
 import WorkoutExerciseRepository from '~/services/database/typeorm/repositories/workout-exercise-repository';
-import WorkoutRepository from '~/services/database/typeorm/repositories/workout-repository';
 import { UseCase } from '~/shared/core/use-case';
 
 type DeleteWorkoutExerciseParams = DeleteWorkoutExerciseDto & {
@@ -21,7 +20,6 @@ export default class DeleteWorkoutExercise
 {
   constructor(
     private readonly workoutExerciseRepository: WorkoutExerciseRepository,
-    private readonly workoutRepository: WorkoutRepository,
   ) {}
 
   public async execute({
