@@ -21,7 +21,9 @@ export class Login implements UseCase<LoginParams, LoginResult> {
   constructor(private readonly userRepository: UserRepository) {}
 
   public async execute({ email, password }: LoginParams): Promise<LoginResult> {
-    const userDomainOrError = await this.userRepository.findByEmail(email);
+    const userDomainOrError = await this.userRepository.findByEmail(
+      email.toLocaleLowerCase(),
+    );
 
     if (userDomainOrError.isLeft()) {
       throw new HttpException(
