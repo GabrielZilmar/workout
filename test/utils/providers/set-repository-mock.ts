@@ -28,6 +28,10 @@ const getSetRepositoryProvider = ({
 
         setRepository.create = jest.fn().mockResolvedValue(right(setDomain));
         setRepository.findOneById = jest.fn().mockResolvedValue(setDomain);
+        setRepository.findByWorkoutExerciseId = jest.fn().mockResolvedValue({
+          items: [setDomain],
+          count: 1,
+        });
         setRepository.update = jest.fn().mockResolvedValue(right(true));
         setRepository.delete = jest.fn().mockResolvedValue(right(true));
       }
