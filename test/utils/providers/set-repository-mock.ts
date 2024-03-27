@@ -26,7 +26,7 @@ const getSetRepositoryProvider = ({
           InstanceType<typeof SetRepository>
         >;
 
-        setRepository.create = jest.fn().mockResolvedValue(setDomain);
+        setRepository.create = jest.fn().mockResolvedValue(right(setDomain));
         setRepository.findOneById = jest.fn().mockResolvedValue(setDomain);
         setRepository.update = jest.fn().mockResolvedValue(right(true));
         setRepository.delete = jest.fn().mockResolvedValue(right(true));
