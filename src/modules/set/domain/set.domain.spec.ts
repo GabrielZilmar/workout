@@ -54,7 +54,7 @@ describe('SetDomain', () => {
     expect(set.isLeft()).toBeTruthy();
     expect(set.value).toEqual(
       SetDomainError.create(
-        SetDomainError.messages.invalidSetWeight,
+        SetDomainError.messages.missingProps,
         HttpStatus.BAD_REQUEST,
       ),
     );
