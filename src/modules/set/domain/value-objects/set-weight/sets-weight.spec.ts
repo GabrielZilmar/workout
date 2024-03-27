@@ -32,7 +32,7 @@ describe('SetWeight value object', () => {
       'isValid',
     );
 
-    const setWeightValue = 0;
+    const setWeightValue = -1;
     const setWeight = SetWeight.create({ value: setWeightValue });
 
     expect(setWeight.isLeft()).toBeTruthy();

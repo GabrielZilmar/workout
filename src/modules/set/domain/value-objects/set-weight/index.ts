@@ -13,7 +13,7 @@ export default class SetWeight extends ValueObject<SetWeightProps> {
   }
 
   private static isValid(value: number) {
-    return value > 0;
+    return value >= 0;
   }
 
   public static create(

@@ -3,6 +3,7 @@ import { HttpStatus } from '@nestjs/common';
 export class SetDomainError extends Error {
   public readonly code: number;
   public static messages = {
+    missingProps: 'Missing props to create set',
     invalidNumReps: 'Num reps must be positive number',
     invalidSetWeight: 'Set weight must be positive number',
     invalidNumDrops: 'Num drops must be positive number',
