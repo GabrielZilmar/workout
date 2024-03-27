@@ -3,6 +3,7 @@ import { SetDomainError } from '~/modules/set/domain/errors';
 import NumDrops from '~/modules/set/domain/value-objects/num-drops';
 import NumReps from '~/modules/set/domain/value-objects/num-reps';
 import SetWeight from '~/modules/set/domain/value-objects/set-weight';
+import { SetDto } from '~/modules/set/dto/set.dto';
 import { AggregateRoot } from '~/shared/domain/aggregate-root';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 import { Either, left, right } from '~/shared/either';
@@ -38,6 +39,10 @@ export default class SetDomain extends AggregateRoot<SetDomainProps> {
 
   get numDrops(): NumDrops {
     return this.props.numDrops;
+  }
+
+  public toDto() {
+    return SetDto.domainToDto(this);
   }
 
   public update({
