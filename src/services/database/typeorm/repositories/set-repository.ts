@@ -39,6 +39,7 @@ export default class SetRepository extends BaseRepository<Set, SetDomain> {
       .select('set')
       .from(Set, 'set')
       .leftJoin('set.workoutExercise', 'we')
+      .leftJoin('we.workout', 'w')
       .where('we.id = :workoutExerciseId', {
         workoutExerciseId,
       })
