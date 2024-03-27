@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -11,8 +12,13 @@ import {
 import { AuthGuard } from '~/guards/auth.guard';
 import { CreateSet } from '~/modules/set/domain/use-cases/create-set';
 import { ListSetByWorkoutExerciseId } from '~/modules/set/domain/use-cases/list-set-by-workout-exercise';
+import { UpdateSet } from '~/modules/set/domain/use-cases/update-set';
 import { CreateSetDto } from '~/modules/set/dto/create-set.dto';
 import { ListSetByWorkoutExerciseIdDto } from '~/modules/set/dto/list-set-by-workout-exercise-id.dto';
+import {
+  UpdateSetBodyDto,
+  UpdateSetParamsDto,
+} from '~/modules/set/dto/update-set.dto';
 import { PaginatedDto } from '~/shared/dto/paginated';
 import { RequestWithUser } from '~/shared/types/request';
 
@@ -22,6 +28,7 @@ export class SetController {
   constructor(
     private readonly createSet: CreateSet,
     private readonly listSetByWorkoutExerciseId: ListSetByWorkoutExerciseId,
+    private readonly updateSet: UpdateSet,
   ) {}
 
   @Post()
@@ -42,5 +49,15 @@ export class SetController {
       userId,
       workoutExerciseId,
     });
+  }
+
+  @Put('/:id')
+  update(
+    @Req() req: RequestWithUser,
+    @Param() { id }: UpdateSetParamsDto,
+    @Body() body: UpdateSetBodyDto,
+  ) {
+    const userId = req.user.id;
+    return this.updateSet.execute({ id, userId, ...body });
   }
 }
