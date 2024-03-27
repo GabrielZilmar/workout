@@ -1,6 +1,6 @@
 import { IsUUID } from 'class-validator';
 
-export class ListByWorkoutExerciseIdDto {
+export class ListSetByWorkoutExerciseIdDto {
   @IsUUID()
   workoutExerciseId: string;
 }

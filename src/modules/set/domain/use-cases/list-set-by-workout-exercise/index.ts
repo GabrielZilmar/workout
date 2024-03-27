@@ -1,21 +1,21 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { ListByWorkoutExerciseIdDto } from '~/modules/set/dto/list-by-workout-exercise-id.dto';
+import { ListSetByWorkoutExerciseIdDto } from '~/modules/set/dto/list-set-by-workout-exercise-id.dto';
 import { SetDto } from '~/modules/set/dto/set.dto';
 import SetRepository from '~/services/database/typeorm/repositories/set-repository';
 import { UseCase } from '~/shared/core/use-case';
 import { PaginatedDto } from '~/shared/dto/paginated';
 
-type ListByWorkoutExerciseIdParams = ListByWorkoutExerciseIdDto &
+type ListSetByWorkoutExerciseIdParams = ListSetByWorkoutExerciseIdDto &
   PaginatedDto & { userId: string };
-type ListByWorkoutExerciseIdResult = Promise<{
+type ListSetByWorkoutExerciseIdResult = Promise<{
   items: SetDto[];
   count: number;
 }>;
 
 @Injectable()
-export class ListByWorkoutExerciseId
+export class ListSetByWorkoutExerciseId
   implements
-    UseCase<ListByWorkoutExerciseIdParams, ListByWorkoutExerciseIdResult>
+    UseCase<ListSetByWorkoutExerciseIdParams, ListSetByWorkoutExerciseIdResult>
 {
   constructor(private readonly setRepository: SetRepository) {}
 
@@ -24,7 +24,7 @@ export class ListByWorkoutExerciseId
     workoutExerciseId,
     skip,
     take,
-  }: ListByWorkoutExerciseIdParams): ListByWorkoutExerciseIdResult {
+  }: ListSetByWorkoutExerciseIdParams): ListSetByWorkoutExerciseIdResult {
     const { items, count } = await this.setRepository.findByWorkoutExerciseId({
       where: { userId, workoutExerciseId },
       skip,
