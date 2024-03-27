@@ -121,7 +121,7 @@ export default class SetDomain extends AggregateRoot<SetDomainProps> {
     if (!SetDomain.isValid(props)) {
       return left(
         SetDomainError.create(
-          SetDomainError.messages.invalidSetWeight,
+          SetDomainError.messages.missingProps,
           HttpStatus.BAD_REQUEST,
         ),
       );
