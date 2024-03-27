@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -11,9 +12,11 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '~/guards/auth.guard';
 import { CreateSet } from '~/modules/set/domain/use-cases/create-set';
+import { DeleteSet } from '~/modules/set/domain/use-cases/delete-set';
 import { ListSetByWorkoutExerciseId } from '~/modules/set/domain/use-cases/list-set-by-workout-exercise';
 import { UpdateSet } from '~/modules/set/domain/use-cases/update-set';
 import { CreateSetDto } from '~/modules/set/dto/create-set.dto';
+import { DeleteSetParamsDto } from '~/modules/set/dto/delete-set.dto';
 import { ListSetByWorkoutExerciseIdDto } from '~/modules/set/dto/list-set-by-workout-exercise-id.dto';
 import {
   UpdateSetBodyDto,
@@ -29,6 +32,7 @@ export class SetController {
     private readonly createSet: CreateSet,
     private readonly listSetByWorkoutExerciseId: ListSetByWorkoutExerciseId,
     private readonly updateSet: UpdateSet,
+    private readonly deleteSet: DeleteSet,
   ) {}
 
   @Post()
@@ -59,5 +63,11 @@ export class SetController {
   ) {
     const userId = req.user.id;
     return this.updateSet.execute({ id, userId, ...body });
+  }
+
+  @Delete('/:id')
+  delete(@Req() req: RequestWithUser, @Param() { id }: DeleteSetParamsDto) {
+    const userId = req.user.id;
+    return this.deleteSet.execute({ id, userId });
   }
 }
