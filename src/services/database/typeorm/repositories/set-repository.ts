@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import SetDomain from '~/modules/set/domain/set.domain';
 import { Set } from '~/modules/set/entities/set.entity';
 import SetMapper from '~/modules/set/mappers/set.mapper';
+import { WorkoutExercise } from '~/modules/workout-exercise/entities/workout-exercise.entity';
+import { Workout } from '~/modules/workout/entities/workout.entity';
 import { BaseRepository } from '~/services/database/typeorm/repositories/base/base-repository';
 
 const DEFAULT_TAKE_ITEMS = 10;
@@ -36,14 +38,33 @@ export default class SetRepository extends BaseRepository<Set, SetDomain> {
   }: FindByWorkoutExerciseIdParams): FindByWorkoutExerciseIdResult {
     const [items, count] = await this.repository
       .createQueryBuilder()
-      .select('set')
-      .from(Set, 'set')
-      .leftJoin('set.workoutExercise', 'we')
-      .leftJoin('we.workout', 'w')
-      .where('we.id = :workoutExerciseId', {
-        workoutExerciseId,
+      .select('Set')
+      .where((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select('id')
+          .from(WorkoutExercise, 'we')
+          .where('we.id = :workoutExerciseId', {
+            workoutExerciseId,
+          })
+          .andWhere((qb) => {
+            const subQuery = qb
+              .subQuery()
+              .select('id')
+              .from(Workout, 'w')
+              .where('w.id = we.workoutId')
+              .andWhere('(w.userId = :userId OR w.isPrivate = false)', {
+                userId,
+              })
+              .getQuery();
+
+            return `(we.workoutId) IN ${subQuery}`;
+          })
+          .getQuery();
+
+        return `(Set.workoutExerciseId) IN ${subQuery}`;
       })
-      .andWhere('(w.userId = :userId OR w.isPrivate = false)', { userId })
+      .groupBy('Set.id')
       .skip(skip)
       .take(take)
       .getManyAndCount();
