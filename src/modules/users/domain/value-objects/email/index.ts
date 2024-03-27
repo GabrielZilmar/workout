@@ -29,6 +29,7 @@ export default class Email extends ValueObject<EmailProps> {
       );
     }
 
+    props.value = props.value.toLowerCase();
     return right(new Email(props));
   }
 }
