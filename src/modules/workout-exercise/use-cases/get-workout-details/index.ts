@@ -33,10 +33,17 @@ export class GetWorkoutExerciseDetails
         relations: ['workout', 'sets'],
       });
 
-    if (!workoutExercise?.workoutDomain) {
+    if (!workoutExercise) {
       throw new HttpException(
         WorkoutExerciseUseCaseError.messages.workoutExerciseNotFound(id),
         HttpStatus.NOT_FOUND,
+      );
+    }
+
+    if (!workoutExercise.workoutDomain) {
+      throw new HttpException(
+        WorkoutExerciseUseCaseError.messages.workoutNotFound(id),
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
 
