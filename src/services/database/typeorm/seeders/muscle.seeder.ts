@@ -23,8 +23,8 @@ type Muscles =
 const MuscleMap: MuscleMapType = {
   quadriceps: 'Quadriceps',
   hamstrings: 'Hamstrings',
-  gluteus: 'Gluteus Maximus',
-  chest: 'Chest (Pectorals)',
+  gluteus: 'Gluteus',
+  chest: 'Chest',
   back: 'Back',
   biceps: 'Biceps',
   triceps: 'Triceps',
@@ -43,7 +43,7 @@ export default class MuscleSeeder implements Seeder {
    */
   track = true;
 
-  public async run(dataSource: DataSource): Promise<any> {
+  public async run(dataSource: DataSource): Promise<void> {
     const repository = dataSource.getRepository(Muscle);
     await repository.insert(Object.values(MuscleMap).map((name) => ({ name })));
   }
