@@ -80,12 +80,7 @@ export default class UserRepository extends BaseRepository<User, UserDomain> {
 
       return right(newItemDomain.value);
     } catch (err) {
-      return left(
-        RepositoryError.create(
-          RepositoryError.messages.createError,
-          (err as Error).message,
-        ),
-      );
+      return left(RepositoryError.create((err as Error).message));
     }
   }
 
@@ -107,12 +102,7 @@ export default class UserRepository extends BaseRepository<User, UserDomain> {
 
       return right(true);
     } catch (err) {
-      return left(
-        RepositoryError.create(
-          RepositoryError.messages.updateError,
-          (err as Error).message,
-        ),
-      );
+      return left(RepositoryError.create((err as Error).message));
     }
   }
 

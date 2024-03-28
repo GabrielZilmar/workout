@@ -105,12 +105,7 @@ export abstract class BaseRepository<T extends { id: string }, D>
 
       return right(true);
     } catch (err) {
-      return left(
-        RepositoryError.create(
-          RepositoryError.messages.updateError,
-          (err as Error).message,
-        ),
-      );
+      return left(RepositoryError.create((err as Error).message));
     }
   }
 
@@ -136,12 +131,7 @@ export abstract class BaseRepository<T extends { id: string }, D>
 
       return right(itemDomain.value);
     } catch (err) {
-      return left(
-        RepositoryError.create(
-          RepositoryError.messages.saveError,
-          (err as Error).message,
-        ),
-      );
+      return left(RepositoryError.create((err as Error).message));
     }
   }
 
