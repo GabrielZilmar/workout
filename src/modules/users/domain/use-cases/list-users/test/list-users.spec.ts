@@ -2,7 +2,7 @@ import { HttpException, InternalServerErrorException } from '@nestjs/common';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { ListUsers } from '~/modules/users/domain/use-cases/list-users';
 import { ListUsersMock } from '~/modules/users/domain/use-cases/list-users/test/list-users.mock';
-import { UserDto } from '~/modules/users/dto/user.dto';
+import { SimpleUserDto } from '~/modules/users/dto/simple-user.dto';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 
 jest.mock('~/services/database/typeorm/repositories/users-repository');
@@ -27,7 +27,9 @@ describe('List users use case', () => {
     const userRepository = userRepositoryMock;
     const listUsers = new ListUsers(userRepository);
 
-    const usersDto = usersDomain.map((user) => UserDto.domainToDto(user).value);
+    const usersDto = usersDomain.map(
+      (user) => SimpleUserDto.domainToDto(user).value,
+    );
 
     const users = await listUsers.execute({});
     expect(users).toMatchObject({ users: usersDto, count: usersDto.length });

@@ -5,13 +5,13 @@ import {
 } from '@nestjs/common';
 import { FindOptionsWhere, ILike } from 'typeorm';
 import { FindAllUsersDto } from '~/modules/users/dto/find-all-users.dto';
-import { UserDto } from '~/modules/users/dto/user.dto';
+import { SimpleUserDto } from '~/modules/users/dto/simple-user.dto';
 import { User } from '~/modules/users/entities/user.entity';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 import { UseCase } from '~/shared/core/use-case';
 
 type ListUsersParams = FindAllUsersDto;
-type ListUsersResult = Promise<{ users: UserDto[]; count: number }>;
+type ListUsersResult = Promise<{ users: SimpleUserDto[]; count: number }>;
 
 @Injectable()
 export class ListUsers implements UseCase<ListUsersParams, ListUsersResult> {
@@ -56,9 +56,9 @@ export class ListUsers implements UseCase<ListUsersParams, ListUsersResult> {
         take,
       });
 
-      const usersDto: UserDto[] = [];
+      const usersDto: SimpleUserDto[] = [];
       users.forEach((user) => {
-        const userDto = user.toDto();
+        const userDto = user.toSimpleDto();
 
         if (userDto.isLeft()) {
           throw new HttpException(
