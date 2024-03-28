@@ -40,6 +40,7 @@ export class WorkoutExerciseDomainMock {
       workoutId: workoutId ?? this.workoutExerciseMockCreateParams.workoutId,
       exerciseId: exerciseId ?? this.workoutExerciseMockCreateParams.exerciseId,
       order: orderValueObject,
+      setDtos: [],
     };
   }
 

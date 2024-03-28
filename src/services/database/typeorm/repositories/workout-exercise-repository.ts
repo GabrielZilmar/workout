@@ -21,7 +21,7 @@ type UsersWorkoutExerciseFindResult = {
   count: number;
 };
 
-type FindOneByIdRelationsParams = 'workout' | 'exercise';
+type FindOneByIdRelationsParams = 'workout' | 'exercise' | 'sets';
 type FindOneByIdParams = {
   id: string;
   relations?: FindOneByIdRelationsParams[];

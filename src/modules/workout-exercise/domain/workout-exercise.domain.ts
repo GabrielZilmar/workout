@@ -1,7 +1,9 @@
 import { HttpStatus } from '@nestjs/common';
 import ExerciseDomain from '~/modules/exercise/domain/exercise.domain';
+import { SetDto } from '~/modules/set/dto/set.dto';
 import { WorkoutExerciseDomainError } from '~/modules/workout-exercise/domain/errors';
 import WorkoutExerciseOrder from '~/modules/workout-exercise/domain/value-objects/order';
+import { WorkoutExerciseDetailsDto } from '~/modules/workout-exercise/dto/workout-exercise-details.dto';
 import { WorkoutExerciseDto } from '~/modules/workout-exercise/dto/workout-exercise.dto';
 import { WorkoutDomainError } from '~/modules/workout/domain/errors';
 import WorkoutDomain from '~/modules/workout/domain/workout.domain';
@@ -15,6 +17,7 @@ export type WorkoutExerciseDomainProps = {
   order: WorkoutExerciseOrder;
   workoutDomain?: WorkoutDomain;
   exerciseDomain?: ExerciseDomain;
+  setDtos?: SetDto[];
 };
 
 export type WorkoutExerciseDomainCreateParams = {
@@ -23,6 +26,7 @@ export type WorkoutExerciseDomainCreateParams = {
   order: number | null;
   workoutDomain?: WorkoutDomain;
   exerciseDomain?: ExerciseDomain;
+  setDtos?: SetDto[];
 };
 
 export type WorkoutExerciseDomainUpdateParams =
@@ -49,8 +53,16 @@ export default class WorkoutExerciseDomain extends AggregateRoot<WorkoutExercise
     return this.props.exerciseDomain;
   }
 
+  get setDtos(): SetDto[] {
+    return this.props.setDtos || [];
+  }
+
   public toDto() {
     return WorkoutExerciseDto.domainToDto(this);
+  }
+
+  public toDetailsDto() {
+    return WorkoutExerciseDetailsDto.domainToDto(this);
   }
 
   public update({
@@ -126,6 +138,7 @@ export default class WorkoutExerciseDomain extends AggregateRoot<WorkoutExercise
     order = null,
     workoutDomain,
     exerciseDomain,
+    setDtos = [],
   }: WorkoutExerciseDomainCreateParams): Either<
     WorkoutDomainError,
     WorkoutExerciseDomainProps
@@ -142,6 +155,7 @@ export default class WorkoutExerciseDomain extends AggregateRoot<WorkoutExercise
       exerciseId,
       workoutDomain,
       exerciseDomain,
+      setDtos,
     };
     return right(workoutExerciseProps);
   }
