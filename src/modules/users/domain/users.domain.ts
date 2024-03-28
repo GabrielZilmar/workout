@@ -16,6 +16,7 @@ import { UserDto } from '~/modules/users/dto/user.dto';
 import { AggregateRoot } from '~/shared/domain/aggregate-root';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 import { Either, left, right } from '~/shared/either';
+import { SimpleUserDto } from '~/modules/users/dto/simple-user.dto';
 
 export type UserDomainCreateParams = {
   username: string;
@@ -89,6 +90,10 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
 
   public toDto() {
     return UserDto.domainToDto(this);
+  }
+
+  public toSimpleDto() {
+    return SimpleUserDto.domainToDto(this);
   }
 
   public async update({
