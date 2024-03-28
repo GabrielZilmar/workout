@@ -8,6 +8,7 @@ import {
   Query,
   Put,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { AuthGuard } from '~/guards/auth.guard';
 import { UserDataGuard } from '~/guards/user-data.guard';
@@ -24,6 +25,7 @@ import {
   CreateUserParamsDto,
   UpdateUserBodyDto,
 } from '~/modules/users/dto/update-user.dto';
+import { RequestWithUser } from '~/shared/types/request';
 
 @Controller('/api/users')
 export class UsersController {
@@ -48,8 +50,9 @@ export class UsersController {
 
   @Get(':idOrUsername')
   @UseGuards(AuthGuard)
-  findOne(@Param() idOrUsername: GetUserDto) {
-    return this.getUser.execute(idOrUsername);
+  findOne(@Req() req: RequestWithUser, @Param() { idOrUsername }: GetUserDto) {
+    const userId = req.user.id;
+    return this.getUser.execute({ userId, idOrUsername });
   }
 
   @Put(':id')
