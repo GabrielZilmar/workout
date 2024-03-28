@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import ExerciseDomain from '~/modules/exercise/domain/exercise.domain';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
+import { SetDto } from '~/modules/set/dto/set.dto';
+import SetMapper from '~/modules/set/mappers/set.mapper';
 import { WorkoutExerciseDomainError } from '~/modules/workout-exercise/domain/errors';
 import WorkoutExerciseDomain from '~/modules/workout-exercise/domain/workout-exercise.domain';
 import { WorkoutExercise as WorkoutExerciseEntity } from '~/modules/workout-exercise/entities/workout-exercise.entity';
@@ -17,12 +19,13 @@ export default class WorkoutExerciseMapper
   constructor(
     private readonly workoutMapper: WorkoutMapper,
     private readonly exerciseMapper: ExerciseMapper,
+    private readonly setMapper: SetMapper,
   ) {}
 
   public toDomain(
     raw: WorkoutExerciseEntity,
   ): Either<WorkoutExerciseDomainError, WorkoutExerciseDomain> {
-    const { id, workoutId, exerciseId, order, workout, exercise } = raw;
+    const { id, workoutId, exerciseId, order, workout, exercise, sets } = raw;
 
     let workoutDomain: WorkoutDomain | undefined;
     if (workout) {
@@ -44,6 +47,23 @@ export default class WorkoutExerciseMapper
       exerciseDomain = exerciseOrError.value;
     }
 
+    const setDtos: SetDto[] = [];
+    if (sets?.length) {
+      for (const set of sets) {
+        const setDomain = this.setMapper.toDomain(set);
+        if (setDomain.isLeft()) {
+          return left(setDomain.value);
+        }
+
+        const setDto = setDomain.value.toDto();
+        if (setDto.isLeft()) {
+          return left(setDto.value);
+        }
+
+        setDtos.push(setDto.value);
+      }
+    }
+
     const entityId = new UniqueEntityID(id);
     const workoutExerciseDomainOrError = WorkoutExerciseDomain.create(
       {
@@ -52,6 +72,7 @@ export default class WorkoutExerciseMapper
         order,
         workoutDomain,
         exerciseDomain,
+        setDtos,
       },
       entityId,
     );
