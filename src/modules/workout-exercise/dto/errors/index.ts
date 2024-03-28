@@ -4,6 +4,7 @@ export class WorkoutExerciseDtoError extends Error {
   public readonly code: number;
   public static messages = {
     missingId: 'Could not transform to DTO. Missing ID',
+    missingSetDomain: 'Could not transform to DTO. Missing Set Domain',
   };
 
   constructor(message: string, code: number) {
