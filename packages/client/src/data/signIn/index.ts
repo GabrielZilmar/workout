@@ -1,5 +1,5 @@
 import { AxiosResponse, AxiosError } from "axios";
-import { axiosInstance } from "~/data/api";
+import axiosInstance from "~/data/api";
 
 type SignInApiResponse = {
   accessToken: string;
