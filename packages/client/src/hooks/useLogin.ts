@@ -1,29 +1,37 @@
-import { DefaultError, useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import signIn, { SignInPayload } from "~/data/signIn";
-import { WorkoutUser } from "~/types/user";
+import { enqueueSnackbar } from "notistack";
+import signIn, { SignInPayload, SignInResult } from "~/data/signIn";
+import SessionStorage, { SESSION_ITEMS } from "~/shared/storage/session";
+import { HttpStatus } from "~/constants/httpStatus";
 
 export const useLogin = () => {
   const navigate = useNavigate();
-  // const { enqueueSnackbar } = useSnackbar();
 
   const { mutate: signInMutation } = useMutation<
-    WorkoutUser,
-    DefaultError,
+    SignInResult,
+    AxiosError,
     SignInPayload
   >({
     mutationFn: (payload) => signIn(payload),
-    onSuccess: (data: WorkoutUser) => {
-      console.log("data", data);
-      // TODO: save the user in the state
-      navigate("/home");
+    onSuccess: ({ data }: SignInResult) => {
+      SessionStorage.setItem({
+        key: SESSION_ITEMS.accessToken,
+        value: data.accessToken,
+      });
+      navigate("/");
     },
-    onError: (error: Error) => {
-      console.log("🚀 ~ useLogin ~ error:", error);
-      // enqueueSnackbar('Ops.. Error on sign in. Try again!', {
-      //   variant: 'error'
-      // });
-      alert(`Ops, error ${error}`);
+    onError: ({ response }: AxiosError) => {
+      if (response?.status === HttpStatus.UNAUTHORIZED) {
+        return enqueueSnackbar("Ops.. Invalid password or email. Try again!", {
+          variant: "error",
+        });
+      }
+
+      return enqueueSnackbar("Ops.. Error on sign in. Try again!", {
+        variant: "error",
+      });
     },
   });
 
