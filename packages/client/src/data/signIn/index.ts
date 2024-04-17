@@ -1,23 +1,26 @@
+import { AxiosResponse, AxiosError } from "axios";
 import { axiosInstance } from "~/data/api";
+
+type SignInApiResponse = {
+  accessToken: string;
+};
 
 export type SignInPayload = {
   email: string;
   password: string;
 };
 
-export const signIn = async (payload: SignInPayload): Promise<WorkoutUser> => {
-  // console.log(process.env.REACT_APP_API_BASE_URL);
+export type SignInResult = AxiosResponse<SignInApiResponse, AxiosError>;
 
-  const users = await axiosInstance.post<WorkoutUser>("/session/login", {
-    ...payload,
-  });
+export const signIn = async (payload: SignInPayload): Promise<SignInResult> => {
+  const response = await axiosInstance.post<SignInApiResponse>(
+    "/session/login",
+    {
+      ...payload,
+    }
+  );
 
-  console.log(users);
-  if (!users.data) {
-    throw new Error("Error to login");
-  }
-
-  return users.data;
+  return response;
 };
 
 export default signIn;
