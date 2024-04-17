@@ -1,8 +1,8 @@
 import axios from "axios";
+import Env from "~/shared/env";
 
 export const axiosInstance = axios.create({
-  // baseURL: process.env.REACT_APP_API_BASE_URL,
-  baseURL: "process.env.REACT_APP_API_BASE_URL",
+  baseURL: Env.apiBaseUrl,
   headers: {
     // Authorization: `Bearer ${localStorage.getItem("token")}`,
     "Content-Type": "application/json",
