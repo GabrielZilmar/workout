@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { StyledOutlineButton } from "~/components/buttons";
 import { StyledOutlineInput } from "~/components/input";
 import { SignInPayload } from "~/data/signIn";
@@ -12,9 +12,9 @@ export default function SignIn() {
   });
   const { signInMutation } = useLogin();
 
-  const handleSubmit = async () => {
-    const test = signInMutation(signInPayload);
-    console.log("🚀 ~ handleSubmit ~ test:", test);
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    signInMutation(signInPayload);
   };
 
   return (
