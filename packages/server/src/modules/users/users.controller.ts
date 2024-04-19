@@ -14,6 +14,7 @@ import { AuthGuard } from '~/guards/auth.guard';
 import { UserDataGuard } from '~/guards/user-data.guard';
 import { CreateUser } from '~/modules/users/domain/use-cases/create-user';
 import { DeleteUser } from '~/modules/users/domain/use-cases/delete-user';
+import { GetMe } from '~/modules/users/domain/use-cases/get-me';
 import { GetUser } from '~/modules/users/domain/use-cases/get-user';
 import { ListUsers } from '~/modules/users/domain/use-cases/list-users';
 import { UpdateUser } from '~/modules/users/domain/use-cases/update-user';
@@ -35,6 +36,7 @@ export class UsersController {
     private readonly getUser: GetUser,
     private readonly updateUser: UpdateUser,
     private readonly deleteUser: DeleteUser,
+    private readonly getMeUseCase: GetMe,
   ) {}
 
   @Post()
@@ -46,6 +48,13 @@ export class UsersController {
   @UseGuards(AuthGuard)
   findAll(@Query() query: FindAllUsersDto) {
     return this.listUsers.execute(query);
+  }
+
+  @Get('/me')
+  @UseGuards(AuthGuard)
+  getMe(@Req() req: RequestWithUser) {
+    const userId = req.user.id;
+    return this.getMeUseCase.execute({ userId });
   }
 
   @Get(':idOrUsername')
