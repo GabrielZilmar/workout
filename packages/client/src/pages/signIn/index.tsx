@@ -75,7 +75,11 @@ export default function SignIn() {
                 <div className="text-sm">
                   <a
                     href="#"
-                    className="font-semibold text-indigo-600 hover:text-indigo-500"
+                    className="
+                      font-semibold text-indigo-600
+                      hover:text-indigo-500
+                      opacity-50
+                      cursor-not-allowed"
                   >
                     Forgot password?
                   </a>
