@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
 import { StyledOutlineButton } from "~/components/buttons";
 import { StyledOutlineInput } from "~/components/input";
+import { AnimatedTooltip } from "~/components/tooltip/animated";
 import { SignInPayload } from "~/data/signIn";
 import { useLogin } from "~/hooks";
 
@@ -72,18 +73,20 @@ export default function SignIn() {
                 >
                   Password
                 </label>
-                <div className="text-sm">
-                  <a
-                    href="#"
-                    className="
+                <AnimatedTooltip message="Not implemented yet 😔">
+                  <div className="text-sm">
+                    <a
+                      href="#"
+                      className="
                       font-semibold text-indigo-600
                       hover:text-indigo-500
                       opacity-50
                       cursor-not-allowed"
-                  >
-                    Forgot password?
-                  </a>
-                </div>
+                    >
+                      Forgot password?
+                    </a>
+                  </div>
+                </AnimatedTooltip>
               </div>
               <div className="mt-2">
                 <StyledOutlineInput
