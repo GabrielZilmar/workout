@@ -5,13 +5,13 @@ import { useUser } from "~/hooks";
 type ProtectedRouteParams = React.FC<{ children: React.ReactNode }>;
 
 const ProtectedRoute: ProtectedRouteParams = ({ children }) => {
-  const { isPending, error, data } = useUser();
+  const { isPending, error, user } = useUser();
 
   if (isPending) {
     return <div>Loading...</div>;
   }
 
-  if (error || !data) {
+  if (error || !user) {
     enqueueSnackbar("Ops.. Session ended. Sign in again!", {
       variant: "error",
     });

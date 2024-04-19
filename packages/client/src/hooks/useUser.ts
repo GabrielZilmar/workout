@@ -9,7 +9,7 @@ export const useUser = () => {
     retry: 0,
   });
 
-  return { isPending, error, data: data?.data || null };
+  return { isPending, error, user: data?.data || null };
 };
 
 export default useUser;
