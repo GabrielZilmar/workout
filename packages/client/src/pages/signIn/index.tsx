@@ -1,4 +1,5 @@
 import { FormEvent, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { StyledOutlineButton } from "~/components/buttons";
 import { StyledOutlineInput } from "~/components/input";
 import { AnimatedTooltip } from "~/components/tooltip/animated";
@@ -7,6 +8,7 @@ import { useLogin } from "~/hooks";
 
 export default function SignIn() {
   // TODO: Implement React Hook Form
+  const navigate = useNavigate();
   const [signInPayload, setSignInPayload] = useState<SignInPayload>({
     email: "",
     password: "",
@@ -16,6 +18,10 @@ export default function SignIn() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     signInMutation(signInPayload);
+  };
+
+  const handleRegisterClick = () => {
+    navigate("/register");
   };
 
   return (
@@ -106,18 +112,23 @@ export default function SignIn() {
             </div>
 
             <div>
-              <StyledOutlineButton type="submit">Sign in</StyledOutlineButton>
+              <StyledOutlineButton
+                className="flex w-full justify-center"
+                type="submit"
+              >
+                Sign in
+              </StyledOutlineButton>
             </div>
           </form>
 
           <p className="mt-10 text-center text-sm text-gray-500">
             Not have an account?{" "}
-            <a
-              href="#"
+            <button
+              onClick={handleRegisterClick}
               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
             >
               Create now
-            </a>
+            </button>
           </p>
         </div>
       </div>
