@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { StyledOutlineButton } from "~/components/buttons";
 import { StyledOutlineInput } from "~/components/input";
@@ -6,18 +6,25 @@ import { AnimatedTooltip } from "~/components/tooltip/animated";
 import { SignInPayload } from "~/data/signIn";
 import { useLogin } from "~/hooks";
 
-export default function SignIn() {
-  // TODO: Implement React Hook Form
-  const navigate = useNavigate();
-  const [signInPayload, setSignInPayload] = useState<SignInPayload>({
-    email: "",
-    password: "",
-  });
-  const { signInMutation } = useLogin();
+type SignInFormInput = SignInPayload;
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    signInMutation(signInPayload);
+export default function SignIn() {
+  const navigate = useNavigate();
+
+  const { signInMutation } = useLogin();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInFormInput>({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit: SubmitHandler<SignInFormInput> = (data) => {
+    signInMutation(data);
   };
 
   const handleRegisterClick = () => {
@@ -45,7 +52,7 @@ export default function SignIn() {
             className="space-y-6"
             action="#"
             method="POST"
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit(onSubmit)}
           >
             <div>
               <label
@@ -61,12 +68,11 @@ export default function SignIn() {
                   type="email"
                   autoComplete="email"
                   required
-                  onChange={(ev) =>
-                    setSignInPayload({
-                      ...signInPayload,
-                      email: ev.target.value,
-                    })
-                  }
+                  register={register}
+                  registerOptions={{
+                    required: "This field is required",
+                  }}
+                  errors={errors.email}
                 />
               </div>
             </div>
@@ -101,12 +107,15 @@ export default function SignIn() {
                   type="password"
                   autoComplete="current-password"
                   required
-                  onChange={(ev) =>
-                    setSignInPayload({
-                      ...signInPayload,
-                      password: ev.target.value,
-                    })
-                  }
+                  register={register}
+                  registerOptions={{
+                    required: "This field is required",
+                    minLength: {
+                      value: 6,
+                      message: "At least 6 characters",
+                    },
+                  }}
+                  errors={errors.password}
                 />
               </div>
             </div>
