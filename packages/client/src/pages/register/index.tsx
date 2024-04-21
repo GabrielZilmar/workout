@@ -16,7 +16,7 @@ export default function Register() {
   return (
     <div className="h-screen">
       <div className="flex min-h-full flex-1 flex-col justify-center">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+        <div className="xs:mx-auto xs:w-full xs:max-w-sm max-w-72 mx-auto">
           <img
             className="mx-auto"
             src="/logo.svg"
@@ -29,7 +29,7 @@ export default function Register() {
           </h2>
         </div>
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+        <div className="mt-10 xs:mx-auto xs:w-full xs:max-w-sm max-w-72 mx-auto">
           <form
             className="space-y-6"
             action="#"
@@ -38,14 +38,21 @@ export default function Register() {
           >
             <div>
               <label
-                htmlFor="email"
+                htmlFor="username"
                 className="block text-sm font-medium leading-6 text-white-900"
               >
+                Username
+              </label>
+              <div className="mt-2">
+                <StyledOutlineInput name="username" required />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium leading-6 text-white-900">
                 Email address
               </label>
               <div className="mt-2">
                 <StyledOutlineInput
-                  id="email"
                   name="email"
                   type="email"
                   autoComplete="email"
@@ -54,35 +61,21 @@ export default function Register() {
               </div>
             </div>
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium leading-6 text-white-900"
-              >
+              <label className="block text-sm font-medium leading-6 text-white-900">
                 Password
               </label>
               <div className="mt-2">
-                <StyledOutlineInput
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                />
+                <StyledOutlineInput name="password" type="password" required />
               </div>
             </div>
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium leading-6 text-white-900"
-              >
+              <label className="block text-sm font-medium leading-6 text-white-900">
                 Confirm Password
               </label>
               <div className="mt-2">
                 <StyledOutlineInput
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
+                  name="confirm-password"
+                  type="password"
                   required
                 />
               </div>
