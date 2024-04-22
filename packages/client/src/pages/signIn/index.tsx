@@ -110,10 +110,6 @@ export default function SignIn() {
                   register={register}
                   registerOptions={{
                     required: "This field is required",
-                    minLength: {
-                      value: 6,
-                      message: "At least 6 characters",
-                    },
                   }}
                   errors={errors.password}
                 />
