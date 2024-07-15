@@ -5,8 +5,6 @@ services:
     container_name: workout.server
     build:
       context: ./
-    ports:
-      - '${PORT}:${PORT}'
     network_mode: host
     env_file: .env
     volumes:
