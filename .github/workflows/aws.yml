@@ -42,23 +42,23 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ec2-user@ec2-3-15-220-180.us-east-2.compute.amazonaws.com << 'EOF'
             cd /home/ec2-user/app
-            echo "PORT=${secrets.PORT}" > .env
+            echo "PORT=${{ secrets.PORT }}" > .env
             echo "The port value is: $PORT"
-            echo "ALGORITHM=${secrets.ALGORITHM}" >> .env
-            echo "ALGORITHM_IV=${secrets.ALGORITHM_IV}" >> .env
-            echo "ALGORITHM_SECURITY_KEY=${secrets.ALGORITHM_SECURITY_KEY}" >> .env
-            echo "DATABASE=${secrets.DATABASE}" >> .env
-            echo "DATABASE_URL=${secrets.DATABASE_URL}" >> .env
-            echo "DB_PORT=${secrets.DB_PORT}" >> .env
-            echo "EMAIL_HOST=${secrets.EMAIL_HOST}" >> .env
-            echo "EMAIL_PASSWORD=${secrets.EMAIL_PASSWORD}" >> .env
-            echo "EMAIL_PORT=${secrets.EMAIL_PORT}" >> .env
-            echo "EMAIL_SENDER=${secrets.EMAIL_SENDER}" >> .env
-            echo "EMAIL_SERVICE=${secrets.EMAIL_SERVICE}" >> .env
-            echo "JWT_SECRET=${secrets.JWT_SECRET}" >> .env
-            echo "PASSWORD=${secrets.PASSWORD}" >> .env
-            echo "PASSWORD_SALT=${secrets.PASSWORD_SALT}" >> .env
-            echo "USERNAME=${secrets.USERNAME}" >> .env
+            echo "ALGORITHM=${{ secrets.ALGORITHM }}" >> .env
+            echo "ALGORITHM_IV=${{ secrets.ALGORITHM_IV }}" >> .env
+            echo "ALGORITHM_SECURITY_KEY=${{ secrets.ALGORITHM_SECURITY_KEY }}" >> .env
+            echo "DATABASE=${{ secrets.DATABASE }}" >> .env
+            echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+            echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+            echo "EMAIL_HOST=${{ secrets.EMAIL_HOST }}" >> .env
+            echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> .env
+            echo "EMAIL_PORT=${{ secrets.EMAIL_PORT }}" >> .env
+            echo "EMAIL_SENDER=${{ secrets.EMAIL_SENDER }}" >> .env
+            echo "EMAIL_SERVICE=${{ secrets.EMAIL_SERVICE }}" >> .env
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+            echo "PASSWORD=${{ secrets.PASSWORD }}" >> .env
+            echo "PASSWORD_SALT=${{ secrets.PASSWORD_SALT }}" >> .env
+            echo "USERNAME=${{ secrets.USERNAME }}" >> .env
             docker-compose down
             docker-compose build
             docker-compose up -d
