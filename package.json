@@ -2,19 +2,23 @@
   "name": "workout",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "packageManager": "npm@10.2.3",
   "scripts": {
     "prepare": "husky install",
-    "pre-commit": "lint-staged"
+    "pre-commit": "lint-staged",
+    "start": "turbo start",
+    "dev": "turbo dev",
+    "build": "turbo build"
   },
   "lint-staged": {
     "{*.js,*.jsx,*.ts,*.tsx}": [
-      "eslint"
+      "prettier --write -u",
+      "eslint --fix"
     ]
   },
+  "keywords": [],
   "author": "",
   "license": "ISC",
+  "packageManager": "npm@10.2.3",
   "workspaces": [
     "./packages/*"
   ],
