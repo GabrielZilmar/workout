@@ -1,0 +1,64 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up SSH agent
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: Copy files via SSH
+        run: scp -o StrictHostKeyChecking=no -r . ec2-user@your-ec2-public-ip:/home/ec2-user/app
+
+      - name: SSH into EC2 and deploy
+        env:
+          PORT: ${{ secrets.PORT }}
+          ALGORITHM: ${{ secrets.ALGORITHM }}
+          ALGORITHM_IV: ${{ secrets.ALGORITHM_IV }}
+          ALGORITHM_SECURITY_KEY: ${{ secrets.ALGORITHM_SECURITY_KEY }}
+          DATABASE: ${{ secrets.DATABASE }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+          EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
+          EMAIL_SERVICE: ${{ secrets.EMAIL_SERVICE }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          PASSWORD_SALT: ${{ secrets.PASSWORD_SALT }}
+          USERNAME: ${{ secrets.USERNAME }}
+        run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@your-ec2-public-ip << 'EOF'
+            cd /home/ec2-user/app
+            echo "PORT=${PORT}" > .env
+            echo "ALGORITHM=${ALGORITHM}" >> .env
+            echo "ALGORITHM_IV=${ALGORITHM_IV}" >> .env
+            echo "ALGORITHM_SECURITY_KEY=${ALGORITHM_SECURITY_KEY}" >> .env
+            echo "DATABASE=${DATABASE}" >> .env
+            echo "DATABASE_URL=${DATABASE_URL}" >> .env
+            echo "DB_PORT=${DB_PORT}" >> .env
+            echo "EMAIL_HOST=${EMAIL_HOST}" >> .env
+            echo "EMAIL_PASSWORD=${EMAIL_PASSWORD}" >> .env
+            echo "EMAIL_PORT=${EMAIL_PORT}" >> .env
+            echo "EMAIL_SENDER=${EMAIL_SENDER}" >> .env
+            echo "EMAIL_SERVICE=${EMAIL_SERVICE}" >> .env
+            echo "JWT_SECRET=${JWT_SECRET}" >> .env
+            echo "PASSWORD=${PASSWORD}" >> .env
+            echo "PASSWORD_SALT=${PASSWORD_SALT}" >> .env
+            echo "USERNAME=${USERNAME}" >> .env
+            docker-compose down
+            docker-compose build
+            docker-compose up -d
+          EOF
