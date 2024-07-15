@@ -42,7 +42,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ec2-user@ec2-3-15-220-180.us-east-2.compute.amazonaws.com << 'EOF'
             cd /home/ec2-user/app
-            echo "The port value is: $PORT"
+            echo "The port value is: $PORT, $secrets.PORT"
             echo "PORT=${PORT}" > .env
             echo "ALGORITHM=${ALGORITHM}" >> .env
             echo "ALGORITHM_IV=${ALGORITHM_IV}" >> .env
