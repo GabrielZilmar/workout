@@ -13,11 +13,4 @@ export default class Env {
 
     return env;
   }
-
-  private static getEnvOrDefault(
-    envName: string,
-    defaultValue: string
-  ): string {
-    return import.meta.env[envName] ?? defaultValue;
-  }
 }
