@@ -40,7 +40,7 @@ jobs:
           PASSWORD_SALT: ${{ secrets.PASSWORD_SALT }}
           USERNAME: ${{ secrets.USERNAME }}
         run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@your-ec2-public-ip << 'EOF'
+          ssh -o StrictHostKeyChecking=no ec2-user@ec2-3-15-220-180.us-east-2.compute.amazonaws.com << 'EOF'
             cd /home/ec2-user/app
             echo "PORT=${PORT}" > .env
             echo "ALGORITHM=${ALGORITHM}" >> .env
