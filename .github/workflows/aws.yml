@@ -19,7 +19,7 @@ jobs:
           ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
       - name: Copy files via SSH
-        run: scp -o StrictHostKeyChecking=no -r . ec2-user@ec2-3-15-220-180.us-east-2.compute.amazonaws.com:/home/ec2-user/app
+        run: scp -o StrictHostKeyChecking=no -r . ec2-3-15-220-180.us-east-2.compute.amazonaws.com:/home/ec2-user/app
 
       - name: SSH into EC2 and deploy
         env:
