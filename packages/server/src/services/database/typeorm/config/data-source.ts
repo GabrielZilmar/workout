@@ -11,7 +11,7 @@ export const dataSourceOptions = {
   username: databaseConfig.username,
   password: databaseConfig.password,
   database: databaseConfig.database,
-  synchronize: true,
+  synchronize: false,
   logging: false,
   namingStrategy: new SnakeNamingStrategy(),
   entities: [join(__dirname, '../../../../modules/**/*.entity.{ts,js}')],
