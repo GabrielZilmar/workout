@@ -6,8 +6,8 @@ import databaseConfig from '~/services/database/typeorm/config/database';
 
 export const dataSourceOptions = {
   type: 'postgres',
-  url: databaseConfig.databaseUrl,
   port: databaseConfig.port,
+  host: databaseConfig.databaseHost,
   username: databaseConfig.username,
   password: databaseConfig.password,
   database: databaseConfig.database,

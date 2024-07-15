@@ -7,7 +7,7 @@ ConfigModule.forRoot({
 const getDatabasePort = () => Number((process.env.DB_PORT as string) || 0);
 
 const databaseConfig = {
-  databaseUrl: process.env.DATABASE_URL as string,
+  databaseHost: process.env.DATABASE_HOST as string,
   get port() {
     return getDatabasePort();
   },
