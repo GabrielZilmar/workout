@@ -11,6 +11,12 @@ export const dataSourceOptions = {
   username: databaseConfig.username,
   password: databaseConfig.password,
   database: databaseConfig.database,
+  ssl: true,
+  extra: {
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  },
   synchronize: false,
   logging: false,
   namingStrategy: new SnakeNamingStrategy(),
