@@ -1,5 +1,12 @@
 import { ConfigModule } from '@nestjs/config';
 
+export enum Environment {
+  LOCAL = 'local',
+  DEV = 'development',
+  PROD = 'production',
+  TEST = 'test',
+}
+
 ConfigModule.forRoot({
   envFilePath: '.env',
 });
