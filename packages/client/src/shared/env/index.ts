@@ -1,16 +1,17 @@
-export default class Env {
-  static get apiBaseUrl(): string {
-    const apiBaseUrl = this.getEnvOrThrow("VITE_API_BASE_URL");
+import { z } from "zod";
 
-    return apiBaseUrl;
-  }
+const envSchema = z.object({
+  apiBaseUrl: z.string().url(),
+  appDomain: z.string(),
+});
 
-  private static getEnvOrThrow(envName: string): string {
-    const env = import.meta.env[envName];
-    if (!env) {
-      throw new Error(`Missing environment variable ${envName}`);
-    }
+const envSafeParse = envSchema.safeParse({
+  apiBaseUrl: process.env.NEXT_PUBLIC_BASE_API_URL,
+  appDomain: process.env.NEXT_PUBLIC_APP_DOMAIN,
+});
 
-    return env;
-  }
+if (!envSafeParse.success) {
+  throw new Error("There is an error with the server environment variables");
 }
+
+export default envSafeParse.data;

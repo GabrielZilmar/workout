@@ -1,13 +1,16 @@
 import { AxiosError } from "axios";
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
 import signIn, { SignInPayload, SignInResult } from "~/data/signIn";
-import SessionStorage, { SESSION_ITEMS } from "~/shared/storage/session";
-import { HttpStatus } from "~/constants/httpStatus";
 
-export const useLogin = () => {
-  const navigate = useNavigate();
+import { HttpStatus } from "~/constants/httpStatus";
+import { setCookie } from "cookies-next";
+import Env from "~/shared/env";
+import { COOKIES_NAMES } from "~/constants/cookies";
+
+export const useSignIn = () => {
+  const router = useRouter();
 
   const { mutate: signInMutation } = useMutation<
     SignInResult,
@@ -16,11 +19,13 @@ export const useLogin = () => {
   >({
     mutationFn: (payload) => signIn(payload),
     onSuccess: ({ data }: SignInResult) => {
-      SessionStorage.setItem({
-        key: SESSION_ITEMS.accessToken,
-        value: data.accessToken,
+      setCookie(COOKIES_NAMES.ACCESS_TOKEN, data.accessToken, {
+        secure: true,
+        sameSite: "lax",
+        domain: Env.appDomain,
       });
-      navigate("/");
+      enqueueSnackbar("Successful login!", { variant: "success" });
+      router.push("/");
     },
     onError: ({ response }: AxiosError) => {
       if (response?.status === HttpStatus.UNAUTHORIZED) {
@@ -38,4 +43,4 @@ export const useLogin = () => {
   return { signInMutation };
 };
 
-export default useLogin;
+export default useSignIn;

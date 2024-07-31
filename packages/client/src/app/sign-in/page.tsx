@@ -1,8 +1,11 @@
+"use client";
+
+import Image from "next/image";
 import { FormEvent, useState } from "react";
 import { StyledOutlineButton } from "~/components/buttons";
 import { StyledOutlineInput } from "~/components/input";
 import { SignInPayload } from "~/data/signIn";
-import { useLogin } from "~/hooks";
+import { useSignIn } from "~/hooks";
 
 export default function SignIn() {
   // TODO: Implement React Hook Form
@@ -10,7 +13,7 @@ export default function SignIn() {
     email: "",
     password: "",
   });
-  const { signInMutation } = useLogin();
+  const { signInMutation } = useSignIn();
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -21,7 +24,7 @@ export default function SignIn() {
     <div className="h-screen">
       <div className="flex min-h-full flex-1 flex-col justify-center">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img
+          <Image
             className="mx-auto"
             src="/logo.svg"
             width={200}

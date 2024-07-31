@@ -15,9 +15,7 @@ export type SignInResult = AxiosResponse<SignInApiResponse, AxiosError>;
 export const signIn = async (payload: SignInPayload): Promise<SignInResult> => {
   const response = await axiosInstance.post<SignInApiResponse>(
     "/session/login",
-    {
-      ...payload,
-    }
+    { ...payload }
   );
 
   return response;
