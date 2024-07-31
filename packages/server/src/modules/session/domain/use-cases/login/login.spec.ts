@@ -44,7 +44,9 @@ describe('Login Use Case', () => {
 
     expect(result).toBeTruthy();
 
-    const decodedToken = jwtService.decodeToken(result.accessToken);
+    const [type, token] = result.accessToken.split(' ') ?? [];
+    expect(type).toBe('Bearer');
+    const decodedToken = jwtService.decodeToken(token);
     expect(decodedToken).toEqual({
       id: userDomainParams.id,
       email: userDomainParams.email,
