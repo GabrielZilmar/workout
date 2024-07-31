@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
-import "@envi/ui/globals.css";
+import "./globals.css";
 import QueryProviders from "~/lib/query-providers";
 
 const nunito = Nunito({ subsets: ["latin"] });
@@ -16,6 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <link rel="icon" href="/favicon.ico" />
       <body className={nunito.className}>
         <QueryProviders>{children}</QueryProviders>
       </body>
