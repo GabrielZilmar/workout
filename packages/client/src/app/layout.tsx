@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <link rel="icon" href="/favicon.ico" />
-      <body className={nunito.className}>
+      <body suppressHydrationWarning={true} className={nunito.className}>
         <QueryProviders>{children}</QueryProviders>
       </body>
     </html>

@@ -1,23 +1,23 @@
 "use client";
 
 import Image from "next/image";
-import { FormEvent, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { StyledOutlineButton } from "~/components/buttons";
 import { StyledOutlineInput } from "~/components/input";
 import { SignInPayload } from "~/data/signIn";
 import { useSignIn } from "~/hooks";
 
 export default function SignIn() {
-  // TODO: Implement React Hook Form
-  const [signInPayload, setSignInPayload] = useState<SignInPayload>({
-    email: "",
-    password: "",
+  const { register, handleSubmit } = useForm<SignInPayload>({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
   const { signInMutation } = useSignIn();
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    signInMutation(signInPayload);
+  const onSubmit: SubmitHandler<SignInPayload> = async (data) => {
+    signInMutation(data);
   };
 
   return (
@@ -27,9 +27,11 @@ export default function SignIn() {
           <Image
             className="mx-auto"
             src="/logo.svg"
-            width={200}
-            height={100}
+            width={0}
+            height={0}
+            style={{ width: "auto", height: "auto" }}
             alt="Workout Logo"
+            priority
           />
           <h2 className="mt-10 text-center text-2xl font-bold text-white-900">
             Sign in to your account
@@ -41,7 +43,7 @@ export default function SignIn() {
             className="space-y-6"
             action="#"
             method="POST"
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit(onSubmit)}
           >
             <div>
               <label
@@ -53,16 +55,10 @@ export default function SignIn() {
               <div className="mt-2">
                 <StyledOutlineInput
                   id="email"
-                  name="email"
                   type="email"
                   autoComplete="email"
                   required
-                  onChange={(ev) =>
-                    setSignInPayload({
-                      ...signInPayload,
-                      email: ev.target.value,
-                    })
-                  }
+                  {...register("email", { required: true })}
                 />
               </div>
             </div>
@@ -87,16 +83,10 @@ export default function SignIn() {
               <div className="mt-2">
                 <StyledOutlineInput
                   id="password"
-                  name="password"
                   type="password"
                   autoComplete="current-password"
                   required
-                  onChange={(ev) =>
-                    setSignInPayload({
-                      ...signInPayload,
-                      password: ev.target.value,
-                    })
-                  }
+                  {...register("password", { required: true })}
                 />
               </div>
             </div>
