@@ -1,4 +1,5 @@
 import { hash as bcryptHash, compare as bcryptCompare } from 'bcrypt';
+import { isStrongPassword } from 'class-validator';
 import { UserDomainError } from '~/modules/users/domain/errors';
 import { ValueObject } from '~/shared/domain/value-object';
 import { Either, left, right } from '~/shared/either';
@@ -27,7 +28,10 @@ export default class Password extends ValueObject<PasswordProps> {
   }
 
   private static isValid(password: string): boolean {
-    return !!password && password.length >= this.minPasswordLength;
+    return (
+      !!password &&
+      isStrongPassword(password, { minLength: this.minPasswordLength })
+    );
   }
 
   private static async hashPassword(password: string): Promise<string> {

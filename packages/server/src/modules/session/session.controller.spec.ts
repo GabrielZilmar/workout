@@ -4,6 +4,7 @@ import SessionMapper from '~/modules/session/domain/mappers/session.mapper';
 import SessionUseCaseProviders from '~/modules/session/domain/use-cases/providers';
 import { SessionController } from '~/modules/session/session.controller';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
+import Crypto from '~/services/cryptography/crypto';
 import TokenRepository from '~/services/database/typeorm/repositories/token-repository';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 import EmailSender from '~/services/email-sender';
@@ -35,6 +36,7 @@ describe('SessionController', () => {
         SessionMapper,
         TokenRepository,
         JwtService,
+        Crypto,
         ...SessionUseCaseProviders,
       ],
     }).compile();
