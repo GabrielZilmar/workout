@@ -1,9 +1,8 @@
 "use client";
 
+import { StyledOutlineButton, StyledOutlineInput } from "@workout/ui";
 import Image from "next/image";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { StyledOutlineButton } from "~/components/buttons";
-import { StyledOutlineInput } from "~/components/input";
 import { SignInPayload } from "~/data/signIn";
 import { useSignIn } from "~/hooks";
 

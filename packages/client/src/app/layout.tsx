@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
-import "./globals.css";
+import "@workout/ui/globals.css";
 import QueryProviders from "~/lib/query-providers";
 
 const nunito = Nunito({ subsets: ["latin"] });
