@@ -21,8 +21,8 @@ export default class Crypto {
       this.initVector,
     );
 
-    let encryptedData = cipher.update(value, 'utf-8', 'base64');
-    encryptedData += cipher.final('base64');
+    let encryptedData = cipher.update(value, 'utf-8', 'base64url');
+    encryptedData += cipher.final('base64url');
 
     return encryptedData;
   }
@@ -34,7 +34,7 @@ export default class Crypto {
       this.initVector,
     );
 
-    let decryptedData = decipher.update(value, 'base64', 'utf-8');
+    let decryptedData = decipher.update(value, 'base64url', 'utf-8');
     decryptedData += decipher.final('utf8');
 
     return decryptedData;
