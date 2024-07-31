@@ -32,7 +32,7 @@ export class SessionController {
     });
   }
 
-  @Get('/verify-email')
+  @Post('/verify-email')
   verifyEmail(@Query() verifyEmailDto: VerifyEmailDto) {
     return this.verifyEmailUseCase.execute(verifyEmailDto);
   }

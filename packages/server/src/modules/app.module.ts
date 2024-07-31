@@ -15,6 +15,7 @@ import WorkoutExerciseMapper from '~/modules/workout-exercise/mappers/workout-ex
 import { WorkoutExerciseModule } from '~/modules/workout-exercise/workout-exercise.module';
 import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
 import { WorkoutModule } from '~/modules/workout/workout.module';
+import Crypto from '~/services/cryptography/crypto';
 import repositoriesProviders from '~/services/database/typeorm/repositories/providers';
 import JwtService from '~/services/jwt/jsonwebtoken';
 
@@ -27,7 +28,7 @@ const mappersProviders = [
   WorkoutExerciseMapper,
   SetMapper,
 ];
-const servicesProviders = [JwtService];
+const servicesProviders = [JwtService, Crypto];
 
 const allProviders = [
   ...mappersProviders,
