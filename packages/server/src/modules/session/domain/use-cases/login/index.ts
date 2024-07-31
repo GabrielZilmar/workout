@@ -25,9 +25,7 @@ export class Login implements UseCase<LoginParams, LoginResult> {
 
     if (userDomainOrError.isLeft()) {
       throw new HttpException(
-        {
-          message: SessionUseCaseError.messages.userNotExits(email),
-        },
+        { message: SessionUseCaseError.messages.userNotExits(email) },
         HttpStatus.NOT_FOUND,
       );
     }
@@ -41,9 +39,7 @@ export class Login implements UseCase<LoginParams, LoginResult> {
 
     if (!passwordMatch) {
       throw new HttpException(
-        {
-          message: SessionUseCaseError.messages.invalidPassword,
-        },
+        { message: SessionUseCaseError.messages.invalidPassword },
         HttpStatus.UNAUTHORIZED,
       );
     }
@@ -51,9 +47,7 @@ export class Login implements UseCase<LoginParams, LoginResult> {
     const userDto = UserTokenDataDto.domainToDto(userDomain);
     if (userDto.isLeft()) {
       throw new HttpException(
-        {
-          message: userDto.value.message,
-        },
+        { message: userDto.value.message },
         userDto.value.code,
       );
     }
@@ -67,9 +61,7 @@ export class Login implements UseCase<LoginParams, LoginResult> {
     });
     if (sessionDomainOrError.isLeft()) {
       throw new HttpException(
-        {
-          message: sessionDomainOrError.value.message,
-        },
+        { message: sessionDomainOrError.value.message },
         sessionDomainOrError.value.code,
       );
     }
@@ -77,9 +69,7 @@ export class Login implements UseCase<LoginParams, LoginResult> {
     const sessionDto = sessionDomainOrError.value.toDto();
     if (sessionDto.isLeft()) {
       throw new HttpException(
-        {
-          message: sessionDto.value.message,
-        },
+        { message: sessionDto.value.message },
         sessionDto.value.code,
       );
     }

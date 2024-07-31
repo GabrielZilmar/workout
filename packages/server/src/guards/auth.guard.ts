@@ -1,4 +1,10 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Request } from 'express';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 import JwtService from '~/services/jwt/jsonwebtoken';
 
@@ -9,9 +15,17 @@ export class AuthGuard implements CanActivate {
     private readonly userRepository: UserRepository,
   ) {}
 
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
+  }
+
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    const token = request.headers.authorization;
+    const token = this.extractTokenFromHeader(request);
+    if (!token) {
+      throw new UnauthorizedException('Invalid bearer token');
+    }
 
     const isTokenValid = this.jwtService.isValidToken(token);
     if (!isTokenValid) {
