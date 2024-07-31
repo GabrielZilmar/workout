@@ -13,6 +13,7 @@ import { SessionUseCaseError } from '~/modules/session/domain/use-cases/errors';
 import { SendVerifyEmail } from '~/modules/session/domain/use-cases/send-verify-email';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { UserDomain } from '~/modules/users/domain/users.domain';
+import Crypto from '~/services/cryptography/crypto';
 import TokenRepository from '~/services/database/typeorm/repositories/token-repository';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 import EmailSender from '~/services/email-sender';
@@ -59,6 +60,7 @@ describe('SendVerifyEmail Use Case', () => {
         UserMapper,
         SessionMapper,
         SendVerifyEmail,
+        Crypto,
       ],
     }).compile();
   };

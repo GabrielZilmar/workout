@@ -17,6 +17,7 @@ import { VerifyEmail } from '~/modules/session/domain/use-cases/verify-email';
 import Token from '~/modules/session/domain/value-objects/token';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { UserDomain } from '~/modules/users/domain/users.domain';
+import Crypto from '~/services/cryptography/crypto';
 import { AppDataSource } from '~/services/database/typeorm/config/data-source';
 import { RepositoryError } from '~/services/database/typeorm/repositories/error';
 import TokenRepository from '~/services/database/typeorm/repositories/token-repository';
@@ -99,6 +100,7 @@ describe('VerifyEmail Use Case', () => {
         SessionMapper,
         VerifyEmail,
         JwtService,
+        Crypto,
       ],
     }).compile();
   };
@@ -106,10 +108,13 @@ describe('VerifyEmail Use Case', () => {
   beforeEach(async () => {
     userDomain = await UserDomainMock.mountUserDomain();
     sessionDomain = SessionDomainMock.mountSessionDomain();
-    token = (
-      Token.create({ value: { userId: userDomain.id?.toValue() } })
-        .value as Token
-    ).value;
+    const crypto = new Crypto();
+    token = crypto.encryptValue(
+      (
+        Token.create({ value: { userId: userDomain.id?.toValue() } })
+          .value as Token
+      ).value,
+    );
     module = await getModuleTest();
   });
 
@@ -246,7 +251,10 @@ describe('VerifyEmail Use Case', () => {
       });
 
     const jwtService = module.get<JwtService>(JwtService);
-    const token = jwtService.signToken({ userId: userDomain.id?.toValue() });
+    const crypto = module.get<Crypto>(Crypto);
+    const token = crypto.encryptValue(
+      jwtService.signToken({ userId: userDomain.id?.toValue() }),
+    );
     jwtService.decodeToken = jest.fn().mockReturnValue(null);
 
     const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
@@ -289,7 +297,10 @@ describe('VerifyEmail Use Case', () => {
       });
 
     const jwtService = module.get<JwtService>(JwtService);
-    const token = jwtService.signToken({ userId: userDomain.id?.toValue() });
+    const crypto = module.get<Crypto>(Crypto);
+    const token = crypto.encryptValue(
+      jwtService.signToken({ userId: userDomain.id?.toValue() }),
+    );
     const verifyEmail = module.get<VerifyEmail>(VerifyEmail);
 
     await expect(verifyEmail.execute({ token })).rejects.toThrow(

@@ -25,7 +25,7 @@ export class UserDomainMock {
     id: uuid(),
     username: 'User Test 1',
     email: 'username1@email.com',
-    password: 'password',
+    password: 'v#$6D=W9',
     isEmailVerified: false,
     isAdmin: false,
     age: 21,

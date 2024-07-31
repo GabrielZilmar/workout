@@ -30,7 +30,7 @@ describe('Update user use case', () => {
     username: 'valid_username',
     email: 'valid@email.com',
     password: {
-      value: 'valid_password',
+      value: 'v#$6D=W9',
     },
     age: 20,
     weight: 80,
