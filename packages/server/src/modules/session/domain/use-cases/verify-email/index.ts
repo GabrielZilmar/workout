@@ -8,6 +8,7 @@ import { SessionUseCaseError } from '~/modules/session/domain/use-cases/errors';
 import { VerifyEmailDto } from '~/modules/session/dto/verify-email.dto';
 import { Token, TokenTypeMap } from '~/modules/session/entities/token.entity';
 import { User } from '~/modules/users/entities/user.entity';
+import Crypto from '~/services/cryptography/crypto';
 import { AppDataSource } from '~/services/database/typeorm/config/data-source';
 import { RepositoryError } from '~/services/database/typeorm/repositories/error';
 import TokenRepository from '~/services/database/typeorm/repositories/token-repository';
@@ -29,21 +30,29 @@ export class VerifyEmail
     private readonly userRepository: UserRepository,
     private readonly tokenRepository: TokenRepository,
     private readonly jwtService: JwtService,
+    private readonly cryptoService: Crypto,
   ) {}
 
   public async execute({ token }: VerifyEmailParams): VerifyEmailResult {
-    const isTokenValid = this.jwtService.isValidToken(token);
+    let decryptedToken: string;
+    try {
+      decryptedToken = this.cryptoService.decryptValue(token);
+    } catch (error) {
+      throw new HttpException(
+        { message: SessionUseCaseError.messages.invalidToken },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const isTokenValid = this.jwtService.isValidToken(decryptedToken);
     if (!isTokenValid) {
       throw new HttpException(
-        {
-          message: SessionUseCaseError.messages.invalidToken,
-        },
+        { message: SessionUseCaseError.messages.invalidToken },
         HttpStatus.UNAUTHORIZED,
       );
     }
 
     const decodedToken = this.jwtService.decodeToken(
-      token,
+      decryptedToken,
     ) as TokenDecoded | null;
     if (!decodedToken) {
       throw new InternalServerErrorException(
@@ -85,9 +94,7 @@ export class VerifyEmail
 
     if (sessionDomain.token.usedAt) {
       throw new HttpException(
-        {
-          message: SessionUseCaseError.messages.tokenAlreadyUsed,
-        },
+        { message: SessionUseCaseError.messages.tokenAlreadyUsed },
         HttpStatus.BAD_REQUEST,
       );
     }

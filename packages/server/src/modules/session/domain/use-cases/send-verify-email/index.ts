@@ -37,18 +37,14 @@ export class SendVerifyEmail
 
     if (!userDomain?.id) {
       throw new HttpException(
-        {
-          message: SessionUseCaseError.messages.userIdNotFound(userId),
-        },
+        { message: SessionUseCaseError.messages.userIdNotFound(userId) },
         HttpStatus.NOT_FOUND,
       );
     }
 
     if (userDomain.emailVerification.isVerified) {
       throw new HttpException(
-        {
-          message: SessionUseCaseError.messages.emailAlreadyVerified,
-        },
+        { message: SessionUseCaseError.messages.emailAlreadyVerified },
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -63,9 +59,7 @@ export class SendVerifyEmail
     });
     if (sessionDomainOrError.isLeft()) {
       throw new HttpException(
-        {
-          message: sessionDomainOrError.value.message,
-        },
+        { message: sessionDomainOrError.value.message },
         sessionDomainOrError.value.code,
       );
     }
@@ -76,9 +70,7 @@ export class SendVerifyEmail
     );
     if (lastToken) {
       throw new HttpException(
-        {
-          message: SessionUseCaseError.messages.tokenStillValid,
-        },
+        { message: SessionUseCaseError.messages.tokenStillValid },
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -92,7 +84,7 @@ export class SendVerifyEmail
         html: VerifyEmailTemplate.renderTemplate({
           username: userDomain.username.value,
           baseUrl,
-          verifyEmailToken: sessionDomain.token.value,
+          verifyEmailToken: sessionDomain.token.getEncryptValue(),
         }),
       });
 
