@@ -1,6 +1,6 @@
 "use client";
 
-import { StyledOutlineButton, Input, cn, Label } from "@workout/ui";
+import { Button, Input, cn, Label } from "@workout/ui";
 import { Lock, Mail } from "lucide-react";
 import Image from "next/image";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -99,7 +99,9 @@ export default function SignIn() {
             </div>
 
             <div>
-              <StyledOutlineButton type="submit">Sign in</StyledOutlineButton>
+              <Button fullWidth type="submit">
+                Sign in
+              </Button>
             </div>
           </form>
 
