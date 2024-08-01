@@ -1,6 +1,7 @@
 "use client";
 
-import { StyledOutlineButton, Input } from "@workout/ui";
+import { StyledOutlineButton, Input, cn } from "@workout/ui";
+import { Lock, Mail } from "lucide-react";
 import Image from "next/image";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { SignInPayload } from "~/data/signIn";
@@ -21,7 +22,12 @@ export default function SignIn() {
 
   return (
     <div className="h-screen">
-      <div className="flex min-h-full flex-1 flex-col justify-center">
+      <div
+        className={cn(
+          "flex min-h-full flex-1 flex-col justify-center",
+          "px-6 sm:px-0"
+        )}
+      >
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <Image
             className="mx-auto"
@@ -32,12 +38,12 @@ export default function SignIn() {
             alt="Workout Logo"
             priority
           />
-          <h2 className="mt-10 text-center text-2xl font-bold text-white-900">
+          <h2 className="mt-2 text-center text-2xl font-bold text-white-900">
             Sign in to your account
           </h2>
         </div>
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+        <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-sm">
           <form
             className="space-y-6"
             action="#"
@@ -57,6 +63,7 @@ export default function SignIn() {
                   type="email"
                   autoComplete="email"
                   required
+                  startIcon={<Mail />}
                   {...register("email", { required: true })}
                 />
               </div>
@@ -85,6 +92,7 @@ export default function SignIn() {
                   type="password"
                   autoComplete="current-password"
                   required
+                  startIcon={<Lock />}
                   {...register("password", { required: true })}
                 />
               </div>
