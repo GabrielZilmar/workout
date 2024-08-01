@@ -77,10 +77,13 @@ export default function SignIn() {
                 >
                   Password
                 </Label>
-                <div className="text-sm">
+                <div className="text-sm cursor-not-allowed">
                   <a
                     href="#"
-                    className="font-semibold text-indigo-600 hover:text-indigo-500"
+                    className={cn(
+                      "font-semibold text-indigo-600 hover:text-indigo-500",
+                      "disabled pointer-events-none"
+                    )}
                   >
                     Forgot password?
                   </a>
