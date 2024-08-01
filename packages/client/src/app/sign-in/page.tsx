@@ -1,9 +1,9 @@
 "use client";
 
+import { Button, Input, cn, Label } from "@workout/ui";
+import { Lock, Mail } from "lucide-react";
 import Image from "next/image";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { StyledOutlineButton } from "~/components/buttons";
-import { StyledOutlineInput } from "~/components/input";
 import { SignInPayload } from "~/data/signIn";
 import { useSignIn } from "~/hooks";
 
@@ -22,7 +22,12 @@ export default function SignIn() {
 
   return (
     <div className="h-screen">
-      <div className="flex min-h-full flex-1 flex-col justify-center">
+      <div
+        className={cn(
+          "flex min-h-full flex-1 flex-col justify-center",
+          "px-6 sm:px-0"
+        )}
+      >
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <Image
             className="mx-auto"
@@ -33,12 +38,12 @@ export default function SignIn() {
             alt="Workout Logo"
             priority
           />
-          <h2 className="mt-10 text-center text-2xl font-bold text-white-900">
+          <h2 className="mt-2 text-center text-2xl font-bold text-white-900">
             Sign in to your account
           </h2>
         </div>
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+        <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-sm">
           <form
             className="space-y-6"
             action="#"
@@ -46,18 +51,19 @@ export default function SignIn() {
             onSubmit={handleSubmit(onSubmit)}
           >
             <div>
-              <label
+              <Label
                 htmlFor="email"
                 className="block text-sm font-medium leading-6 text-white-900"
               >
-                Email address
-              </label>
+                Email
+              </Label>
               <div className="mt-2">
-                <StyledOutlineInput
+                <Input
                   id="email"
                   type="email"
                   autoComplete="email"
                   required
+                  startIcon={<Mail />}
                   {...register("email", { required: true })}
                 />
               </div>
@@ -65,12 +71,12 @@ export default function SignIn() {
 
             <div>
               <div className="flex items-center justify-between">
-                <label
+                <Label
                   htmlFor="password"
                   className="block text-sm font-medium leading-6 text-white-900"
                 >
                   Password
-                </label>
+                </Label>
                 <div className="text-sm">
                   <a
                     href="#"
@@ -81,18 +87,21 @@ export default function SignIn() {
                 </div>
               </div>
               <div className="mt-2">
-                <StyledOutlineInput
+                <Input
                   id="password"
                   type="password"
                   autoComplete="current-password"
                   required
+                  startIcon={<Lock />}
                   {...register("password", { required: true })}
                 />
               </div>
             </div>
 
             <div>
-              <StyledOutlineButton type="submit">Sign in</StyledOutlineButton>
+              <Button fullWidth type="submit">
+                Sign in
+              </Button>
             </div>
           </form>
 
