@@ -1,6 +1,6 @@
 "use client";
 
-import { StyledOutlineButton, StyledOutlineInput } from "@workout/ui";
+import { StyledOutlineButton, Input } from "@workout/ui";
 import Image from "next/image";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { SignInPayload } from "~/data/signIn";
@@ -52,7 +52,7 @@ export default function SignIn() {
                 Email address
               </label>
               <div className="mt-2">
-                <StyledOutlineInput
+                <Input
                   id="email"
                   type="email"
                   autoComplete="email"
@@ -80,7 +80,7 @@ export default function SignIn() {
                 </div>
               </div>
               <div className="mt-2">
-                <StyledOutlineInput
+                <Input
                   id="password"
                   type="password"
                   autoComplete="current-password"

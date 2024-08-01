@@ -1,6 +1,6 @@
 import "./globals.css";
 
-export * from "./inputs";
+export * from "./input";
 export * from "./buttons";
 
 export * from "./utils";
