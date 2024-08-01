@@ -1,3 +1,3 @@
-# React + TypeScript + Material Tailwind
+# React + TypeScript + ShadCN
 
 This is a small UI package
