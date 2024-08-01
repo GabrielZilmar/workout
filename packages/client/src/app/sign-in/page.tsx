@@ -1,6 +1,6 @@
 "use client";
 
-import { StyledOutlineButton, Input, cn } from "@workout/ui";
+import { StyledOutlineButton, Input, cn, Label } from "@workout/ui";
 import { Lock, Mail } from "lucide-react";
 import Image from "next/image";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -51,12 +51,12 @@ export default function SignIn() {
             onSubmit={handleSubmit(onSubmit)}
           >
             <div>
-              <label
+              <Label
                 htmlFor="email"
                 className="block text-sm font-medium leading-6 text-white-900"
               >
-                Email address
-              </label>
+                Email
+              </Label>
               <div className="mt-2">
                 <Input
                   id="email"
@@ -71,12 +71,12 @@ export default function SignIn() {
 
             <div>
               <div className="flex items-center justify-between">
-                <label
+                <Label
                   htmlFor="password"
                   className="block text-sm font-medium leading-6 text-white-900"
                 >
                   Password
-                </label>
+                </Label>
                 <div className="text-sm">
                   <a
                     href="#"
