@@ -4,7 +4,7 @@ import { Button, Input, cn, Label } from "@workout/ui";
 import { Lock, Mail } from "lucide-react";
 import Image from "next/image";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { SignInPayload } from "~/data/signIn";
+import { SignInPayload } from "~/data/sign-in";
 import { useSignIn } from "~/hooks";
 
 export default function SignIn() {
