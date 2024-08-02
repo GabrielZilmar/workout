@@ -3,6 +3,7 @@
 import { Button, Input, cn, Label } from "@workout/ui";
 import { Lock, Mail } from "lucide-react";
 import Image from "next/image";
+import Logo from "/public/logo.svg";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { SignInPayload } from "~/data/sign-in";
 import { useSignIn } from "~/hooks";
@@ -31,7 +32,7 @@ export default function SignIn() {
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <Image
             className="mx-auto"
-            src="/logo.svg"
+            src={Logo}
             width={0}
             height={0}
             style={{ width: "auto", height: "auto" }}
