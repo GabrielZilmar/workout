@@ -21,16 +21,14 @@ export class Login implements UseCase<LoginParams, LoginResult> {
   constructor(private readonly userRepository: UserRepository) {}
 
   public async execute({ email, password }: LoginParams): Promise<LoginResult> {
-    const userDomainOrError = await this.userRepository.findByEmail(email);
-
-    if (userDomainOrError.isLeft()) {
+    const userDomain = await this.userRepository.findByEmail(email);
+    if (!userDomain) {
       throw new HttpException(
         { message: SessionUseCaseError.messages.userNotExits(email) },
         HttpStatus.NOT_FOUND,
       );
     }
 
-    const userDomain = userDomainOrError.value;
     if (!userDomain.id) {
       throw new InternalServerErrorException(userDomain.props);
     }
