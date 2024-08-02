@@ -17,6 +17,7 @@ import { DeleteUser } from '~/modules/users/domain/use-cases/delete-user';
 import { GetMe } from '~/modules/users/domain/use-cases/get-me';
 import { GetUser } from '~/modules/users/domain/use-cases/get-user';
 import { IsEmailAvailable } from '~/modules/users/domain/use-cases/is-email-available';
+import { IsUsernameAvailable } from '~/modules/users/domain/use-cases/is-username-available';
 import { ListUsers } from '~/modules/users/domain/use-cases/list-users';
 import { UpdateUser } from '~/modules/users/domain/use-cases/update-user';
 import { CreateUserDto } from '~/modules/users/dto/create-user.dto';
@@ -24,6 +25,7 @@ import { DeleteUserParamsDto } from '~/modules/users/dto/delete-user.dto';
 import { FindAllUsersDto } from '~/modules/users/dto/find-all-users.dto';
 import { GetUserDto } from '~/modules/users/dto/get-user.dto';
 import { IsEmailAvailableQueryDTO } from '~/modules/users/dto/is-email-available.dto';
+import { IsUsernameAvailableQueryDTO } from '~/modules/users/dto/is-username-available.dto';
 import {
   CreateUserParamsDto,
   UpdateUserBodyDto,
@@ -40,6 +42,7 @@ export class UsersController {
     private readonly deleteUser: DeleteUser,
     private readonly getMeUseCase: GetMe,
     private readonly isEmailAvailableUseCase: IsEmailAvailable,
+    private readonly isUsernameAvailableUseCase: IsUsernameAvailable,
   ) {}
 
   @Post()
@@ -63,6 +66,11 @@ export class UsersController {
   @Get('/is-email-available')
   isEmailAvailable(@Query() { email }: IsEmailAvailableQueryDTO) {
     return this.isEmailAvailableUseCase.execute({ email });
+  }
+
+  @Get('/is-username-available')
+  isUsernameAvailable(@Query() { username }: IsUsernameAvailableQueryDTO) {
+    return this.isUsernameAvailableUseCase.execute({ username });
   }
 
   @Get(':idOrUsername')
