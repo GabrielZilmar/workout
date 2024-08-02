@@ -2,9 +2,9 @@ import { AxiosError, AxiosResponse } from "axios";
 import axiosInstance from "~/data/api";
 import { WorkoutUser } from "~/types/user";
 
-type SignInApiResponse = WorkoutUser;
+type SignUpApiResponse = WorkoutUser;
 
-export type SignInPayload = {
+export type SignUpPayload = {
   username: string;
   email: string;
   password: string;
@@ -13,10 +13,16 @@ export type SignInPayload = {
   height?: number;
 };
 
-export type SignInResult = AxiosResponse<SignInApiResponse, AxiosError>;
+type SignUpUserError = {
+  duplicatedItems?: Record<string, string>;
+  message: string;
+};
+export type SignUpUserErrorResult = AxiosError<SignUpUserError>;
 
-export const signUp = async (payload: SignInPayload): Promise<SignInResult> => {
-  const response = await axiosInstance.post<SignInApiResponse>("/users", {
+export type SignUpResult = AxiosResponse<SignUpApiResponse, AxiosError>;
+
+export const signUp = async (payload: SignUpPayload): Promise<SignUpResult> => {
+  const response = await axiosInstance.post<SignUpApiResponse>("/users", {
     ...payload,
   });
 
