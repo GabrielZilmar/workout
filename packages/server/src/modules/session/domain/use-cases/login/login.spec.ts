@@ -7,7 +7,6 @@ import { UserDomain } from '~/modules/users/domain/users.domain';
 import { User } from '~/modules/users/entities/user.entity';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 import JwtService from '~/services/jwt/jsonwebtoken';
-import { right } from '~/shared/either';
 
 describe('Login Use Case', () => {
   let userRepository: UserRepository;
@@ -19,7 +18,7 @@ describe('Login Use Case', () => {
   const mockUserRepository = () => {
     const userMapper = new UserMapper();
 
-    const findByEmailUserMock = jest.fn().mockResolvedValue(right(userDomain));
+    const findByEmailUserMock = jest.fn().mockResolvedValue(userDomain);
     const userRepositoryMock = new UserRepository(userMapper) as jest.Mocked<
       InstanceType<typeof UserRepository>
     >;
@@ -50,7 +49,7 @@ describe('Login Use Case', () => {
     expect(decodedToken).toEqual({
       id: userDomainParams.id,
       email: userDomainParams.email,
-      username: userDomainParams.username,
+      username: userDomainParams.username.toLowerCase(),
       isAdmin: userDomainParams.isAdmin,
       isEmailVerified: userDomainParams.isEmailVerified,
       iat: expect.any(Number),
@@ -59,7 +58,7 @@ describe('Login Use Case', () => {
   });
 
   it('Should not login if user does not exists', async () => {
-    const findByEmailUserMock = jest.fn().mockResolvedValue(right(null));
+    const findByEmailUserMock = jest.fn().mockResolvedValue(null);
     userRepository.findByEmail = findByEmailUserMock;
 
     await expect(
@@ -71,7 +70,7 @@ describe('Login Use Case', () => {
   });
 
   it('Should not login if password not match', async () => {
-    const findByEmailUserMock = jest.fn().mockResolvedValue(right(userDomain));
+    const findByEmailUserMock = jest.fn().mockResolvedValue(userDomain);
     userRepository.findByEmail = findByEmailUserMock;
 
     await expect(

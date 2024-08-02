@@ -66,7 +66,7 @@ describe('CreateUser', () => {
     const newUser = await createUser.execute(createUserParams);
     expect(newUser).toBeInstanceOf(UserDto);
     expect(newUser).toMatchObject({
-      username: userParams.username,
+      username: userParams.username.toLowerCase(),
       email: userParams.email,
       age: userParams.age,
       weight: userParams.weight,

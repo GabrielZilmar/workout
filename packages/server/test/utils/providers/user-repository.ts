@@ -21,11 +21,19 @@ const getUserRepositoryProvider = async ({
     provide: UserRepository,
     useFactory: (userMapper: UserMapper) => {
       if (!userRepositoryMock) {
-        const findOneByIdMock = jest.fn().mockResolvedValue(userDomain);
         userRepositoryMock = new UserRepository(userMapper) as jest.Mocked<
           InstanceType<typeof UserRepository>
         >;
-        userRepositoryMock.findOneById = findOneByIdMock;
+
+        userRepositoryMock.findOneById = jest
+          .fn()
+          .mockResolvedValue(userDomain);
+        userRepositoryMock.findByEmail = jest
+          .fn()
+          .mockResolvedValue(userDomain);
+        userRepositoryMock.findOneByUsername = jest
+          .fn()
+          .mockResolvedValue(userDomain);
       }
 
       return userRepositoryMock;
