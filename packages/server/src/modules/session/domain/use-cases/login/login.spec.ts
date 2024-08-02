@@ -49,7 +49,7 @@ describe('Login Use Case', () => {
     expect(decodedToken).toEqual({
       id: userDomainParams.id,
       email: userDomainParams.email,
-      username: userDomainParams.username,
+      username: userDomainParams.username.toLowerCase(),
       isAdmin: userDomainParams.isAdmin,
       isEmailVerified: userDomainParams.isEmailVerified,
       iat: expect.any(Number),

@@ -38,6 +38,7 @@ export default class Username extends ValueObject<UsernameProps> {
       );
     }
 
+    props.value = props.value.toLowerCase();
     return right(new Username(props));
   }
 }
