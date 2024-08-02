@@ -16,12 +16,14 @@ import { CreateUser } from '~/modules/users/domain/use-cases/create-user';
 import { DeleteUser } from '~/modules/users/domain/use-cases/delete-user';
 import { GetMe } from '~/modules/users/domain/use-cases/get-me';
 import { GetUser } from '~/modules/users/domain/use-cases/get-user';
+import { IsEmailAvailable } from '~/modules/users/domain/use-cases/is-email-available';
 import { ListUsers } from '~/modules/users/domain/use-cases/list-users';
 import { UpdateUser } from '~/modules/users/domain/use-cases/update-user';
 import { CreateUserDto } from '~/modules/users/dto/create-user.dto';
 import { DeleteUserParamsDto } from '~/modules/users/dto/delete-user.dto';
 import { FindAllUsersDto } from '~/modules/users/dto/find-all-users.dto';
 import { GetUserDto } from '~/modules/users/dto/get-user.dto';
+import { IsEmailAvailableQueryDTO } from '~/modules/users/dto/is-email-available.dto';
 import {
   CreateUserParamsDto,
   UpdateUserBodyDto,
@@ -37,6 +39,7 @@ export class UsersController {
     private readonly updateUser: UpdateUser,
     private readonly deleteUser: DeleteUser,
     private readonly getMeUseCase: GetMe,
+    private readonly isEmailAvailableUseCase: IsEmailAvailable,
   ) {}
 
   @Post()
@@ -55,6 +58,11 @@ export class UsersController {
   getMe(@Req() req: RequestWithUser) {
     const userId = req.user.id;
     return this.getMeUseCase.execute({ userId });
+  }
+
+  @Get('/is-email-available')
+  isEmailAvailable(@Query() { email }: IsEmailAvailableQueryDTO) {
+    return this.isEmailAvailableUseCase.execute({ email });
   }
 
   @Get(':idOrUsername')
