@@ -25,14 +25,35 @@ import Validator from "~/shared/validator";
 import { useSignUp } from "~/hooks";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { isEmailAvailable } from "~/data/is-email-available";
+import { isUsernameAvailable } from "~/data/is-username-available";
 
 type FormFieldValues = SignUpPayload & { confirmPassword: string };
 
-// TODO: Add check if username and email are already taken
 const formSchema = z
   .object({
-    username: z.string().min(4),
-    email: z.string().email(),
+    username: z
+      .string()
+      .min(4)
+      .refine(async (value) => {
+        try {
+          const { data: isAvail } = await isUsernameAvailable(value);
+          return isAvail;
+        } catch (e) {
+          return false;
+        }
+      }, "Email is already taken"),
+    email: z
+      .string()
+      .email()
+      .refine(async (value) => {
+        try {
+          const { data: isAvail } = await isEmailAvailable(value);
+          return isAvail;
+        } catch (e) {
+          return false;
+        }
+      }, "Email is already taken"),
     password: z.string().regex(Validator.regexPasswordValidation, {
       message: "Password does not meet complexity requirements",
     }),
@@ -47,6 +68,7 @@ const SignUp: React.FC = () => {
   const router = useRouter();
   const form = useForm<FormFieldValues>({
     resolver: zodResolver(formSchema),
+    mode: "onBlur",
     defaultValues: {
       username: "",
       email: "",
