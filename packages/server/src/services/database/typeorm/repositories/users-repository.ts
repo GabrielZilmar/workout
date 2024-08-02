@@ -48,7 +48,7 @@ export default class UserRepository extends BaseRepository<User, UserDomain> {
         RepositoryError.create(
           RepositoryError.messages.itemDuplicated,
           itemsDuplicated,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.CONFLICT,
         ),
       );
     }
