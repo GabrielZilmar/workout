@@ -31,6 +31,9 @@ const getUserRepositoryProvider = async ({
         userRepositoryMock.findByEmail = jest
           .fn()
           .mockResolvedValue(userDomain);
+        userRepositoryMock.findOneByUsername = jest
+          .fn()
+          .mockResolvedValue(userDomain);
       }
 
       return userRepositoryMock;
