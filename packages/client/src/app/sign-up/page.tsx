@@ -1,27 +1,11 @@
-"use client";
-
-import { Button, Input, cn, Label } from "@workout/ui";
-import { Lock, Mail } from "lucide-react";
+import { Button, cn, Input, Label } from "@workout/ui";
 import Image from "next/image";
 import Logo from "/public/logo.svg";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { SignInPayload } from "~/data/sign-in";
-import { useSignIn } from "~/hooks";
+import { Lock, Mail, User } from "lucide-react";
+import { ALL_ROUTES } from "~/routes";
 import Link from "next/link";
 
-export default function SignIn() {
-  const { register, handleSubmit } = useForm<SignInPayload>({
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-  const { signInMutation } = useSignIn();
-
-  const onSubmit: SubmitHandler<SignInPayload> = async (data) => {
-    signInMutation(data);
-  };
-
+const SignUp: React.FC = () => {
   return (
     <div className="h-screen">
       <div
@@ -36,22 +20,17 @@ export default function SignIn() {
             src={Logo}
             width={0}
             height={0}
-            style={{ width: "auto", height: "auto" }}
+            style={{ width: 200, height: 200 }}
             alt="Workout Logo"
             priority
           />
-          <h2 className="mt-2 text-center text-2xl font-bold text-white-900">
-            Sign in to your account
+          <h2 className="text-center text-xl font-bold text-white-900">
+            Register your account
           </h2>
         </div>
 
-        <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form
-            className="space-y-6"
-            action="#"
-            method="POST"
-            onSubmit={handleSubmit(onSubmit)}
-          >
+        <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-sm">
+          <form className="space-y-6" action="#" method="POST">
             <div>
               <Label
                 htmlFor="email"
@@ -66,11 +45,26 @@ export default function SignIn() {
                   autoComplete="email"
                   required
                   startIcon={<Mail />}
-                  {...register("email", { required: true })}
                 />
               </div>
             </div>
-
+            <div>
+              <Label
+                htmlFor="username"
+                className="block text-sm font-medium leading-6 text-white-900"
+              >
+                Username
+              </Label>
+              <div className="mt-2">
+                <Input
+                  id="username"
+                  type="username"
+                  autoComplete="username"
+                  required
+                  startIcon={<User />}
+                />
+              </div>
+            </div>
             <div>
               <div className="flex items-center justify-between">
                 <Label
@@ -79,17 +73,6 @@ export default function SignIn() {
                 >
                   Password
                 </Label>
-                <div className="text-sm cursor-not-allowed">
-                  <a
-                    href="#"
-                    className={cn(
-                      "font-semibold text-indigo-600 hover:text-indigo-500",
-                      "disabled pointer-events-none"
-                    )}
-                  >
-                    Forgot password?
-                  </a>
-                </div>
               </div>
               <div className="mt-2">
                 <Input
@@ -98,29 +81,49 @@ export default function SignIn() {
                   autoComplete="current-password"
                   required
                   startIcon={<Lock />}
-                  {...register("password", { required: true })}
+                />
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center justify-between">
+                <Label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-medium leading-6 text-white-900"
+                >
+                  Confirm Password
+                </Label>
+              </div>
+              <div className="mt-2">
+                <Input
+                  id="confirmPassword"
+                  type="confirmPassword"
+                  autoComplete="current-password"
+                  required
+                  startIcon={<Lock />}
                 />
               </div>
             </div>
 
             <div>
               <Button fullWidth type="submit">
-                Sign in
+                Register
               </Button>
             </div>
           </form>
 
           <p className="mt-10 text-center text-sm text-gray-500">
-            Not have an account?{" "}
+            Already have an account?{" "}
             <Link
-              href="#"
+              href={ALL_ROUTES.signIn}
               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
             >
-              Create now
+              Sign In
             </Link>
           </p>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default SignUp;
