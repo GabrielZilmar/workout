@@ -10,6 +10,7 @@ import {
   FormControl,
   FormField,
   FormMessage,
+  PasswordInput,
 } from "@workout/ui";
 import z from "zod";
 import { Lock, Mail } from "lucide-react";
@@ -127,10 +128,9 @@ export default function SignIn() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input
+                        <PasswordInput
                           {...field}
                           id="password"
-                          type="password"
                           autoComplete="current-password"
                           required
                           startIcon={<Lock />}
