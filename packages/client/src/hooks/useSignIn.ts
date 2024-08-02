@@ -2,7 +2,7 @@ import { AxiosError } from "axios";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
-import signIn, { SignInPayload, SignInResult } from "~/data/signIn";
+import signIn, { SignInPayload, SignInResult } from "~/data/sign-in";
 
 import { HttpStatus } from "~/constants/httpStatus";
 import { setCookie } from "cookies-next";

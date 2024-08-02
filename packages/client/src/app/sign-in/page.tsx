@@ -3,8 +3,9 @@
 import { Button, Input, cn, Label } from "@workout/ui";
 import { Lock, Mail } from "lucide-react";
 import Image from "next/image";
+import Logo from "/public/logo.svg";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { SignInPayload } from "~/data/signIn";
+import { SignInPayload } from "~/data/sign-in";
 import { useSignIn } from "~/hooks";
 
 export default function SignIn() {
@@ -31,7 +32,7 @@ export default function SignIn() {
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <Image
             className="mx-auto"
-            src="/logo.svg"
+            src={Logo}
             width={0}
             height={0}
             style={{ width: "auto", height: "auto" }}
@@ -77,10 +78,13 @@ export default function SignIn() {
                 >
                   Password
                 </Label>
-                <div className="text-sm">
+                <div className="text-sm cursor-not-allowed">
                   <a
                     href="#"
-                    className="font-semibold text-indigo-600 hover:text-indigo-500"
+                    className={cn(
+                      "font-semibold text-indigo-600 hover:text-indigo-500",
+                      "disabled pointer-events-none"
+                    )}
                   >
                     Forgot password?
                   </a>
