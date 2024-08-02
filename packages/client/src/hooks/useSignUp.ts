@@ -10,11 +10,12 @@ import {
 import Formatter from "~/shared/formatter";
 
 export const useSignUp = () => {
-  const { mutate: signUpMutation } = useMutation<
-    SignUpResult,
-    SignUpUserErrorResult,
-    SignUpPayload
-  >({
+  const {
+    mutate: signUpMutation,
+    data,
+    isError,
+    isSuccess,
+  } = useMutation<SignUpResult, SignUpUserErrorResult, SignUpPayload>({
     mutationFn: (payload) => signUp(payload),
     onSuccess: ({ data }: SignUpResult) => {
       enqueueSnackbar("Successful sign up!", { variant: "success" });
@@ -45,5 +46,5 @@ export const useSignUp = () => {
     },
   });
 
-  return { signUpMutation };
+  return { signUpMutation, data: data?.data || null, isError, isSuccess };
 };

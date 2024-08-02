@@ -22,6 +22,9 @@ import Link from "next/link";
 import SessionLayout from "~/layouts/session.layout";
 import { SignUpPayload } from "~/data/sign-up";
 import Validator from "~/shared/validator";
+import { useSignUp } from "~/hooks";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 type FormFieldValues = SignUpPayload & { confirmPassword: string };
 
@@ -41,6 +44,7 @@ const formSchema = z
   });
 
 const SignUp: React.FC = () => {
+  const router = useRouter();
   const form = useForm<FormFieldValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -52,9 +56,16 @@ const SignUp: React.FC = () => {
   });
   const { errors: formErrors } = form.formState;
 
+  const { signUpMutation, isSuccess } = useSignUp();
   const onSubmit: SubmitHandler<FormFieldValues> = async (data) => {
-    console.log(data);
+    signUpMutation(data);
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      router.push(ALL_ROUTES.signIn);
+    }
+  }, [isSuccess, router]);
 
   return (
     <SessionLayout>
@@ -64,7 +75,7 @@ const SignUp: React.FC = () => {
           src={Logo}
           width={0}
           height={0}
-          style={{ width: 200, height: 200 }}
+          style={{ width: 160, height: 160 }}
           alt="Workout Logo"
           priority
         />
