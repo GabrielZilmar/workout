@@ -85,6 +85,7 @@ export default function SignIn() {
                       <FormControl>
                         <Input
                           {...field}
+                          placeholder="test@example.com"
                           id="email"
                           type="email"
                           autoComplete="email"
@@ -130,6 +131,7 @@ export default function SignIn() {
                       <FormControl>
                         <PasswordInput
                           {...field}
+                          placeholder="Password"
                           id="password"
                           autoComplete="current-password"
                           required
