@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { enqueueSnackbar } from "notistack";
 import { HttpStatus } from "~/constants/httpStatus";
+import { sendVerifyEmail } from "~/data/send-verify-email";
 import {
   signUp,
   SignUpPayload,
@@ -19,6 +20,17 @@ export const useSignUp = () => {
     mutationFn: (payload) => signUp(payload),
     onSuccess: ({ data }: SignUpResult) => {
       enqueueSnackbar("Successful sign up!", { variant: "success" });
+      try {
+        sendVerifyEmail({ userId: data.id });
+      } catch (err) {
+        return enqueueSnackbar(
+          "Something went wrong when sending the verification email. Try again later.",
+          {
+            variant: "error",
+            style: { whiteSpace: "pre-line" },
+          }
+        );
+      }
     },
     onError: (error) => {
       if (error.response?.status === HttpStatus.CONFLICT) {
