@@ -1,5 +1,4 @@
-import { Controller, Post, Body, Req, Query, Get } from '@nestjs/common';
-import { Request } from 'express';
+import { Controller, Post, Body, Query } from '@nestjs/common';
 import { Login } from '~/modules/session/domain/use-cases/login';
 import { SendVerifyEmail } from '~/modules/session/domain/use-cases/send-verify-email';
 import { VerifyEmail } from '~/modules/session/domain/use-cases/verify-email';
@@ -21,14 +20,9 @@ export class SessionController {
   }
 
   @Post('/send-verify-email')
-  sendVerifyEmail(
-    @Req() req: Request,
-    @Body() sendVerifyEmailDto: SendVerifyEmailDto,
-  ) {
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
+  sendVerifyEmail(@Body() sendVerifyEmailDto: SendVerifyEmailDto) {
     return this.sendVerifyEmailUseCase.execute({
       ...sendVerifyEmailDto,
-      baseUrl,
     });
   }
 

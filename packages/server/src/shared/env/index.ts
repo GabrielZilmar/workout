@@ -62,6 +62,10 @@ export default class Env {
     return this.getEnvOrThrow('EMAIL_PASSWORD');
   }
 
+  static get verifyEmailUrl(): string {
+    return this.getEnvOrThrow('VERIFY_EMAIL_URL');
+  }
+
   private static getEnvOrThrow(envName: string): string {
     const env = process.env[envName];
     if (!env) {
