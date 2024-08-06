@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { enqueueSnackbar } from "notistack";
+import { useState } from "react";
 import {
   VerifyEmailError,
   VerifyEmailPayload,
@@ -8,10 +9,14 @@ import {
 } from "~/data/verify-email";
 
 export const useVerifyEmail = () => {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const {
     mutate: verifyEmailMutation,
     isError,
     isSuccess,
+    isPending,
+    isIdle,
     error,
     data,
   } = useMutation<VerifyEmailResult, VerifyEmailError, VerifyEmailPayload>({
@@ -21,21 +26,18 @@ export const useVerifyEmail = () => {
         variant: "success",
       });
     },
-    onError: () => {
-      if (error?.message.includes("expired")) {
-        enqueueSnackbar("Email verification link expired!", {
-          variant: "error",
-        });
+    onError: (error) => {
+      let errorMessage =
+        "Failed to verify email, try again later! Please contact a support";
+      if (error.response?.data?.message?.includes("expired")) {
+        errorMessage = "Email verification link expired!";
+      }
+      if (error.response?.data?.message?.includes("jwt string")) {
+        errorMessage = "Invalid verify email token!";
       }
 
-      if (error?.message[0].includes("jwt string")) {
-        enqueueSnackbar("Invalid verify email token!", { variant: "error" });
-      }
-
-      return enqueueSnackbar(
-        "Failed to verify email, try again later! Please contact a support",
-        { variant: "error" }
-      );
+      setErrorMessage(errorMessage);
+      return enqueueSnackbar(errorMessage, { variant: "error" });
     },
   });
 
@@ -43,8 +45,11 @@ export const useVerifyEmail = () => {
     verifyEmailMutation,
     isError,
     isSuccess,
+    isPending,
+    isIdle,
     error: error?.response?.data,
     data,
+    errorMessage,
   };
 };
 
