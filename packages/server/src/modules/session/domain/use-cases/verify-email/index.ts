@@ -5,7 +5,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { SessionUseCaseError } from '~/modules/session/domain/use-cases/errors';
-import { VerifyEmailDto } from '~/modules/session/dto/verify-email.dto';
+import { VerifyEmailBodyDto } from '~/modules/session/dto/verify-email.dto';
 import { Token, TokenTypeMap } from '~/modules/session/entities/token.entity';
 import { User } from '~/modules/users/entities/user.entity';
 import Crypto from '~/services/cryptography/crypto';
@@ -17,7 +17,7 @@ import JwtService from '~/services/jwt/jsonwebtoken';
 import { UseCase } from '~/shared/core/use-case';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 
-export type VerifyEmailParams = VerifyEmailDto;
+export type VerifyEmailParams = VerifyEmailBodyDto;
 export type VerifyEmailResult = Promise<boolean>;
 
 type TokenDecoded = { userId: string };

@@ -1,11 +1,10 @@
-import { Controller, Post, Body, Req, Query, Get } from '@nestjs/common';
-import { Request } from 'express';
+import { Controller, Post, Body } from '@nestjs/common';
 import { Login } from '~/modules/session/domain/use-cases/login';
 import { SendVerifyEmail } from '~/modules/session/domain/use-cases/send-verify-email';
 import { VerifyEmail } from '~/modules/session/domain/use-cases/verify-email';
 import { SessionLoginDto } from '~/modules/session/dto/login.dto';
 import { SendVerifyEmailDto } from '~/modules/session/dto/send-verify-email.dto';
-import { VerifyEmailDto } from '~/modules/session/dto/verify-email.dto';
+import { VerifyEmailBodyDto } from '~/modules/session/dto/verify-email.dto';
 
 @Controller('/api/session')
 export class SessionController {
@@ -21,19 +20,14 @@ export class SessionController {
   }
 
   @Post('/send-verify-email')
-  sendVerifyEmail(
-    @Req() req: Request,
-    @Body() sendVerifyEmailDto: SendVerifyEmailDto,
-  ) {
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
+  sendVerifyEmail(@Body() sendVerifyEmailDto: SendVerifyEmailDto) {
     return this.sendVerifyEmailUseCase.execute({
       ...sendVerifyEmailDto,
-      baseUrl,
     });
   }
 
   @Post('/verify-email')
-  verifyEmail(@Query() verifyEmailDto: VerifyEmailDto) {
+  verifyEmail(@Body() verifyEmailDto: VerifyEmailBodyDto) {
     return this.verifyEmailUseCase.execute(verifyEmailDto);
   }
 }

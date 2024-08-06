@@ -9,13 +9,12 @@ import UserRepository from '~/services/database/typeorm/repositories/users-repos
 import EmailSender from '~/services/email-sender';
 import EmailSenderError from '~/services/email-sender/errors';
 import { UseCase } from '~/shared/core/use-case';
-import VerifyEmailTemplate from '~/shared/templates/verify-email';
+import Env from '~/shared/env';
+import VerifyEmailTemplate from '~/shared/templates/email/verify-email';
 
 const EXPIRES_IN_15_MIN = '15min';
 
-export type SendVerifyEmailParams = SendVerifyEmailDto & {
-  baseUrl: string;
-};
+export type SendVerifyEmailParams = SendVerifyEmailDto;
 export type SendVerifyEmailResult = Promise<boolean>;
 
 @Injectable()
@@ -31,7 +30,6 @@ export class SendVerifyEmail
 
   public async execute({
     userId,
-    baseUrl,
   }: SendVerifyEmailParams): SendVerifyEmailResult {
     const userDomain = await this.userRepository.findOneById(userId);
 
@@ -83,7 +81,7 @@ export class SendVerifyEmail
         subject: VerifyEmailTemplate.subject,
         html: VerifyEmailTemplate.renderTemplate({
           username: userDomain.username.value,
-          baseUrl,
+          baseUrl: Env.verifyEmailUrl,
           verifyEmailToken: sessionDomain.token.getEncryptValue(),
         }),
       });

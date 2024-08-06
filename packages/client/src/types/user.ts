@@ -1,7 +1,8 @@
 export type WorkoutUser = {
+  id: string;
   name: string;
   email: string;
-  age: number;
-  height: number;
-  weight: number;
+  age: number | null;
+  height: number | null;
+  weight: number | null;
 };
