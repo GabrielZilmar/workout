@@ -1,8 +1,10 @@
+import GlobalLayout from "~/layouts/global.layout";
+
 const Home: React.FC = () => {
   return (
-    <div>
+    <GlobalLayout>
       <h1>Hello World</h1>
-    </div>
+    </GlobalLayout>
   );
 };
 
