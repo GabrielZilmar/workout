@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Disclosure,
   DisclosureButton,
@@ -7,10 +9,15 @@ import {
   MenuItem,
   MenuItems,
 } from "@headlessui/react";
-import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import SecondaryLogo from "/public/secondary-logo.png";
 import Avatar from "/public/mock-avatar.jpeg";
+import { setCookie } from "cookies-next";
+import { COOKIES_NAMES } from "~/constants/cookies";
+import env from "~/shared/env";
+import { useRouter } from "next/navigation";
+import { ALL_ROUTES } from "~/routes";
 
 const navigation = [
   { name: "Dashboard", href: "#", current: true },
@@ -23,6 +30,17 @@ function classNames(...classes: string[]) {
 }
 
 export default function Navbar() {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    setCookie(COOKIES_NAMES.ACCESS_TOKEN, null, {
+      secure: true,
+      sameSite: "lax",
+      domain: env.appDomain,
+    });
+    router.push(ALL_ROUTES.signIn);
+  };
+
   return (
     <Disclosure as="nav" className="bg-gray-800">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -101,20 +119,12 @@ export default function Navbar() {
                   </a>
                 </MenuItem>
                 <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
-                  >
-                    Settings
-                  </a>
-                </MenuItem>
-                <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+                  <button
+                    className="w-full block px-4 py-2 text-left text-sm text-gray-700 data-[focus]:bg-gray-100"
+                    onClick={handleLogout}
                   >
                     Sign out
-                  </a>
+                  </button>
                 </MenuItem>
               </MenuItems>
             </Menu>
