@@ -1,9 +1,10 @@
+import { WorkoutDataTable } from "~/components/data-table/workouts";
 import GlobalLayout from "~/layouts/global.layout";
 
 const Home: React.FC = () => {
   return (
     <GlobalLayout>
-      <h1>Hello World</h1>
+      <WorkoutDataTable />
     </GlobalLayout>
   );
 };
