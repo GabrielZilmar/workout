@@ -13,7 +13,7 @@ const initialData: ListWorkoutResult = {
 };
 
 export const useListWorkouts = (params: ListWorkoutsQuery = {}) => {
-  const { isLoading, error, data } = useQuery<
+  const { isLoading, isError, error, data } = useQuery<
     ListWorkoutsResult,
     ListWorkoutsError
   >({
@@ -22,5 +22,5 @@ export const useListWorkouts = (params: ListWorkoutsQuery = {}) => {
     retry: 0,
   });
 
-  return { isLoading, error, data: data?.data || initialData };
+  return { isLoading, isError, error, data: data?.data || initialData };
 };
