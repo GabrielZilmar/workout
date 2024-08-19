@@ -5,5 +5,10 @@ export * from "./label";
 export * from "./button";
 export * from "./form";
 export * from "./tooltip";
+export * from "./table";
+export * from "./dropdown-menu";
+export * from "./checkbox";
+export * from "./data-table";
+export * from "./pagination";
 
 export * from "./utils";

@@ -28,6 +28,7 @@ export class ListWorkouts
       where: { userId, isRoutine, name: name && ILike(`%${name}%`) },
       skip,
       take,
+      order: { createdAt: 'DESC' },
     });
 
     const workoutsDto: WorkoutDto[] = [];
