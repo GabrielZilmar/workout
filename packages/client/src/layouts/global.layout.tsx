@@ -12,14 +12,9 @@ const GlobalLayout: React.FC<GlobalLayoutProps> = ({
   children,
 }: GlobalLayoutProps) => {
   return (
-    <div className="flex w-full h-screen max-h-screen min-h-screen">
-      <div className={cn("w-full h-full flex flex-col")}>
-        <Navbar />
-
-        <div className="flex flex-col h-[calc(100%-4rem)] max-h-[calc(100%-4rem)] p-6 overflow-y-auto custom-scrollbar">
-          {children}
-        </div>
-      </div>
+    <div className="flex flex-col w-full">
+      <Navbar />
+      <div className="relative mt-10 p-6 overflow-y-auto">{children}</div>
     </div>
   );
 };
