@@ -57,7 +57,13 @@ const Pagination: React.FC<PaginationProps> = ({
           <PaginationPrevious onClick={handlePrevious} />
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink isActive={currentPage === FIRST_PAGE}>
+          <PaginationLink
+            isActive={currentPage === FIRST_PAGE}
+            onClick={(e) => {
+              e.preventDefault();
+              changePage(FIRST_PAGE);
+            }}
+          >
             {FIRST_PAGE}
           </PaginationLink>
         </PaginationItem>
@@ -78,7 +84,13 @@ const Pagination: React.FC<PaginationProps> = ({
         )}
         {shouldRenderMap.lastPaginateLink && (
           <PaginationItem>
-            <PaginationLink isActive={currentPage === totalPages}>
+            <PaginationLink
+              isActive={currentPage === totalPages}
+              onClick={(e) => {
+                e.preventDefault();
+                changePage(totalPages);
+              }}
+            >
               {totalPages}
             </PaginationLink>
           </PaginationItem>
