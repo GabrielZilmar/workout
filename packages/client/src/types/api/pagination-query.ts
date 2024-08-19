@@ -1,4 +1,4 @@
 export type PaginationQuery = {
-  skip: number;
-  take: number;
+  skip?: number;
+  take?: number;
 };
