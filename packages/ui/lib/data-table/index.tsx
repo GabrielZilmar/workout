@@ -28,15 +28,32 @@ import {
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 
-interface DataTableProps<TData, TValue> {
+type SearchProps = {
+  search: string;
+  onSearch: (search: string) => void;
+};
+
+type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-}
+} & (
+  | ({
+      isServerSearch: true;
+    } & SearchProps)
+  | {
+      isServerSearch?: false;
+    }
+);
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  isServerSearch,
+  ...params
 }: DataTableProps<TData, TValue>) {
+  const [search, setSearch] = useState<string | undefined>(
+    isServerSearch ? (params as SearchProps).search : undefined
+  );
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -66,10 +83,20 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter name..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
+          value={
+            isServerSearch
+              ? search ?? ""
+              : (table.getColumn("name")?.getFilterValue() as string) ?? ""
           }
+          onChange={(event) => {
+            const value = event.target.value;
+            if (isServerSearch) {
+              const { onSearch } = params as SearchProps;
+              setSearch(value);
+              return onSearch(value);
+            }
+            table.getColumn("name")?.setFilterValue(value);
+          }}
           className="max-w-sm"
         />
         <DropdownMenu>
