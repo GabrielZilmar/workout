@@ -7,7 +7,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@workout/ui";
-import { MouseEvent, useCallback, useMemo } from "react";
+import { MouseEvent, useMemo } from "react";
 
 const FIRST_PAGE = 1;
 
