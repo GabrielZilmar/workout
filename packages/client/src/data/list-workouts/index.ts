@@ -1,4 +1,4 @@
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import axiosInstance from "~/data/api";
 import { GenericResponseError } from "~/types/api/errors";
 import { GenericListResponse } from "~/types/generic-list-response";
@@ -10,7 +10,7 @@ export type ListWorkoutsQuery = {
 };
 export type ListWorkoutResult = GenericListResponse<Workout>;
 export type ListWorkoutsResult = AxiosResponse<ListWorkoutResult>;
-export type ListWorkoutsError = AxiosResponse<GenericResponseError>;
+export type ListWorkoutsError = AxiosError<GenericResponseError>;
 
 export const listWorkouts = async (
   query: ListWorkoutsQuery
