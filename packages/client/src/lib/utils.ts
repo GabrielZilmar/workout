@@ -1,6 +1,6 @@
 export function debounce<T extends (...args: Parameters<T>) => void>(
   func: T,
-  delay: number
+  delay = 500
 ) {
   let timeout: NodeJS.Timeout;
   return function (...args: Parameters<T>) {
