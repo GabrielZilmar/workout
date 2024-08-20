@@ -10,5 +10,6 @@ export * from "./dropdown-menu";
 export * from "./checkbox";
 export * from "./data-table";
 export * from "./pagination";
+export * from "./alert-dialog";
 
 export * from "./utils";
