@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '~/guards/auth.guard';
 import { CreateWorkoutDto } from '~/modules/workout/dto/create-workout.dto';
+import DeleteWorkoutDto from '~/modules/workout/dto/delete-workout.dto';
 import GetWorkoutDto from '~/modules/workout/dto/get-workout.dto';
 import { ListPublicWorkoutsDto } from '~/modules/workout/dto/list-public-workouts.dto';
 import { ListWorkoutsDto } from '~/modules/workout/dto/list-workouts.dto';
@@ -76,7 +77,7 @@ export class WorkoutsController {
   }
 
   @Delete(':id')
-  delete(@Req() req: RequestWithUser, @Param() param: UpdateWorkoutParamsDto) {
+  delete(@Req() req: RequestWithUser, @Param() param: DeleteWorkoutDto) {
     const userId = req.user.id;
     return this.deleteWorkout.execute({ ...param, userId: userId });
   }
