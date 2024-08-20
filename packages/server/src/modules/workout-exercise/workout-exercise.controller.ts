@@ -5,7 +5,7 @@ import {
   Get,
   Param,
   Post,
-  Put,
+  Patch,
   Query,
   Req,
   UseGuards,
@@ -71,7 +71,7 @@ export class WorkoutExerciseController {
     });
   }
 
-  @Put('/:id')
+  @Patch('/:id')
   update(
     @Req() req: RequestWithUser,
     @Param() { id }: UpdateWorkoutExerciseParamsDto,
