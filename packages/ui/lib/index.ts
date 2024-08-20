@@ -11,5 +11,6 @@ export * from "./checkbox";
 export * from "./data-table";
 export * from "./pagination";
 export * from "./alert-dialog";
+export * from "./dialog";
 
 export * from "./utils";
