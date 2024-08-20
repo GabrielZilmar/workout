@@ -1,9 +1,18 @@
 "use client";
 
-import { DataTable } from "@workout/ui";
+import {
+  Button,
+  DataTable,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@workout/ui";
 import { useMemo, useState } from "react";
 import { workoutColumns } from "~/components/data-table/workouts/columns";
 import Error from "~/components/error";
+import WorkoutForm from "~/components/forms/workout";
 import Loading from "~/components/loading";
 import Pagination from "~/components/pagination";
 import { DEFAULT_PER_PAGE } from "~/constants/pagination";
@@ -13,6 +22,7 @@ import { debounce } from "~/lib/utils";
 const INITIAL_PAGE = 1;
 
 export function WorkoutDataTable() {
+  const [isAddWorkoutModalOpen, setIsAddWorkoutModalOpen] = useState(false);
   const [search, setSearch] = useState<string | undefined>(undefined);
   const [page, setPage] = useState<number>(INITIAL_PAGE);
   const { isLoading, isError, error, data } = useListWorkouts({
@@ -27,6 +37,8 @@ export function WorkoutDataTable() {
   );
 
   const handleSearch = debounce((search: string) => setSearch(search));
+  const handleToggleAddWorkoutModal = () =>
+    setIsAddWorkoutModalOpen((isOpen) => !isOpen);
 
   if (isError) {
     const errorMessage = `${error?.response?.data?.message || ""}\n ${
@@ -47,12 +59,34 @@ export function WorkoutDataTable() {
         isServerSearch
         search={search || ""}
         onSearch={handleSearch}
+        addButton={
+          <Button onClick={handleToggleAddWorkoutModal}>Add Workout</Button>
+        }
       />
       <Pagination
         currentPage={page}
         totalPages={totalPages}
         changePage={(page) => setPage(page)}
       />
+      <Dialog
+        open={isAddWorkoutModalOpen}
+        onOpenChange={handleToggleAddWorkoutModal}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create workout</DialogTitle>
+            <DialogDescription>
+              {
+                "Create your workout. Choice if it's public or private, if it's a routine..."
+              }
+            </DialogDescription>
+          </DialogHeader>
+          <WorkoutForm
+            onSubmit={handleToggleAddWorkoutModal}
+            onCancel={handleToggleAddWorkoutModal}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
