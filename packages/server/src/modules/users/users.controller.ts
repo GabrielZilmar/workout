@@ -6,7 +6,7 @@ import {
   Param,
   Delete,
   Query,
-  Put,
+  Patch,
   UseGuards,
   Req,
 } from '@nestjs/common';
@@ -80,7 +80,7 @@ export class UsersController {
     return this.getUser.execute({ userId, idOrUsername });
   }
 
-  @Put(':id')
+  @Patch(':id')
   @UseGuards(AuthGuard, UserDataGuard)
   update(
     @Param() id: CreateUserParamsDto,

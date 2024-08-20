@@ -5,7 +5,7 @@ import {
   Get,
   Param,
   Post,
-  Put,
+  Patch,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -44,7 +44,7 @@ export class MuscleController {
     return this.listMuscle.execute({ ...query });
   }
 
-  @Put(':id')
+  @Patch(':id')
   @UseGuards(AdminGuard)
   update(
     @Body() body: UpdateMuscleBodyDto,
