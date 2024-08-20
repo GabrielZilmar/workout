@@ -36,6 +36,7 @@ type SearchProps = {
 type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  addButton?: React.ReactNode;
 } & (
   | ({
       isServerSearch: true;
@@ -49,6 +50,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   isServerSearch,
+  addButton,
   ...params
 }: DataTableProps<TData, TValue>) {
   const [search, setSearch] = useState<string | undefined>(
@@ -125,6 +127,9 @@ export function DataTable<TData, TValue>({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
+      </div>
+      <div className="flex justify-end items-center pb-4">
+        {addButton || null}
       </div>
       <div className="rounded-md border">
         <Table>
