@@ -1,9 +1,20 @@
 "use client";
 
 import { ColumnDef, Table, Row } from "@tanstack/react-table";
-import { Button, Checkbox } from "@workout/ui";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  Button,
+  Checkbox,
+} from "@workout/ui";
 import { AlarmClockCheck, CircleX, Trash2 } from "lucide-react";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useDeleteWorkout } from "~/hooks";
 import { Workout } from "~/types/workout";
 
@@ -19,41 +30,74 @@ const WorkoutActionColumn: React.FC<WorkoutActionColumnProps> = ({
   table,
   ...params
 }) => {
+  const [isDeleteWorkoutDialogOpen, setIsDeleteWorkoutDialogOpen] =
+    useState<boolean>(false);
   const selectedRows = table.getSelectedRowModel().rows;
   const isMultipleRowsSelected = selectedRows.length > 1;
   const { deleteWorkoutMutation } = useDeleteWorkout();
 
+  const handleToggleDeleteDialog = useCallback(() => {
+    setIsDeleteWorkoutDialogOpen(!isDeleteWorkoutDialogOpen);
+  }, [isDeleteWorkoutDialogOpen]);
+
   const handleDelete = useCallback(() => {
+    handleToggleDeleteDialog();
     if (!isHeader) {
       const workout = (params as RowProps).row.original;
-      deleteWorkoutMutation({ id: workout.id });
+      return deleteWorkoutMutation({ id: workout.id });
     }
-  }, [deleteWorkoutMutation, isHeader, params]);
 
-  const handleDeleteMultiple = useCallback(() => {
-    if (isHeader) {
-      const ids = selectedRows.map((row) => row.original.id);
-      Promise.all(ids.map((id) => deleteWorkoutMutation({ id })));
-    }
-  }, [deleteWorkoutMutation, selectedRows, isHeader]);
+    const ids = selectedRows.map((row) => row.original.id);
+    Promise.all(ids.map((id) => deleteWorkoutMutation({ id })));
+  }, [
+    handleToggleDeleteDialog,
+    deleteWorkoutMutation,
+    selectedRows,
+    isHeader,
+    params,
+  ]);
 
-  if (isHeader) {
-    return isMultipleRowsSelected ? (
-      <div>
-        <Button className="p-2 h-fit" onClick={handleDeleteMultiple}>
+  return (
+    <>
+      <AlertDialog open={isDeleteWorkoutDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{`Are you sure to delete the workout${
+              isMultipleRowsSelected ? "s" : ""
+            }?`}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {`This action cannot be undone. This will permanently delete the workout${
+                isMultipleRowsSelected ? "s" : ""
+              } selected`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleToggleDeleteDialog}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      {isHeader ? (
+        isMultipleRowsSelected ? (
+          <div>
+            <Button className="p-2 h-fit" onClick={handleToggleDeleteDialog}>
+              <Trash2 size={16} />
+            </Button>
+          </div>
+        ) : (
+          <span>Action</span>
+        )
+      ) : !isMultipleRowsSelected ? (
+        <Button className="p-2 h-fit" onClick={handleToggleDeleteDialog}>
           <Trash2 size={16} />
         </Button>
-      </div>
-    ) : (
-      <span>Action</span>
-    );
-  }
-
-  return !isMultipleRowsSelected ? (
-    <Button className="p-2 h-fit" onClick={handleDelete}>
-      <Trash2 size={16} />
-    </Button>
-  ) : null;
+      ) : null}
+    </>
+  );
 };
 
 export const workoutColumns: ColumnDef<Workout>[] = [
@@ -104,7 +148,7 @@ export const workoutColumns: ColumnDef<Workout>[] = [
   },
   {
     id: "actions",
-    header: ({ table }) => <WorkoutActionColumn table={table} isHeader />,
+    header: ({ table }) => <WorkoutActionColumn isHeader table={table} />,
     cell: ({ row, table }) => <WorkoutActionColumn row={row} table={table} />,
   },
 ];
