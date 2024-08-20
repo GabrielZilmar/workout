@@ -4,8 +4,8 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
-  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -51,7 +51,7 @@ export class ExerciseController {
     return this.getExercise.execute({ idOrUsername });
   }
 
-  @Put(':id')
+  @Patch(':id')
   @UseGuards(AdminGuard)
   update(
     @Param() { id }: UpdateExerciseParamsDto,
