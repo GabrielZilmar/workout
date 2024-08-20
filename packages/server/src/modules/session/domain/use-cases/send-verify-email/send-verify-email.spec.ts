@@ -80,7 +80,6 @@ describe('SendVerifyEmail Use Case', () => {
 
     await sendVerifyEmail.execute({
       userId: userDomain.id?.toValue() as string,
-      baseUrl: 'http://localhost:3000',
     });
     expect(sendMailSpy).toHaveBeenCalled();
   });
@@ -103,7 +102,6 @@ describe('SendVerifyEmail Use Case', () => {
     await expect(
       sendVerifyEmail.execute({
         userId,
-        baseUrl: 'http://localhost:3000',
       }),
     ).rejects.toThrow(
       new HttpException(
@@ -135,7 +133,6 @@ describe('SendVerifyEmail Use Case', () => {
     await expect(
       sendVerifyEmail.execute({
         userId: 'user-id',
-        baseUrl: 'http://localhost:3000',
       }),
     ).rejects.toThrow(
       new HttpException(
@@ -169,7 +166,6 @@ describe('SendVerifyEmail Use Case', () => {
     await expect(
       sendVerifyEmail.execute({
         userId: sessionDomain.userId,
-        baseUrl: 'http://localhost:3000',
       }),
     ).rejects.toThrow(
       new HttpException(
@@ -190,7 +186,6 @@ describe('SendVerifyEmail Use Case', () => {
     await expect(
       sendVerifyEmail.execute({
         userId: 'user-id',
-        baseUrl: 'http://localhost:3000',
       }),
     ).rejects.toThrowError(
       new HttpException(
