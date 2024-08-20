@@ -5,3 +5,4 @@ export * from "./useSendVerifyEmail";
 export * from "./useVerifyEmail";
 export * from "./useListWorkouts";
 export * from "./useDeleteWorkout";
+export * from "./useCreateWorkout";
