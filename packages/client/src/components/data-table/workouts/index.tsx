@@ -1,18 +1,10 @@
 "use client";
 
-import {
-  Button,
-  DataTable,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@workout/ui";
+import { Button, DataTable } from "@workout/ui";
 import { useMemo, useState } from "react";
 import { workoutColumns } from "~/components/data-table/workouts/columns";
+import WorkoutDialog from "~/components/dialogs/workout";
 import Error from "~/components/error";
-import WorkoutForm from "~/components/forms/workout";
 import Loading from "~/components/loading";
 import Pagination from "~/components/pagination";
 import { DEFAULT_PER_PAGE } from "~/constants/pagination";
@@ -68,25 +60,11 @@ export function WorkoutDataTable() {
         totalPages={totalPages}
         changePage={(page) => setPage(page)}
       />
-      <Dialog
-        open={isAddWorkoutModalOpen}
+      <WorkoutDialog
+        isOpen={isAddWorkoutModalOpen}
         onOpenChange={handleToggleAddWorkoutModal}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create workout</DialogTitle>
-            <DialogDescription>
-              {
-                "Create your workout. Choice if it's public or private, if it's a routine..."
-              }
-            </DialogDescription>
-          </DialogHeader>
-          <WorkoutForm
-            onSubmit={handleToggleAddWorkoutModal}
-            onCancel={handleToggleAddWorkoutModal}
-          />
-        </DialogContent>
-      </Dialog>
+        onClose={handleToggleAddWorkoutModal}
+      />
     </div>
   );
 }
