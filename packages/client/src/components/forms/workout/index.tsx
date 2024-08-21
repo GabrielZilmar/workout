@@ -8,17 +8,29 @@ import { Workout } from "~/types/workout";
 import { useCreateWorkout, useUpdateWorkout } from "~/hooks";
 import {
   Button,
+  cn,
   Form,
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
   Input,
-  Label,
+  RadioGroup,
+  RadioGroupItem,
 } from "@workout/ui";
 import { Dumbbell } from "lucide-react";
 
+type RadioGroupItems = {
+  value: "yes" | "no";
+  label: string;
+};
+
 const WORKOUT_NAME_PLACEHOLDER = ["Chest", "Leg", "Back", "Arms", "Shoulder"];
+const RADIO_GROUP_ITEMS: RadioGroupItems[] = [
+  { value: "no", label: "No" },
+  { value: "yes", label: "Yes" },
+];
 
 const formSchema = z.object({
   name: z.string().min(1).max(255),
@@ -41,11 +53,12 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: workout?.name || "",
-      isPrivate: workout?.isPrivate,
-      isRoutine: workout?.isRoutine,
+      isPrivate: workout?.isPrivate || true,
+      isRoutine: workout?.isRoutine || false,
     },
   });
   const { errors: formErrors } = form.formState;
+
   const workoutNamePlaceholder = useMemo(
     () =>
       WORKOUT_NAME_PLACEHOLDER[
@@ -72,18 +85,13 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({
         onSubmit={form.handleSubmit(handleSubmit)}
       >
         <div>
-          <Label
-            htmlFor="name"
-            className="block text-sm font-medium leading-6 text-white-900"
-          >
-            Name
-          </Label>
           <div className="mt-2">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
@@ -102,6 +110,75 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({
               )}
             />
           </div>
+        </div>
+        <div
+          className={cn(
+            "flex flex-col sm:flex-row space-y-2 sm:space-y-0",
+            "justify-around mt-2"
+          )}
+        >
+          <FormField
+            control={form.control}
+            name="isRoutine"
+            render={({ field }) => (
+              <FormItem className="space-y-3">
+                <FormLabel>Is routine?</FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={(value) => {
+                      field.onChange(value === "yes");
+                    }}
+                    defaultValue={field.value ? "yes" : "no"}
+                    className="flex space-x-4"
+                  >
+                    {RADIO_GROUP_ITEMS.map(({ value, label }) => (
+                      <FormItem
+                        key={value}
+                        className="flex items-center space-x-3 space-y-0"
+                      >
+                        <FormControl>
+                          <RadioGroupItem value={value} id={value} />
+                        </FormControl>
+                        <FormLabel className="font-normal">{label}</FormLabel>
+                      </FormItem>
+                    ))}
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="isPrivate"
+            render={({ field }) => (
+              <FormItem className="space-y-3">
+                <FormLabel>Is Private?</FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={(value) => {
+                      field.onChange(value === "yes");
+                    }}
+                    defaultValue={field.value ? "yes" : "no"}
+                    className="flex space-x-4"
+                  >
+                    {RADIO_GROUP_ITEMS.map(({ value, label }) => (
+                      <FormItem
+                        key={value}
+                        className="flex items-center space-x-3 space-y-0"
+                      >
+                        <FormControl>
+                          <RadioGroupItem value={value} id={value} />
+                        </FormControl>
+                        <FormLabel className="font-normal">{label}</FormLabel>
+                      </FormItem>
+                    ))}
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
 
         <div className="flex space-x-4">
