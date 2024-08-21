@@ -34,17 +34,10 @@ export const useSignUp = () => {
     },
     onError: (error) => {
       if (error.response?.status === HttpStatus.CONFLICT) {
-        let message = "Ops.. User already exists!";
-
-        const { duplicatedItems } = error.response.data;
-        if (duplicatedItems) {
-          let duplicateItemsMessage = "";
-          Object.entries(duplicatedItems).forEach(([key, value]) => {
-            const capitalizedKey = Formatter.capitalizeAll(key);
-            duplicateItemsMessage += `\n${capitalizedKey} ${value} already used.`;
-          });
-          message = `${message}${duplicateItemsMessage}`;
-        }
+        const message = Formatter.mountDuplicateErrorMessage({
+          duplicatedItems: error.response.data.duplicatedItems,
+          itemName: "User",
+        });
 
         return enqueueSnackbar(message, {
           variant: "error",
