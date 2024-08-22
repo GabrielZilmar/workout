@@ -13,8 +13,14 @@ import {
   Button,
   Checkbox,
 } from "@workout/ui";
-import { AlarmClockCheck, CircleX, Trash2 } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import {
+  AlarmClockCheck,
+  BookLock,
+  BookOpen,
+  CircleX,
+  Trash2,
+} from "lucide-react";
+import { useCallback, useState } from "react";
 import { useDeleteWorkout } from "~/hooks";
 import { Workout } from "~/types/workout";
 
@@ -126,6 +132,25 @@ export const workoutColumns: ColumnDef<Workout>[] = [
   {
     accessorKey: "name",
     header: "Name",
+  },
+  {
+    accessorKey: "isPrivate",
+    header: "Private/Public",
+    cell: ({ row }) => {
+      const isPrivate = row.getValue("isPrivate");
+
+      return isPrivate ? (
+        <div className="flex space-x-2 items-center">
+          <BookLock />
+          <p>Private</p>
+        </div>
+      ) : (
+        <div className="flex space-x-2 items-center">
+          <BookOpen />
+          <p>Public</p>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "isRoutine",
