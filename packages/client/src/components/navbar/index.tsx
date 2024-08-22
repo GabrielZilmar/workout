@@ -22,7 +22,7 @@ import Link from "next/link";
 
 const navigation = [
   { name: "Home", href: ALL_ROUTES.home },
-  { name: "Public Workouts", href: "#" },
+  { name: "Public Workouts", href: ALL_ROUTES.publicWorkouts },
   { name: "Exercises", href: "#" },
 ];
 
