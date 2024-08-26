@@ -1,7 +1,10 @@
-export type WorkoutUser = {
+export type PublicWorkoutUser = {
   id: string;
-  name: string;
+  username: string;
   email: string;
+};
+
+export type WorkoutUser = PublicWorkoutUser & {
   age: number | null;
   height: number | null;
   weight: number | null;
