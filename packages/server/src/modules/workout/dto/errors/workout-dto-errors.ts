@@ -4,6 +4,7 @@ export class WorkoutDtoError extends Error {
   public readonly code: number;
   public static messages = {
     missingId: 'Could not transform to DTO. Missing ID',
+    missingUser: 'Could not transform to DTO. Missing User',
   };
 
   constructor(message: string, code: number) {
