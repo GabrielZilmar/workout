@@ -2,6 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { Button, Checkbox } from "@workout/ui";
+import { PublicWorkoutUser } from "~/types/user";
 import { Workout } from "~/types/workout";
 
 const PublicWorkoutActionColumn: React.FC = () => {
@@ -36,8 +37,9 @@ export const publicWorkoutsColumns: ColumnDef<Workout>[] = [
     header: "Name",
   },
   {
-    accessorKey: "userId",
+    accessorKey: "user",
     header: "Created By",
+    cell: ({ row }) => row.getValue<PublicWorkoutUser>("user")?.username || "-",
   },
   {
     id: "actions",
