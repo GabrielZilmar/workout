@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserDomainMock } from 'test/utils/domains/user-domain-mock';
 import { WorkoutDomainMock } from 'test/utils/domains/workout-domain-mock';
 import getWorkoutRepositoryProvider from 'test/utils/providers/workout-repository';
+import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { UserDomain } from '~/modules/users/domain/users.domain';
 import WorkoutDomain from '~/modules/workout/domain/workout.domain';
 import { WorkoutDtoError } from '~/modules/workout/dto/errors/workout-dto-errors';
@@ -43,7 +44,12 @@ describe('ListWorkouts use case', () => {
 
     return Test.createTestingModule({
       imports: [],
-      providers: [workoutRepositoryProvider, WorkoutMapper, ListWorkouts],
+      providers: [
+        workoutRepositoryProvider,
+        WorkoutMapper,
+        UserMapper,
+        ListWorkouts,
+      ],
     }).compile();
   };
 
@@ -68,7 +74,7 @@ describe('ListWorkouts use case', () => {
     });
 
     const workoutRepositoryMock = new WorkoutRepository(
-      new WorkoutMapper(),
+      new WorkoutMapper(new UserMapper()),
     ) as jest.Mocked<InstanceType<typeof WorkoutRepository>>;
     const findMock = jest.fn().mockResolvedValue({
       items: [workoutDomainWithoutId],

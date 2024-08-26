@@ -8,6 +8,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserDomainMock } from 'test/utils/domains/user-domain-mock';
 import { WorkoutDomainMock } from 'test/utils/domains/workout-domain-mock';
 import getWorkoutRepositoryProvider from 'test/utils/providers/workout-repository';
+import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { UserDomain } from '~/modules/users/domain/users.domain';
 import WorkoutDomain from '~/modules/workout/domain/workout.domain';
 import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
@@ -50,7 +51,12 @@ describe('Delete workout use case', () => {
 
     return Test.createTestingModule({
       imports: [],
-      providers: [workoutRepositoryProvider, WorkoutMapper, DeleteWorkout],
+      providers: [
+        workoutRepositoryProvider,
+        WorkoutMapper,
+        UserMapper,
+        DeleteWorkout,
+      ],
     }).compile();
   };
 
@@ -67,7 +73,7 @@ describe('Delete workout use case', () => {
 
   it('Should not delete workout if it does not exist', async () => {
     const workoutRepositoryMock = new WorkoutRepository(
-      new WorkoutMapper(),
+      new WorkoutMapper(new UserMapper()),
     ) as jest.Mocked<InstanceType<typeof WorkoutRepository>>;
     workoutRepositoryMock.findOneById = jest.fn().mockResolvedValue(null);
 
@@ -114,7 +120,7 @@ describe('Delete workout use case', () => {
     const errorMockStatusCode = HttpStatus.INTERNAL_SERVER_ERROR;
 
     const workoutRepositoryMock = new WorkoutRepository(
-      new WorkoutMapper(),
+      new WorkoutMapper(new UserMapper()),
     ) as jest.Mocked<InstanceType<typeof WorkoutRepository>>;
     workoutRepositoryMock.findOneById = jest
       .fn()

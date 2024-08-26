@@ -10,6 +10,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserDomainMock } from 'test/utils/domains/user-domain-mock';
 import { WorkoutDomainMock } from 'test/utils/domains/workout-domain-mock';
 import getWorkoutRepositoryProvider from 'test/utils/providers/workout-repository';
+import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { UserDomain } from '~/modules/users/domain/users.domain';
 import { WorkoutDomainError } from '~/modules/workout/domain/errors';
 import WorkoutDomain from '~/modules/workout/domain/workout.domain';
@@ -53,7 +54,12 @@ describe('UpdateWorkout use case', () => {
 
     return Test.createTestingModule({
       imports: [],
-      providers: [workoutRepositoryProvider, WorkoutMapper, UpdateWorkout],
+      providers: [
+        workoutRepositoryProvider,
+        WorkoutMapper,
+        UserMapper,
+        UpdateWorkout,
+      ],
     }).compile();
   };
 
@@ -73,7 +79,7 @@ describe('UpdateWorkout use case', () => {
 
   it('Should not update if workout not found', async () => {
     const workoutRepositoryMock = new WorkoutRepository(
-      new WorkoutMapper(),
+      new WorkoutMapper(new UserMapper()),
     ) as jest.Mocked<InstanceType<typeof WorkoutRepository>>;
     const findOneByIdMock = jest.fn().mockResolvedValue(null);
     workoutRepositoryMock.findOneById = findOneByIdMock;
@@ -128,7 +134,7 @@ describe('UpdateWorkout use case', () => {
         left(new WorkoutDomainError(mockErrorMessage, mockErrorCode)),
       );
     const workoutRepositoryMock = new WorkoutRepository(
-      new WorkoutMapper(),
+      new WorkoutMapper(new UserMapper()),
     ) as jest.Mocked<InstanceType<typeof WorkoutRepository>>;
     workoutRepositoryMock.findOneById = jest
       .fn()
@@ -161,7 +167,7 @@ describe('UpdateWorkout use case', () => {
 
   it('Should not update if workout repository update fails', async () => {
     const workoutRepositoryMock = new WorkoutRepository(
-      new WorkoutMapper(),
+      new WorkoutMapper(new UserMapper()),
     ) as jest.Mocked<InstanceType<typeof WorkoutRepository>>;
     workoutRepositoryMock.findOneById = jest
       .fn()

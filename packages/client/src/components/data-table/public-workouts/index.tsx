@@ -18,7 +18,7 @@ export function PublicWorkoutsDataTable() {
   const { isLoading, isError, error, data } = useListPublicWorkouts({
     skip: (page - 1) * DEFAULT_PER_PAGE,
     take: DEFAULT_PER_PAGE,
-    name: search || undefined,
+    searchTerm: search || undefined,
   });
 
   const totalPages = useMemo(

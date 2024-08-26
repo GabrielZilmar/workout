@@ -22,14 +22,14 @@ export default class WorkoutExerciseMapper
     private readonly setMapper: SetMapper,
   ) {}
 
-  public toDomain(
+  public async toDomain(
     raw: WorkoutExerciseEntity,
-  ): Either<WorkoutExerciseDomainError, WorkoutExerciseDomain> {
+  ): Promise<Either<WorkoutExerciseDomainError, WorkoutExerciseDomain>> {
     const { id, workoutId, exerciseId, order, workout, exercise, sets } = raw;
 
     let workoutDomain: WorkoutDomain | undefined;
     if (workout) {
-      const workoutOrError = this.workoutMapper.toDomain(workout);
+      const workoutOrError = await this.workoutMapper.toDomain(workout);
       if (workoutOrError.isLeft()) {
         return left(workoutOrError.value);
       }

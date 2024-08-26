@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { DeepPartial, FindManyOptions } from 'typeorm';
+import { Brackets, DeepPartial, FindManyOptions } from 'typeorm';
 import WorkoutDomain from '~/modules/workout/domain/workout.domain';
 import { Workout } from '~/modules/workout/entities/workout.entity';
 import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
@@ -11,6 +11,12 @@ type DuplicatedItems = { userId?: string; name?: string };
 
 type PreventDuplicatedParams = DuplicatedItems & {
   id?: string;
+};
+
+type FindPublicWorkoutsParams = {
+  searchTerm?: string;
+  skip?: number;
+  take?: number;
 };
 
 @Injectable()
@@ -68,7 +74,7 @@ export default class WorkoutRepository extends BaseRepository<
 
     try {
       const newWorkout = await this.repository.save(item);
-      const newWorkoutDomain = this.mapper.toDomain(newWorkout);
+      const newWorkoutDomain = await this.mapper.toDomain(newWorkout);
 
       return newWorkoutDomain;
     } catch (err) {
@@ -77,15 +83,43 @@ export default class WorkoutRepository extends BaseRepository<
   }
 
   public async findPublicWorkouts({
-    where,
-    ...options
-  }: FindManyOptions<Workout>): Promise<
+    searchTerm,
+    skip,
+    take,
+  }: FindPublicWorkoutsParams): Promise<
     Promise<{ items: WorkoutDomain[]; count: number }>
   > {
-    return this.find({
-      ...options,
-      where: { ...where, isPrivate: false },
-    });
+    const qb = this.repository
+      .createQueryBuilder()
+      .select(['Workout', 'User'])
+      .leftJoinAndSelect('Workout.user', 'User')
+      .where('Workout.isPrivate = :isPrivate', { isPrivate: false })
+      .skip(skip)
+      .take(take);
+    if (searchTerm) {
+      qb.andWhere(
+        new Brackets((qb) => {
+          qb.where('Workout.name ILIKE :name', {
+            name: `%${searchTerm}%`,
+          });
+          qb.orWhere('User.username ILIKE :username', {
+            username: `%${searchTerm}%`,
+          });
+        }),
+      );
+    }
+
+    const [items, count] = await qb.getManyAndCount();
+    const itemsToDomain: WorkoutDomain[] = [];
+    for await (const item of items) {
+      const itemToDomain = await this.mapper.toDomain(item);
+
+      if (itemToDomain.isRight()) {
+        itemsToDomain.push(itemToDomain.value);
+      }
+    }
+
+    return { items: itemsToDomain, count };
   }
 
   public async update(
