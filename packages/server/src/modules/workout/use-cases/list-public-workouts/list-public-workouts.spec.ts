@@ -3,9 +3,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserDomainMock } from 'test/utils/domains/user-domain-mock';
 import { WorkoutDomainMock } from 'test/utils/domains/workout-domain-mock';
 import getWorkoutRepositoryProvider from 'test/utils/providers/workout-repository';
+import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { UserDomain } from '~/modules/users/domain/users.domain';
 import WorkoutDomain from '~/modules/workout/domain/workout.domain';
 import { WorkoutDtoError } from '~/modules/workout/dto/errors/workout-dto-errors';
+import { PublicWorkoutDTO } from '~/modules/workout/dto/list-public-workouts.dto';
 import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
 import { ListPublicWorkouts } from '~/modules/workout/use-cases/list-public-workouts';
 import WorkoutRepository from '~/services/database/typeorm/repositories/workout-repository';
@@ -23,6 +25,7 @@ describe('ListPublicWorkouts use case', () => {
     userDomain = await UserDomainMock.mountUserDomain();
     workoutDomain = WorkoutDomainMock.mountWorkoutDomain({
       userId: userDomain.id?.toString(),
+      userDomain,
     });
     module = await getModuleTest();
   });
@@ -43,7 +46,12 @@ describe('ListPublicWorkouts use case', () => {
 
     return Test.createTestingModule({
       imports: [],
-      providers: [workoutRepositoryProvider, WorkoutMapper, ListPublicWorkouts],
+      providers: [
+        workoutRepositoryProvider,
+        WorkoutMapper,
+        UserMapper,
+        ListPublicWorkouts,
+      ],
     }).compile();
   };
 
@@ -61,7 +69,7 @@ describe('ListPublicWorkouts use case', () => {
       listPublicWorkoutsParams,
     );
     expect(workouts).toEqual({
-      items: [workoutDomain.toDto().value],
+      items: [PublicWorkoutDTO.domainToDto(workoutDomain).value],
       count: 1,
     });
 
@@ -89,7 +97,7 @@ describe('ListPublicWorkouts use case', () => {
     });
 
     const workoutRepositoryMock = new WorkoutRepository(
-      new WorkoutMapper(),
+      new WorkoutMapper(new UserMapper()),
     ) as jest.Mocked<InstanceType<typeof WorkoutRepository>>;
     const findPublicWorkoutsMock = jest.fn().mockResolvedValue({
       items: [workoutDomainWithoutId],

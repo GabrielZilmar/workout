@@ -9,6 +9,7 @@ import getWorkoutRepositoryProvider from 'test/utils/providers/workout-repositor
 import ExerciseDomain from '~/modules/exercise/domain/exercise.domain';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
 import SetMapper from '~/modules/set/mappers/set.mapper';
+import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import WorkoutExerciseDomain from '~/modules/workout-exercise/domain/workout-exercise.domain';
 import WorkoutExerciseMapper from '~/modules/workout-exercise/mappers/workout-exercise.mapper';
 import DeleteWorkoutExercise from '~/modules/workout-exercise/use-cases/delete-workout-exercise';
@@ -61,6 +62,7 @@ describe('DeleteWorkoutExerciseUseCase', () => {
         workoutRepositoryProvider,
         exerciseRepositoryProvider,
         WorkoutMapper,
+        UserMapper,
         ExerciseMapper,
         SetMapper,
         WorkoutExerciseMapper,

@@ -4,6 +4,7 @@ import { WorkoutDomainMock } from 'test/utils/domains/workout-domain-mock';
 import { WorkoutExerciseDomainMock } from 'test/utils/domains/workout-exercise-domain.mock';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
 import SetMapper from '~/modules/set/mappers/set.mapper';
+import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import WorkoutExerciseDomain from '~/modules/workout-exercise/domain/workout-exercise.domain';
 import WorkoutExerciseMapper from '~/modules/workout-exercise/mappers/workout-exercise.mapper';
 import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
@@ -38,7 +39,7 @@ const getWorkoutExerciseRepositoryProvider = ({
       if (!workoutExerciseRepository) {
         workoutExerciseRepository = new WorkoutExerciseRepository(
           new WorkoutExerciseMapper(
-            new WorkoutMapper(),
+            new WorkoutMapper(new UserMapper()),
             new ExerciseMapper(),
             new SetMapper(),
           ),

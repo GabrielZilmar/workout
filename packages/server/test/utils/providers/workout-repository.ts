@@ -1,5 +1,6 @@
 import { Provider } from '@nestjs/common';
 import { WorkoutDomainMock } from 'test/utils/domains/workout-domain-mock';
+import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import WorkoutDomain from '~/modules/workout/domain/workout.domain';
 import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
 import WorkoutRepository from '~/services/database/typeorm/repositories/workout-repository';
@@ -24,7 +25,7 @@ const getWorkoutRepositoryProvider = ({
       if (!workoutRepositoryMock) {
         const createMock = jest.fn().mockResolvedValue(right(workoutDomain));
         workoutRepositoryMock = new WorkoutRepository(
-          new WorkoutMapper(),
+          new WorkoutMapper(new UserMapper()),
         ) as jest.Mocked<InstanceType<typeof WorkoutRepository>>;
         workoutRepositoryMock.create = createMock;
 
