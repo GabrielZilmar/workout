@@ -1,13 +1,14 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { ILike } from 'typeorm';
-import { ListPublicWorkoutsDto } from '~/modules/workout/dto/list-public-workouts.dto';
-import { WorkoutDto } from '~/modules/workout/dto/workout.dto';
+import {
+  ListPublicWorkoutsDto,
+  PublicWorkoutDTO,
+} from '~/modules/workout/dto/list-public-workouts.dto';
 import WorkoutRepository from '~/services/database/typeorm/repositories/workout-repository';
 import { UseCase } from '~/shared/core/use-case';
 
 export type ListPublicWorkoutsParams = ListPublicWorkoutsDto;
 export type ListPublicWorkoutsResult = {
-  items: WorkoutDto[];
+  items: PublicWorkoutDTO[];
   count: number;
 };
 
@@ -17,23 +18,19 @@ export class ListPublicWorkouts
 {
   constructor(private readonly workoutRepository: WorkoutRepository) {}
   public async execute({
-    name,
-    isRoutine,
+    searchTerm,
     skip,
     take,
   }: ListPublicWorkoutsParams): Promise<ListPublicWorkoutsResult> {
     const { items, count } = await this.workoutRepository.findPublicWorkouts({
-      where: {
-        isRoutine,
-        name: name && ILike(`%${name}%`),
-      },
+      searchTerm,
       skip,
       take,
     });
 
-    const workoutsDto: WorkoutDto[] = [];
+    const workoutsDto: PublicWorkoutDTO[] = [];
     items.forEach((workout) => {
-      const workoutDto = workout.toDto();
+      const workoutDto = PublicWorkoutDTO.domainToDto(workout);
 
       if (workoutDto.isLeft()) {
         throw new HttpException(
