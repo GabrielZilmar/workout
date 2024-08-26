@@ -58,7 +58,7 @@ export default class WorkoutExerciseRepository extends BaseRepository<
 
     const itemsToDomain: WorkoutExerciseDomain[] = [];
     for await (const item of items) {
-      const itemToDomain = this.mapper.toDomain(item);
+      const itemToDomain = await this.mapper.toDomain(item);
 
       if (itemToDomain.isRight()) {
         itemsToDomain.push(itemToDomain.value);
@@ -80,7 +80,7 @@ export default class WorkoutExerciseRepository extends BaseRepository<
       return null;
     }
 
-    const itemToDomain = this.mapper.toDomain(item);
+    const itemToDomain = await this.mapper.toDomain(item);
     return itemToDomain.isRight() ? itemToDomain.value : null;
   }
 }
