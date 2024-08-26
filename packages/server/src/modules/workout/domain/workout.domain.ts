@@ -1,4 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
+import { UserDomain } from '~/modules/users/domain/users.domain';
 import { WorkoutDomainError } from '~/modules/workout/domain/errors';
 import WorkoutName from '~/modules/workout/domain/value-objects/name';
 import PrivateStatus from '~/modules/workout/domain/value-objects/private-status';
@@ -13,6 +14,7 @@ export type WorkoutDomainProps = {
   userId: string;
   privateStatus: PrivateStatus;
   routineStatus: RoutineStatus;
+  userDomain?: UserDomain;
 };
 
 export type WorkoutDomainCreateParams = {
@@ -20,12 +22,14 @@ export type WorkoutDomainCreateParams = {
   userId: string;
   isPrivate?: boolean;
   isRoutine?: boolean;
+  userDomain?: UserDomain;
 };
 
 export type WorkoutDomainUpdateParams = {
   name?: string;
   isPrivate?: boolean;
   isRoutine?: boolean;
+  userDomain?: UserDomain;
 };
 
 export default class WorkoutDomain extends AggregateRoot<WorkoutDomainProps> {
@@ -43,6 +47,10 @@ export default class WorkoutDomain extends AggregateRoot<WorkoutDomainProps> {
 
   get routineStatus(): RoutineStatus {
     return this.props.routineStatus;
+  }
+
+  get userDomain(): UserDomain | undefined {
+    return this.props.userDomain;
   }
 
   public toDto() {
@@ -69,6 +77,7 @@ export default class WorkoutDomain extends AggregateRoot<WorkoutDomainProps> {
       userId: props.userId,
       privateStatus,
       routineStatus,
+      userDomain: props.userDomain,
     };
     return right(workoutProps);
   }
@@ -77,6 +86,7 @@ export default class WorkoutDomain extends AggregateRoot<WorkoutDomainProps> {
     name,
     isPrivate,
     isRoutine,
+    userDomain,
   }: WorkoutDomainUpdateParams): Either<WorkoutDomainError, this> {
     if (name) {
       const nameOrError = WorkoutName.create({ value: name });
@@ -95,6 +105,10 @@ export default class WorkoutDomain extends AggregateRoot<WorkoutDomainProps> {
     if (isRoutine !== undefined) {
       const routineStatus = RoutineStatus.create({ value: isRoutine });
       this.props.routineStatus = routineStatus;
+    }
+
+    if (userDomain !== undefined) {
+      this.props.userDomain = userDomain;
     }
 
     return right(this);
