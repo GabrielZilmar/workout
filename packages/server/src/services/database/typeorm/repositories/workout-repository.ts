@@ -76,12 +76,15 @@ export default class WorkoutRepository extends BaseRepository<
     }
   }
 
-  public async findPublicWorkouts(
-    options: FindManyOptions<Workout>,
-  ): Promise<Promise<{ items: WorkoutDomain[]; count: number }>> {
+  public async findPublicWorkouts({
+    where,
+    ...options
+  }: FindManyOptions<Workout>): Promise<
+    Promise<{ items: WorkoutDomain[]; count: number }>
+  > {
     return this.find({
       ...options,
-      where: { ...options.where, isPrivate: false },
+      where: { ...where, isPrivate: false },
     });
   }
 

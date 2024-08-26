@@ -16,9 +16,7 @@ export class ListPublicWorkouts
   implements UseCase<ListPublicWorkoutsParams, ListPublicWorkoutsResult>
 {
   constructor(private readonly workoutRepository: WorkoutRepository) {}
-
   public async execute({
-    userId,
     name,
     isRoutine,
     skip,
@@ -26,7 +24,6 @@ export class ListPublicWorkouts
   }: ListPublicWorkoutsParams): Promise<ListPublicWorkoutsResult> {
     const { items, count } = await this.workoutRepository.findPublicWorkouts({
       where: {
-        userId,
         isRoutine,
         name: name && ILike(`%${name}%`),
       },
