@@ -5,6 +5,7 @@ import ExerciseName from '~/modules/exercise/domain/value-objects/name';
 import ExerciseTutorialUrl from '~/modules/exercise/domain/value-objects/tutorial-url';
 import { ExerciseDto } from '~/modules/exercise/dto/exercise.dto';
 import { SimpleExerciseDto } from '~/modules/exercise/dto/simple-exercise.dto';
+import MuscleDomain from '~/modules/muscle/domain/muscle.domain';
 import { AggregateRoot } from '~/shared/domain/aggregate-root';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 import { Either, left, right } from '~/shared/either';
@@ -14,6 +15,7 @@ export type ExerciseDomainProps = {
   info: ExerciseInfo | null;
   tutorialUrl: ExerciseTutorialUrl | null;
   muscleId: string;
+  muscleDomain?: MuscleDomain;
 };
 
 export type ExerciseDomainCreateParams = {
@@ -21,6 +23,7 @@ export type ExerciseDomainCreateParams = {
   muscleId: string;
   info?: string;
   tutorialUrl?: string;
+  muscleDomain?: MuscleDomain;
 };
 
 export type ExerciseDomainUpdateParams = Partial<ExerciseDomainCreateParams>;
@@ -42,6 +45,10 @@ export default class ExerciseDomain extends AggregateRoot<ExerciseDomainProps> {
     return this.props.muscleId;
   }
 
+  get muscleDomain(): MuscleDomain | undefined {
+    return this.props.muscleDomain;
+  }
+
   public toDto() {
     return ExerciseDto.domainToDto(this);
   }
@@ -55,6 +62,7 @@ export default class ExerciseDomain extends AggregateRoot<ExerciseDomainProps> {
     info,
     tutorialUrl,
     muscleId,
+    muscleDomain,
   }: ExerciseDomainUpdateParams): Either<ExerciseDomainError, ExerciseDomain> {
     if (name) {
       const nameOrError = ExerciseName.create({ value: name });
@@ -87,6 +95,10 @@ export default class ExerciseDomain extends AggregateRoot<ExerciseDomainProps> {
 
     if (muscleId) {
       this.props.muscleId = muscleId;
+    }
+
+    if (muscleDomain) {
+      this.props.muscleDomain = muscleDomain;
     }
 
     return right(this);
@@ -127,6 +139,7 @@ export default class ExerciseDomain extends AggregateRoot<ExerciseDomainProps> {
       muscleId: props.muscleId,
       info: infoValueObject,
       tutorialUrl: tutorialUrlValueObject,
+      muscleDomain: props.muscleDomain,
     };
     return right(exerciseDomainProps);
   }

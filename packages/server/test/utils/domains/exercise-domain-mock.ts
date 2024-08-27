@@ -13,13 +13,14 @@ type MountExerciseDomainParams = Partial<ExerciseDomainCreateParams> &
   GenericCreateDomainParams;
 
 export class ExerciseDomainMock {
-  public static readonly exerciseMockCreateParams: Required<ExerciseDomainCreateParams> =
-    {
-      name: 'Exercise Test 1',
-      muscleId: uuid(),
-      info: 'Info Test 1',
-      tutorialUrl: 'https://www.youtube.com/watch?v=123',
-    };
+  public static readonly exerciseMockCreateParams: Required<
+    Omit<ExerciseDomainCreateParams, 'muscleDomain'>
+  > = {
+    name: 'Exercise Test 1',
+    muscleId: uuid(),
+    info: 'Info Test 1',
+    tutorialUrl: 'https://www.youtube.com/watch?v=123',
+  };
 
   public static getExerciseCreateParams(
     props?: Partial<ExerciseDomainCreateParams>,

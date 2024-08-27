@@ -2,6 +2,7 @@ import { Provider } from '@nestjs/common';
 import { ExerciseDomainMock } from 'test/utils/domains/exercise-domain-mock';
 import ExerciseDomain from '~/modules/exercise/domain/exercise.domain';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
+import MuscleMapper from '~/modules/muscle/mappers/muscle.mapper';
 import ExerciseRepository from '~/services/database/typeorm/repositories/exercise-repository';
 import { right } from '~/shared/either';
 
@@ -23,7 +24,7 @@ const getExerciseRepositoryProvider = ({
     useFactory: () => {
       if (!exerciseRepository) {
         exerciseRepository = new ExerciseRepository(
-          new ExerciseMapper(),
+          new ExerciseMapper(new MuscleMapper()),
         ) as jest.Mocked<InstanceType<typeof ExerciseRepository>>;
 
         exerciseRepository.create = jest

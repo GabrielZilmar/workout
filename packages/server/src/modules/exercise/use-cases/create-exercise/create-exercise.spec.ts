@@ -16,6 +16,7 @@ import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
 import { CreateExercise } from '~/modules/exercise/use-cases/create-exercise';
 import { ExerciseUseCaseError } from '~/modules/exercise/use-cases/errors';
 import MuscleDomain from '~/modules/muscle/domain/muscle.domain';
+import MuscleMapper from '~/modules/muscle/mappers/muscle.mapper';
 import { left } from '~/shared/either';
 
 type GetModuleTestParams = {
@@ -61,6 +62,7 @@ describe('CreateExercise use case', () => {
         exerciseRepositoryProvider,
         muscleRepositoryProvider,
         ExerciseMapper,
+        MuscleMapper,
         CreateExercise,
       ],
     }).compile();
