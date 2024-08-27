@@ -18,7 +18,7 @@ export default class ExerciseMapper
       {
         name,
         info,
-        tutorialUrl,
+        tutorialUrl: tutorialUrl ?? undefined,
         muscleId,
       },
       entityId,
