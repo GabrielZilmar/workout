@@ -8,14 +8,29 @@ import {
   CardTitle,
   cn,
 } from "@workout/ui";
-import ReactPlayer from "react-player";
+import { useEffect } from "react";
+import ReactPlayer from "react-player/lazy";
 import Error from "~/components/error";
 import Loading from "~/components/loading";
-import { useListExercises } from "~/hooks";
+import { useListPaginatedExercises } from "~/hooks";
 import GlobalLayout from "~/layouts/global.layout";
 
 const ExercisesPage: React.FC = () => {
-  const { data, isLoading, isError, error } = useListExercises();
+  const {
+    data: exercises,
+    isLoading,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useListPaginatedExercises();
+
+  useEffect(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (isError) {
     const errorMessage = `${error?.response?.data?.message || ""}\n ${
@@ -36,7 +51,7 @@ const ExercisesPage: React.FC = () => {
           "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
         )}
       >
-        {data.items.map((exercise) => (
+        {exercises.map((exercise) => (
           <Card key={exercise.id}>
             <CardHeader>
               <CardTitle>{exercise.name}</CardTitle>
