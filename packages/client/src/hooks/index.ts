@@ -8,3 +8,4 @@ export * from "./useDeleteWorkout";
 export * from "./useCreateWorkout";
 export * from "./useUpdateWorkout";
 export * from "./useListPublicWorkouts";
+export * from "./useListExercises";
