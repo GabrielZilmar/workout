@@ -13,5 +13,6 @@ export * from "./pagination";
 export * from "./alert-dialog";
 export * from "./dialog";
 export * from "./radio-group";
+export * from "./card";
 
 export * from "./utils";
