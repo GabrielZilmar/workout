@@ -14,7 +14,9 @@ const GlobalLayout: React.FC<GlobalLayoutProps> = ({
   return (
     <div className="flex flex-col w-full">
       <Navbar />
-      <div className="relative mt-10 p-6 overflow-y-auto">{children}</div>
+      <div className="relative mt-16 p-6 overflow-y-auto h-[calc(100vh-4rem)]">
+        {children}
+      </div>
     </div>
   );
 };
