@@ -30,7 +30,7 @@ export class Exercise {
   info: string;
 
   @Column({ nullable: true })
-  tutorialUrl: string | null;
+  tutorialUrl: string;
 
   @OneToMany(
     () => WorkoutExercise,
