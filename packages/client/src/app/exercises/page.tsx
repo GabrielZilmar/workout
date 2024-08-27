@@ -47,7 +47,7 @@ const ExercisesPage: React.FC = () => {
     <GlobalLayout>
       <div
         className={cn(
-          "gap-4 mt-4",
+          "gap-4",
           "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
         )}
       >
