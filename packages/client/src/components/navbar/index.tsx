@@ -23,7 +23,7 @@ import Link from "next/link";
 const navigation = [
   { name: "Home", href: ALL_ROUTES.home },
   { name: "Public Workouts", href: ALL_ROUTES.publicWorkouts },
-  { name: "Exercises", href: "#" },
+  { name: "Exercises", href: ALL_ROUTES.exercises },
 ];
 
 function classNames(...classes: string[]) {
