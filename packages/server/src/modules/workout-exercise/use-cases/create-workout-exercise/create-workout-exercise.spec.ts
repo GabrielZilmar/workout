@@ -13,6 +13,7 @@ import getWorkoutExerciseRepositoryProvider from 'test/utils/providers/workout-e
 import getWorkoutRepositoryProvider from 'test/utils/providers/workout-repository';
 import ExerciseDomain from '~/modules/exercise/domain/exercise.domain';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
+import MuscleMapper from '~/modules/muscle/mappers/muscle.mapper';
 import SetMapper from '~/modules/set/mappers/set.mapper';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import { WorkoutExerciseDomainError } from '~/modules/workout-exercise/domain/errors';
@@ -81,6 +82,7 @@ describe('CreateWorkout use case', () => {
         workoutRepositoryProvider,
         exerciseRepositoryProvider,
         WorkoutMapper,
+        MuscleMapper,
         UserMapper,
         ExerciseMapper,
         SetMapper,

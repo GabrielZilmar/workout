@@ -13,6 +13,7 @@ import { ExerciseDtoError } from '~/modules/exercise/dto/errors';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
 import { ExerciseUseCaseError } from '~/modules/exercise/use-cases/errors';
 import { GetExercise } from '~/modules/exercise/use-cases/get-exercise';
+import MuscleMapper from '~/modules/muscle/mappers/muscle.mapper';
 
 type GetModuleTestParams = {
   exerciseRepositoryProvider?: Provider;
@@ -43,7 +44,12 @@ describe('GetExercise use case', () => {
 
     return Test.createTestingModule({
       imports: [],
-      providers: [exerciseRepositoryProvider, ExerciseMapper, GetExercise],
+      providers: [
+        exerciseRepositoryProvider,
+        ExerciseMapper,
+        MuscleMapper,
+        GetExercise,
+      ],
     }).compile();
   };
 

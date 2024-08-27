@@ -11,6 +11,7 @@ import ExerciseDomain from '~/modules/exercise/domain/exercise.domain';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
 import { ExerciseUseCaseError } from '~/modules/exercise/use-cases/errors';
 import { UpdateExercise } from '~/modules/exercise/use-cases/update-exercise';
+import MuscleMapper from '~/modules/muscle/mappers/muscle.mapper';
 import { RepositoryError } from '~/services/database/typeorm/repositories/error';
 import { left } from '~/shared/either';
 
@@ -41,7 +42,12 @@ describe('UpdateExercise use case', () => {
 
     return Test.createTestingModule({
       imports: [],
-      providers: [exerciseRepositoryProvider, ExerciseMapper, UpdateExercise],
+      providers: [
+        exerciseRepositoryProvider,
+        ExerciseMapper,
+        MuscleMapper,
+        UpdateExercise,
+      ],
     }).compile();
   };
 

@@ -6,6 +6,7 @@ import ExerciseDomain from '~/modules/exercise/domain/exercise.domain';
 import { ExerciseDtoError } from '~/modules/exercise/dto/errors';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
 import { ListExercises } from '~/modules/exercise/use-cases/list-exercises';
+import MuscleMapper from '~/modules/muscle/mappers/muscle.mapper';
 
 describe('List exercises use case', () => {
   let exerciseDomain: ExerciseDomain;
@@ -28,7 +29,12 @@ describe('List exercises use case', () => {
   ) =>
     Test.createTestingModule({
       imports: [],
-      providers: [muscleRepositoryProvider, ExerciseMapper, ListExercises],
+      providers: [
+        muscleRepositoryProvider,
+        ExerciseMapper,
+        MuscleMapper,
+        ListExercises,
+      ],
     }).compile();
 
   it('Should list exercises', async () => {
@@ -40,12 +46,12 @@ describe('List exercises use case', () => {
     });
 
     expect(exercises).toEqual({
-      items: [exerciseDomain.toSimpleDto().value],
+      items: [exerciseDomain.toDto().value],
       count: 1,
     });
   });
 
-  it('Should not list exercises if to simple dto fails', async () => {
+  it('Should not list exercises if to dto fails', async () => {
     const exerciseWithoutId = ExerciseDomainMock.mountExerciseDomain({
       withoutId: true,
     });

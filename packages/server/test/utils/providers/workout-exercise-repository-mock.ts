@@ -3,6 +3,7 @@ import { ExerciseDomainMock } from 'test/utils/domains/exercise-domain-mock';
 import { WorkoutDomainMock } from 'test/utils/domains/workout-domain-mock';
 import { WorkoutExerciseDomainMock } from 'test/utils/domains/workout-exercise-domain.mock';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
+import MuscleMapper from '~/modules/muscle/mappers/muscle.mapper';
 import SetMapper from '~/modules/set/mappers/set.mapper';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import WorkoutExerciseDomain from '~/modules/workout-exercise/domain/workout-exercise.domain';
@@ -40,7 +41,7 @@ const getWorkoutExerciseRepositoryProvider = ({
         workoutExerciseRepository = new WorkoutExerciseRepository(
           new WorkoutExerciseMapper(
             new WorkoutMapper(new UserMapper()),
-            new ExerciseMapper(),
+            new ExerciseMapper(new MuscleMapper()),
             new SetMapper(),
           ),
         ) as jest.Mocked<InstanceType<typeof WorkoutExerciseRepository>>;
