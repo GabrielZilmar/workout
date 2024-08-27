@@ -6,7 +6,7 @@ type PublicRouteNames =
   | "verifyEmail";
 type PublicRoute = { [key in PublicRouteNames]: string };
 
-type PrivateRouteNames = "home" | "publicWorkouts";
+type PrivateRouteNames = "home" | "publicWorkouts" | "exercises";
 type PrivateRoute = { [key in PrivateRouteNames]: string };
 
 type AllRoutes = PublicRoute & PrivateRoute;
@@ -22,6 +22,7 @@ export const PUBLIC_ROUTES: PublicRoute = {
 export const PRIVATE_ROUTES: PrivateRoute = {
   home: "/home",
   publicWorkouts: "/public-workouts",
+  exercises: "/exercises",
 };
 
 export const ALL_ROUTES: AllRoutes = {
