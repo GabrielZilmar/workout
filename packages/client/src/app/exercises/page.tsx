@@ -40,7 +40,7 @@ const ExercisesPage: React.FC = () => {
           <Card key={exercise.id}>
             <CardHeader>
               <CardTitle>{exercise.name}</CardTitle>
-              <CardDescription>Card Description</CardDescription>
+              <CardDescription>{exercise.muscle?.name || ""}</CardDescription>
             </CardHeader>
             <CardContent>
               <ReactPlayer
