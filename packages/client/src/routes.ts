@@ -1,13 +1,19 @@
-type PublicRouteNames =
-  | "signIn"
-  | "signUp"
-  | "forgotPassword"
-  | "resetPassword"
-  | "verifyEmail";
-type PublicRoute = { [key in PublicRouteNames]: string };
+type GoToRouteFunction = (id: string) => string;
 
-type PrivateRouteNames = "home" | "publicWorkouts" | "exercises";
-type PrivateRoute = { [key in PrivateRouteNames]: string };
+type PublicRoute = {
+  signIn: string;
+  signUp: string;
+  forgotPassword: string;
+  resetPassword: string;
+  verifyEmail: string;
+};
+
+type PrivateRoute = {
+  home: string;
+  publicWorkouts: string;
+  exercises: string;
+  workoutDetails: GoToRouteFunction;
+};
 
 type AllRoutes = PublicRoute & PrivateRoute;
 
@@ -23,6 +29,7 @@ export const PRIVATE_ROUTES: PrivateRoute = {
   home: "/home",
   publicWorkouts: "/public-workouts",
   exercises: "/exercises",
+  workoutDetails: (id: string) => `/workout/${id}`,
 };
 
 export const ALL_ROUTES: AllRoutes = {
