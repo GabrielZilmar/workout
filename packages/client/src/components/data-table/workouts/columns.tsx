@@ -21,7 +21,6 @@ import {
   Trash2,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { useDeleteWorkout } from "~/hooks";
 import { ALL_ROUTES } from "~/routes";
@@ -109,18 +108,6 @@ const WorkoutActionColumn: React.FC<WorkoutActionColumnProps> = ({
   );
 };
 
-const NameColumn: React.FC<RowProps> = ({ row }) => {
-  const router = useRouter();
-
-  const handleClickName = (id: string) => {
-    router.push(ALL_ROUTES.workoutDetails(id));
-  };
-
-  const name = row.getValue<string>("name");
-  const id = row.getValue<string>("id");
-  return <Link href={ALL_ROUTES.workoutDetails(id)}>{name || "-"}</Link>;
-};
-
 export const workoutColumns: ColumnDef<Workout>[] = [
   {
     id: "select",
@@ -145,9 +132,17 @@ export const workoutColumns: ColumnDef<Workout>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "name",
+    accessorKey: "id",
     header: "Name",
-    cell: ({ row }) => <NameColumn row={row} />,
+    cell: ({ row }) => {
+      const id = row.getValue<string>("id");
+
+      return (
+        <Link href={ALL_ROUTES.workoutDetails(id)}>
+          {row.original.name || "-"}
+        </Link>
+      );
+    },
   },
   {
     accessorKey: "isPrivate",
