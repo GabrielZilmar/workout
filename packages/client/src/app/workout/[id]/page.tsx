@@ -5,6 +5,14 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
   Button,
 } from "@workout/ui";
 import { PlusCircle, Trash2 } from "lucide-react";
@@ -21,10 +29,20 @@ import {
 } from "~/hooks";
 import GlobalLayout from "~/layouts/global.layout";
 
+type DeleteWorkoutExerciseDialogState = {
+  workoutExerciseId?: string;
+  isOpen: boolean;
+};
+
 const WorkoutDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const [isAddWorkoutExerciseModalOpen, setIsAddWorkoutExerciseModalOpen] =
     useState(false);
+  const [deleteWorkoutExerciseDialog, setDeleteWorkoutExerciseDialog] =
+    useState<DeleteWorkoutExerciseDialogState>({
+      isOpen: false,
+    });
+
   const { data: workout, isLoading, isError, error } = useGetWorkout(id);
   const { data: workoutExerciseData, isLoading: isLoadingWorkoutExercises } =
     useGetWorkoutExercises({ workoutId: id });
@@ -32,6 +50,18 @@ const WorkoutDetailsPage = () => {
 
   const handleToggleAddWorkoutExerciseModal = () =>
     setIsAddWorkoutExerciseModalOpen((isOpen) => !isOpen);
+
+  const handleDeleteWorkoutExercise = () => {
+    if (!deleteWorkoutExerciseDialog.workoutExerciseId) return;
+
+    deleteWorkoutExerciseMutation({
+      id: deleteWorkoutExerciseDialog.workoutExerciseId,
+    });
+    setDeleteWorkoutExerciseDialog({
+      isOpen: false,
+      workoutExerciseId: undefined,
+    });
+  };
 
   if (isError) {
     const errorMessage = `${error?.response?.data?.message || ""}\n ${
@@ -78,8 +108,9 @@ const WorkoutDetailsPage = () => {
                   </div>
                   <Button
                     onClick={() =>
-                      deleteWorkoutExerciseMutation({
-                        id: workoutExercise.id,
+                      setDeleteWorkoutExerciseDialog({
+                        workoutExerciseId: workoutExercise.id,
+                        isOpen: true,
                       })
                     }
                   >
@@ -105,6 +136,34 @@ const WorkoutDetailsPage = () => {
           onClose={handleToggleAddWorkoutExerciseModal}
         />
       </div>
+      <AlertDialog open={deleteWorkoutExerciseDialog.isOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Are you sure to delete this workout exercise?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete this
+              workout exercise and the sets
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              onClick={() => {
+                setDeleteWorkoutExerciseDialog({
+                  ...deleteWorkoutExerciseDialog,
+                  isOpen: false,
+                });
+              }}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteWorkoutExercise}>
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </GlobalLayout>
   );
 };
