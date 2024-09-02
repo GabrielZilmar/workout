@@ -41,7 +41,7 @@ const WorkoutExerciseSets: React.FC<WorkoutExerciseSetsProps> = ({
   return (
     <div className="px-2">
       {sets.map((set) => (
-        <SetForm key={set.id} set={set} />
+        <SetForm key={set.id} workoutExerciseId={workoutExerciseId} set={set} />
       ))}
     </div>
   );

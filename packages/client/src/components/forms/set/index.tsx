@@ -12,6 +12,7 @@ import {
   Input,
   Label,
 } from "@workout/ui";
+import { useCreateSet, useUpdateSet } from "~/hooks";
 
 const formSchema = z.object({
   numReps: z.coerce.number().min(0).default(0),
@@ -21,11 +22,16 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 type SetFormProps = {
+  workoutExerciseId: string;
   set?: Set;
   onSubmit?: (data?: FormSchema) => void;
 };
 
-const SetForm: React.FC<SetFormProps> = ({ set, onSubmit }) => {
+const SetForm: React.FC<SetFormProps> = ({
+  workoutExerciseId,
+  set,
+  onSubmit,
+}) => {
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -36,8 +42,19 @@ const SetForm: React.FC<SetFormProps> = ({ set, onSubmit }) => {
   });
   const { errors: formErrors } = form.formState;
 
+  const { createSetMutation } = useCreateSet();
+  const { updateSetMutation } = useUpdateSet();
+
   const handleSubmit: SubmitHandler<FormSchema> = async (data) => {
-    // !!set ? updateSetMutation(data) : createSetMutation(data);
+    !!set
+      ? updateSetMutation({
+          id: set.id,
+          ...data,
+        })
+      : createSetMutation({
+          workoutExerciseId,
+          ...data,
+        });
 
     if (onSubmit) {
       onSubmit(data);
@@ -103,7 +120,7 @@ const SetForm: React.FC<SetFormProps> = ({ set, onSubmit }) => {
               htmlFor="setWeight"
               className="block text-sm font-medium leading-6 text-white-900"
             >
-              Weight
+              Weight (KG)
             </Label>
             <FormField
               control={form.control}
