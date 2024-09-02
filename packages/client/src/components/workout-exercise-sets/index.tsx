@@ -1,11 +1,10 @@
 import { Button } from "@workout/ui";
-import { PlusCircle } from "lucide-react";
-import { Instrument_Sans } from "next/font/google";
+import { PlusCircle, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import Error from "~/components/error";
 import SetForm from "~/components/forms/set";
 import Loading from "~/components/loading";
-import { useListInfiniteSets } from "~/hooks";
+import { useDeleteSet, useListInfiniteSets } from "~/hooks";
 import { Set } from "~/types/set";
 
 type WorkoutExerciseSetsProps = {
@@ -29,6 +28,7 @@ const WorkoutExerciseSets: React.FC<WorkoutExerciseSetsProps> = ({
     isFetchingNextPage,
   } = useListInfiniteSets({ workoutExerciseId });
   const [sets, setSets] = useState<SetsState[]>([]);
+  const { deleteSetMutation } = useDeleteSet();
 
   useEffect(() => {
     if (hasNextPage && !isFetchingNextPage) {
@@ -53,6 +53,14 @@ const WorkoutExerciseSets: React.FC<WorkoutExerciseSetsProps> = ({
     setSets(currentSets);
   };
 
+  const handleDeleteSet = (id?: string) => {
+    if (!id) {
+      return;
+    }
+
+    deleteSetMutation({ id });
+  };
+
   if (isError) {
     const errorMessage = `${error?.response?.data?.message || ""}\n ${
       error?.response?.statusText || ""
@@ -67,7 +75,13 @@ const WorkoutExerciseSets: React.FC<WorkoutExerciseSetsProps> = ({
   return (
     <div className="flex flex-col gap-4 px-2">
       {sets.map(({ id, set }) => (
-        <SetForm key={id} workoutExerciseId={workoutExerciseId} set={set} />
+        <SetForm
+          key={id}
+          workoutExerciseId={workoutExerciseId}
+          set={set}
+          onCancel={handleDeleteSet}
+          cancelLabel={<Trash2>Remove Set</Trash2>}
+        />
       ))}
       <div className="flex justify-end">
         <Button onClick={handleInsert}>
