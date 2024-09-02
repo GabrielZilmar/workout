@@ -66,6 +66,18 @@ export default class Env {
     return this.getEnvOrThrow('VERIFY_EMAIL_URL');
   }
 
+  static get adminPassword(): string {
+    return this.getEnvOrThrow('ADMIN_PASSWORD');
+  }
+
+  static get adminEmail(): string {
+    return this.getEnvOrThrow('ADMIN_EMAIL');
+  }
+
+  static get adminUsername(): string {
+    return this.getEnvOrThrow('ADMIN_USERNAME');
+  }
+
   private static getEnvOrThrow(envName: string): string {
     const env = process.env[envName];
     if (!env) {
