@@ -16,13 +16,13 @@ export class WorkoutExercise {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Workout)
+  @ManyToOne(() => Workout, { onDelete: 'CASCADE' })
   workout: Workout;
 
   @Column({ type: 'uuid' })
   workoutId: string;
 
-  @ManyToOne(() => Exercise)
+  @ManyToOne(() => Exercise, { onDelete: 'CASCADE' })
   exercise: Exercise;
 
   @Column({ type: 'uuid' })
