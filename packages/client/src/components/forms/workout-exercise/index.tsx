@@ -147,16 +147,15 @@ const WorkoutExerciseForm: React.FC<WorkoutExerciseFormProps> = ({
             </FormItem>
           )}
         />
+        <div className="flex space-x-4">
+          <Button fullWidth type="button" className="mt-4" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button fullWidth type="submit" className="mt-4">
+            Create Workout Exercise
+          </Button>
+        </div>
       </form>
-
-      <div className="flex space-x-4">
-        <Button fullWidth type="button" className="mt-4" onClick={onCancel}>
-          Cancel
-        </Button>
-        <Button fullWidth type="submit" className="mt-4">
-          Create Workout Exercise
-        </Button>
-      </div>
     </Form>
   );
 };
