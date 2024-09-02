@@ -1,8 +1,18 @@
+import { cn } from "@workout/ui";
 import LoadingSvgComponent from "~/icons/loading";
 
-const Loading: React.FC = () => {
+type LoadingProps = {
+  className?: string;
+};
+
+const Loading: React.FC<LoadingProps> = (props: LoadingProps) => {
   return (
-    <div className="h-screen flex items-center justify-center">
+    <div
+      className={cn(
+        "h-screen flex items-center justify-center",
+        props.className
+      )}
+    >
       <div>
         <LoadingSvgComponent height={128} width={128} />
       </div>
