@@ -9,6 +9,7 @@ import {
 import { useParams } from "next/navigation";
 import Error from "~/components/error";
 import Loading from "~/components/loading";
+import WorkoutExerciseSets from "~/components/workout-exercise-sets";
 import { useGetWorkout, useGetWorkoutExercises } from "~/hooks";
 import GlobalLayout from "~/layouts/global.layout";
 
@@ -49,7 +50,9 @@ const WorkoutDetailsPage = () => {
                       {workoutExercise.exercise?.name}
                     </AccordionTrigger>
                     <AccordionContent>
-                      Yes. It adheres to the WAI-ARIA design pattern.
+                      <WorkoutExerciseSets
+                        workoutExerciseId={workoutExercise.id}
+                      />
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
