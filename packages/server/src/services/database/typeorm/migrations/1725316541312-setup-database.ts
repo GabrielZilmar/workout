@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class SetupDatabase1721058298858 implements MigrationInterface {
-  name = 'SetupDatabase1721058298858';
+export class SetupDatabase1725316541312 implements MigrationInterface {
+  name = 'SetupDatabase1725316541312';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -20,7 +20,7 @@ export class SetupDatabase1721058298858 implements MigrationInterface {
       `CREATE TABLE "workouts" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "user_id" uuid NOT NULL, "is_private" boolean NOT NULL DEFAULT true, "is_routine" boolean NOT NULL DEFAULT false, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "UQ_9b3ed8405efac2b46cef0f9939f" UNIQUE ("user_id", "name"), CONSTRAINT "PK_5b2319bf64a674d40237dbb1697" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "workout-exercises" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "workout_id" uuid NOT NULL, "exercise_id" uuid NOT NULL, "order" integer, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_bc695d4fc1a633e4f210ea8fd48" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "workout_exercises" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "workout_id" uuid NOT NULL, "exercise_id" uuid NOT NULL, "order" integer, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_377f9ead6fd69b29f0d0feb1028" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "tokens" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "user_id" uuid NOT NULL, "type" character varying NOT NULL, "token" character varying NOT NULL, "expiry" TIMESTAMP WITH TIME ZONE NOT NULL, "used_at" TIMESTAMP WITH TIME ZONE, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "UQ_6a8ca5961656d13c16c04079dd3" UNIQUE ("token"), CONSTRAINT "PK_3001e89ada36263dabf1fb6210a" PRIMARY KEY ("id"))`,
@@ -29,16 +29,16 @@ export class SetupDatabase1721058298858 implements MigrationInterface {
       `ALTER TABLE "exercises" ADD CONSTRAINT "FK_91941405cbc1e00392d62f7e8a1" FOREIGN KEY ("muscle_id") REFERENCES "muscles"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "sets" ADD CONSTRAINT "FK_31a6f55b3ecb4516de1970f5c94" FOREIGN KEY ("workout_exercise_id") REFERENCES "workout-exercises"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "sets" ADD CONSTRAINT "FK_31a6f55b3ecb4516de1970f5c94" FOREIGN KEY ("workout_exercise_id") REFERENCES "workout_exercises"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE "workouts" ADD CONSTRAINT "FK_2df679279a7ac263bcff20c78dd" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "workout-exercises" ADD CONSTRAINT "FK_d2aa405299277bea0da8a73367d" FOREIGN KEY ("workout_id") REFERENCES "workouts"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "workout_exercises" ADD CONSTRAINT "FK_7e6040e931b008308aaddbb7d32" FOREIGN KEY ("workout_id") REFERENCES "workouts"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "workout-exercises" ADD CONSTRAINT "FK_0913dee63ee2dcad70bfac6dc38" FOREIGN KEY ("exercise_id") REFERENCES "exercises"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "workout_exercises" ADD CONSTRAINT "FK_9a0656f321d9a96de2eb685e85a" FOREIGN KEY ("exercise_id") REFERENCES "exercises"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE "tokens" ADD CONSTRAINT "FK_8769073e38c365f315426554ca5" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
@@ -50,10 +50,10 @@ export class SetupDatabase1721058298858 implements MigrationInterface {
       `ALTER TABLE "tokens" DROP CONSTRAINT "FK_8769073e38c365f315426554ca5"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "workout-exercises" DROP CONSTRAINT "FK_0913dee63ee2dcad70bfac6dc38"`,
+      `ALTER TABLE "workout_exercises" DROP CONSTRAINT "FK_9a0656f321d9a96de2eb685e85a"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "workout-exercises" DROP CONSTRAINT "FK_d2aa405299277bea0da8a73367d"`,
+      `ALTER TABLE "workout_exercises" DROP CONSTRAINT "FK_7e6040e931b008308aaddbb7d32"`,
     );
     await queryRunner.query(
       `ALTER TABLE "workouts" DROP CONSTRAINT "FK_2df679279a7ac263bcff20c78dd"`,
@@ -65,7 +65,7 @@ export class SetupDatabase1721058298858 implements MigrationInterface {
       `ALTER TABLE "exercises" DROP CONSTRAINT "FK_91941405cbc1e00392d62f7e8a1"`,
     );
     await queryRunner.query(`DROP TABLE "tokens"`);
-    await queryRunner.query(`DROP TABLE "workout-exercises"`);
+    await queryRunner.query(`DROP TABLE "workout_exercises"`);
     await queryRunner.query(`DROP TABLE "workouts"`);
     await queryRunner.query(`DROP TABLE "users"`);
     await queryRunner.query(`DROP TABLE "sets"`);

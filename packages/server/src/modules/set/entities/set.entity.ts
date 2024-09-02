@@ -13,7 +13,7 @@ export class Set {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => WorkoutExercise)
+  @ManyToOne(() => WorkoutExercise, { onDelete: 'CASCADE' })
   workoutExercise: WorkoutExercise;
 
   @Column({ type: 'uuid' })
