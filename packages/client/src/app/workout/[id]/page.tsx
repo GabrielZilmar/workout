@@ -5,8 +5,12 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  Button,
 } from "@workout/ui";
+import { PlusCircle } from "lucide-react";
 import { useParams } from "next/navigation";
+import { useState } from "react";
+import WorkoutExerciseDialog from "~/components/dialogs/workout-exercise";
 import Error from "~/components/error";
 import Loading from "~/components/loading";
 import WorkoutExerciseSets from "~/components/workout-exercise-sets";
@@ -15,9 +19,14 @@ import GlobalLayout from "~/layouts/global.layout";
 
 const WorkoutDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
+  const [isAddWorkoutExerciseModalOpen, setIsAddWorkoutExerciseModalOpen] =
+    useState(false);
   const { data: workout, isLoading, isError, error } = useGetWorkout(id);
   const { data: workoutExerciseData, isLoading: isLoadingWorkoutExercises } =
     useGetWorkoutExercises({ workoutId: id });
+
+  const handleToggleAddWorkoutExerciseModal = () =>
+    setIsAddWorkoutExerciseModalOpen((isOpen) => !isOpen);
 
   if (isError) {
     const errorMessage = `${error?.response?.data?.message || ""}\n ${
@@ -60,6 +69,20 @@ const WorkoutDetailsPage = () => {
             </div>
           )}
         </div>
+        <div>
+          <Button onClick={handleToggleAddWorkoutExerciseModal}>
+            <div className="flex items-center space-x-2">
+              <PlusCircle />
+              <p>Add New Exercise</p>
+            </div>
+          </Button>
+        </div>
+        <WorkoutExerciseDialog
+          workoutId={id}
+          isOpen={isAddWorkoutExerciseModalOpen}
+          onOpenChange={handleToggleAddWorkoutExerciseModal}
+          onClose={handleToggleAddWorkoutExerciseModal}
+        />
       </div>
     </GlobalLayout>
   );

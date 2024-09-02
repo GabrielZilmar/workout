@@ -16,6 +16,8 @@ import { UseCase } from '~/shared/core/use-case';
 export type LoginParams = SessionLoginDto;
 export type LoginResult = SessionDto;
 
+const SESSION_DURATION = '7d';
+
 @Injectable()
 export class Login implements UseCase<LoginParams, LoginResult> {
   constructor(private readonly userRepository: UserRepository) {}
@@ -54,6 +56,7 @@ export class Login implements UseCase<LoginParams, LoginResult> {
       userId: userDomain.id.toValue(),
       token: {
         value: { ...userDto.value },
+        expiresIn: SESSION_DURATION,
       },
       tokenType: TokenTypeMap.LOGIN,
     });

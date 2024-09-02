@@ -17,7 +17,7 @@ export const useGetWorkoutExercises = (params: GetWorkoutExerciseParams) => {
     GetWorkoutExerciseResponse,
     GetWorkoutExerciseError
   >({
-    queryKey: ["workout-exercises", params],
+    queryKey: ["workout-exercises", params.workoutId],
     queryFn: () => getWorkoutExercise(params),
     enabled: !!params.workoutId,
   });
