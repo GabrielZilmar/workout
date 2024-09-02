@@ -7,6 +7,8 @@ import Loading from "~/components/loading";
 import { useDeleteSet, useListInfiniteSets } from "~/hooks";
 import { Set } from "~/types/set";
 
+const NEW_SET_PREFIX = "new-item";
+
 type WorkoutExerciseSetsProps = {
   workoutExerciseId: string;
 };
@@ -48,16 +50,16 @@ const WorkoutExerciseSets: React.FC<WorkoutExerciseSetsProps> = ({
   const handleInsert = () => {
     const currentSets = [...sets];
     currentSets.push({
-      id: `new-item-${currentSets.length}`,
+      id: `${NEW_SET_PREFIX}-${currentSets.length}`,
     });
     setSets(currentSets);
   };
 
-  const handleDeleteSet = (id?: string) => {
-    if (!id) {
+  const handleDeleteSet = (id: string) => {
+    if (id.includes(NEW_SET_PREFIX)) {
+      setSets(sets.filter((item) => item.id !== id));
       return;
     }
-
     deleteSetMutation({ id });
   };
 
@@ -79,7 +81,7 @@ const WorkoutExerciseSets: React.FC<WorkoutExerciseSetsProps> = ({
           key={id}
           workoutExerciseId={workoutExerciseId}
           set={set}
-          onCancel={handleDeleteSet}
+          onCancel={() => handleDeleteSet(set ? set.id : id)}
           cancelLabel={<Trash2>Remove Set</Trash2>}
         />
       ))}

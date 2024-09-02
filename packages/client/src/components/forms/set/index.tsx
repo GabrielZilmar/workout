@@ -25,7 +25,7 @@ type SetFormProps = {
   workoutExerciseId: string;
   set?: Set;
   onSubmit?: (data?: FormSchema) => void;
-  onCancel?: (id?: string) => void;
+  onCancel?: () => void;
   cancelLabel?: string | React.ReactNode;
 };
 
@@ -67,7 +67,7 @@ const SetForm: React.FC<SetFormProps> = ({
 
   const handleCancel = () => {
     if (onCancel) {
-      onCancel(set?.id);
+      onCancel();
     }
   };
 
