@@ -14,3 +14,4 @@ export * from "./useGetWorkoutExercises";
 export * from "./useListSets";
 export * from "./useCreateSet";
 export * from "./useUpdateSet";
+export * from "./useDeleteSet";
