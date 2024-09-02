@@ -7,14 +7,18 @@ import {
   AccordionTrigger,
   Button,
 } from "@workout/ui";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Trash2 } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import WorkoutExerciseDialog from "~/components/dialogs/workout-exercise";
 import Error from "~/components/error";
 import Loading from "~/components/loading";
 import WorkoutExerciseSets from "~/components/workout-exercise-sets";
-import { useGetWorkout, useGetWorkoutExercises } from "~/hooks";
+import {
+  useDeleteWorkoutExercise,
+  useGetWorkout,
+  useGetWorkoutExercises,
+} from "~/hooks";
 import GlobalLayout from "~/layouts/global.layout";
 
 const WorkoutDetailsPage = () => {
@@ -24,6 +28,7 @@ const WorkoutDetailsPage = () => {
   const { data: workout, isLoading, isError, error } = useGetWorkout(id);
   const { data: workoutExerciseData, isLoading: isLoadingWorkoutExercises } =
     useGetWorkoutExercises({ workoutId: id });
+  const { deleteWorkoutExerciseMutation } = useDeleteWorkoutExercise();
 
   const handleToggleAddWorkoutExerciseModal = () =>
     setIsAddWorkoutExerciseModalOpen((isOpen) => !isOpen);
@@ -53,18 +58,34 @@ const WorkoutDetailsPage = () => {
           ) : (
             <div className="px-4">
               {workoutExerciseData?.items.map((workoutExercise) => (
-                <Accordion key={workoutExercise.id} type="single" collapsible>
-                  <AccordionItem value="item-1">
-                    <AccordionTrigger>
-                      {workoutExercise.exercise?.name}
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      <WorkoutExerciseSets
-                        workoutExerciseId={workoutExercise.id}
-                      />
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
+                <div
+                  key={workoutExercise.id}
+                  className="flex items-center justify-between space-x-6"
+                >
+                  <div className="w-full">
+                    <Accordion type="single" collapsible>
+                      <AccordionItem value="item-1">
+                        <AccordionTrigger>
+                          {workoutExercise.exercise?.name}
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <WorkoutExerciseSets
+                            workoutExerciseId={workoutExercise.id}
+                          />
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  </div>
+                  <Button
+                    onClick={() =>
+                      deleteWorkoutExerciseMutation({
+                        id: workoutExercise.id,
+                      })
+                    }
+                  >
+                    <Trash2 />
+                  </Button>
+                </div>
               ))}
             </div>
           )}
