@@ -16,5 +16,7 @@ export * from "./radio-group";
 export * from "./card";
 export * from "./skeleton";
 export * from "./accordion";
+export * from "./command";
+export * from "./popover";
 
 export * from "./utils";
