@@ -29,6 +29,7 @@ export class FindByWorkoutId
     const { items, count } =
       await this.workoutExerciseRepository.findUsersWorkoutExercises({
         where: { userId, workoutId },
+        relations: ['exercise'],
         skip,
         take,
       });

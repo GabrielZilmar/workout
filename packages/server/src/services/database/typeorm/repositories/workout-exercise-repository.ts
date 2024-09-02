@@ -11,8 +11,10 @@ type UsersWorkoutExercisesWhereOption = {
   userId: string;
   workoutId: string;
 };
+type UsersWorkoutExercisesFindRelationsParams = 'exercise';
 type UsersWorkoutExercisesFindParams = {
   where: UsersWorkoutExercisesWhereOption;
+  relations?: UsersWorkoutExercisesFindRelationsParams[];
   skip?: number;
   take?: number;
 };
@@ -20,7 +22,6 @@ type UsersWorkoutExerciseFindResult = {
   items: WorkoutExerciseDomain[];
   count: number;
 };
-
 type FindOneByIdRelationsParams = 'workout' | 'exercise' | 'sets';
 type FindOneByIdParams = {
   id: string;
@@ -41,10 +42,11 @@ export default class WorkoutExerciseRepository extends BaseRepository<
 
   async findUsersWorkoutExercises({
     where: { userId, workoutId },
+    relations,
     take = DEFAULT_TAKE_ITEMS,
     skip = DEFAULT_SKIP_ITEMS,
   }: UsersWorkoutExercisesFindParams): Promise<UsersWorkoutExerciseFindResult> {
-    const [items, count] = await this.repository
+    const qb = this.repository
       .createQueryBuilder()
       .select('we')
       .from(WorkoutExercise, 'we')
@@ -53,8 +55,14 @@ export default class WorkoutExerciseRepository extends BaseRepository<
       .andWhere('(w.userId = :userId OR w.isPrivate = false)', { userId })
       .orderBy('we.order', 'ASC')
       .skip(skip)
-      .take(take)
-      .getManyAndCount();
+      .take(take);
+    if (relations) {
+      for (const relation of relations) {
+        qb.leftJoinAndSelect(`we.${relation}`, relation);
+      }
+    }
+
+    const [items, count] = await qb.getManyAndCount();
 
     const itemsToDomain: WorkoutExerciseDomain[] = [];
     for await (const item of items) {
