@@ -18,11 +18,15 @@ import {
   BookLock,
   BookOpen,
   CircleX,
+  Edit2,
+  Repeat,
   Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import { useDeleteWorkout } from "~/hooks";
+import GenericDialog from "~/components/dialogs/generic";
+import WorkoutDialog from "~/components/dialogs/workout";
+import { useDeleteWorkout, useStartRoutine } from "~/hooks";
 import { ALL_ROUTES } from "~/routes";
 import { Workout } from "~/types/workout";
 
@@ -33,23 +37,36 @@ type WorkoutActionColumnProps = { table: Table<Workout> } & (
   | (RowProps & { isHeader?: false })
 );
 
+type AlertDialogState = {
+  isOpen: boolean;
+  title: string;
+  description: string;
+  confirmAction: () => void;
+};
+
 const WorkoutActionColumn: React.FC<WorkoutActionColumnProps> = ({
   isHeader = false,
   table,
   ...params
 }) => {
-  const [isDeleteWorkoutDialogOpen, setIsDeleteWorkoutDialogOpen] =
-    useState<boolean>(false);
+  const [alertDialog, setAlertDialog] = useState<AlertDialogState>({
+    isOpen: false,
+    title: "",
+    description: "",
+    confirmAction: () => {},
+  });
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
   const selectedRows = table.getSelectedRowModel().rows;
   const isMultipleRowsSelected = selectedRows.length > 1;
   const { deleteWorkoutMutation } = useDeleteWorkout();
+  const { startRoutineMutation } = useStartRoutine();
 
-  const handleToggleDeleteDialog = useCallback(() => {
-    setIsDeleteWorkoutDialogOpen(!isDeleteWorkoutDialogOpen);
-  }, [isDeleteWorkoutDialogOpen]);
+  const handleToggleUpdateDialog = useCallback(() => {
+    setIsUpdateDialogOpen((isOpen) => !isOpen);
+  }, []);
 
   const handleDelete = useCallback(() => {
-    handleToggleDeleteDialog();
+    setAlertDialog({ ...alertDialog, isOpen: false });
     if (!isHeader) {
       const workout = (params as RowProps).row.original;
       return deleteWorkoutMutation({ id: workout.id });
@@ -57,42 +74,53 @@ const WorkoutActionColumn: React.FC<WorkoutActionColumnProps> = ({
 
     const ids = selectedRows.map((row) => row.original.id);
     Promise.all(ids.map((id) => deleteWorkoutMutation({ id })));
-  }, [
-    handleToggleDeleteDialog,
-    deleteWorkoutMutation,
-    selectedRows,
-    isHeader,
-    params,
-  ]);
+  }, [alertDialog, deleteWorkoutMutation, selectedRows, isHeader, params]);
+
+  const handleDeleteDialog = useCallback(() => {
+    setAlertDialog({
+      title: `Are you sure to delete the workout${
+        isMultipleRowsSelected ? "s" : ""
+      }?`,
+      description: `This action cannot be undone. This will permanently delete the workout${
+        isMultipleRowsSelected ? "s" : ""
+      } selected`,
+      confirmAction: handleDelete,
+      isOpen: true,
+    });
+  }, [handleDelete, isMultipleRowsSelected]);
+
+  const handleStartRoutine = useCallback(() => {
+    setAlertDialog({ ...alertDialog, isOpen: false });
+    if (!isHeader) {
+      const workout = (params as RowProps).row.original;
+      return startRoutineMutation({ workoutId: workout.id });
+    }
+  }, [alertDialog, startRoutineMutation, isHeader, params]);
+
+  const handleStartRoutineDialog = useCallback(() => {
+    setAlertDialog({
+      title: "Are you sure to start this routine?",
+      description:
+        "It will create a new workout exercise, copying all exercises and sets.",
+      confirmAction: handleStartRoutine,
+      isOpen: true,
+    });
+  }, [handleStartRoutine]);
 
   return (
     <>
-      <AlertDialog open={isDeleteWorkoutDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{`Are you sure to delete the workout${
-              isMultipleRowsSelected ? "s" : ""
-            }?`}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {`This action cannot be undone. This will permanently delete the workout${
-                isMultipleRowsSelected ? "s" : ""
-              } selected`}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={handleToggleDeleteDialog}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>
-              Confirm
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <GenericDialog
+        isOpen={alertDialog.isOpen}
+        title={alertDialog.title}
+        description={alertDialog.description}
+        onConfirm={alertDialog.confirmAction}
+        onCancel={() => setAlertDialog({ ...alertDialog, isOpen: false })}
+      />
+
       {isHeader ? (
         isMultipleRowsSelected ? (
           <div>
-            <Button className="p-2 h-fit" onClick={handleToggleDeleteDialog}>
+            <Button className="p-2 h-fit" onClick={handleDeleteDialog}>
               <Trash2 size={16} />
             </Button>
           </div>
@@ -100,9 +128,24 @@ const WorkoutActionColumn: React.FC<WorkoutActionColumnProps> = ({
           <span>Action</span>
         )
       ) : !isMultipleRowsSelected ? (
-        <Button className="p-2 h-fit" onClick={handleToggleDeleteDialog}>
-          <Trash2 size={16} />
-        </Button>
+        <div className="h-fit space-x-2 flex">
+          <Button className="p-2 h-fit" onClick={handleStartRoutineDialog}>
+            <Repeat size={16} />
+          </Button>
+          <Button className="p-2 h-fit" onClick={handleToggleUpdateDialog}>
+            <Edit2 size={16} />
+          </Button>
+          <Button className="p-2 h-fit" onClick={handleDeleteDialog}>
+            <Trash2 size={16} />
+          </Button>
+
+          <WorkoutDialog
+            isOpen={isUpdateDialogOpen}
+            workout={(params as RowProps).row.original}
+            onOpenChange={handleToggleUpdateDialog}
+            onClose={handleToggleUpdateDialog}
+          />
+        </div>
       ) : null}
     </>
   );

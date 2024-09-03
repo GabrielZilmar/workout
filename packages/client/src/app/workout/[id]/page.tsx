@@ -17,7 +17,7 @@ import {
 } from "@workout/ui";
 import { PlusCircle, Trash2 } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import WorkoutExerciseDialog from "~/components/dialogs/workout-exercise";
 import Error from "~/components/error";
 import Loading from "~/components/loading";
@@ -26,6 +26,7 @@ import {
   useDeleteWorkoutExercise,
   useGetWorkout,
   useGetWorkoutExercises,
+  useUser,
 } from "~/hooks";
 import GlobalLayout from "~/layouts/global.layout";
 
@@ -47,6 +48,8 @@ const WorkoutDetailsPage = () => {
   const { data: workoutExerciseData, isLoading: isLoadingWorkoutExercises } =
     useGetWorkoutExercises({ workoutId: id });
   const { deleteWorkoutExerciseMutation } = useDeleteWorkoutExercise();
+  const { user } = useUser();
+  const isOwner = useMemo(() => user?.id === workout?.userId, [user, workout]);
 
   const handleToggleAddWorkoutExerciseModal = () =>
     setIsAddWorkoutExerciseModalOpen((isOpen) => !isOpen);
@@ -101,34 +104,37 @@ const WorkoutDetailsPage = () => {
                         <AccordionContent>
                           <WorkoutExerciseSets
                             workoutExerciseId={workoutExercise.id}
+                            isOwner={isOwner}
                           />
                         </AccordionContent>
                       </AccordionItem>
                     </Accordion>
                   </div>
-                  <Button
-                    onClick={() =>
-                      setDeleteWorkoutExerciseDialog({
-                        workoutExerciseId: workoutExercise.id,
-                        isOpen: true,
-                      })
-                    }
-                  >
-                    <Trash2 />
-                  </Button>
+                  {isOwner ? (
+                    <Button
+                      onClick={() =>
+                        setDeleteWorkoutExerciseDialog({
+                          workoutExerciseId: workoutExercise.id,
+                          isOpen: true,
+                        })
+                      }
+                    >
+                      <Trash2 />
+                    </Button>
+                  ) : null}
                 </div>
               ))}
             </div>
           )}
         </div>
-        <div>
+        {isOwner ? (
           <Button onClick={handleToggleAddWorkoutExerciseModal}>
             <div className="flex items-center space-x-2">
               <PlusCircle />
               <p>Add New Exercise</p>
             </div>
           </Button>
-        </div>
+        ) : null}
         <WorkoutExerciseDialog
           workoutId={id}
           isOpen={isAddWorkoutExerciseModalOpen}

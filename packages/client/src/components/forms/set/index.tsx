@@ -24,6 +24,7 @@ type FormSchema = z.infer<typeof formSchema>;
 type SetFormProps = {
   workoutExerciseId: string;
   set?: Set;
+  isOwner?: boolean;
   onSubmit?: (data?: FormSchema) => void;
   onCancel?: () => void;
   cancelLabel?: string | React.ReactNode;
@@ -32,6 +33,7 @@ type SetFormProps = {
 const SetForm: React.FC<SetFormProps> = ({
   workoutExerciseId,
   set,
+  isOwner = false,
   onSubmit,
   onCancel,
   cancelLabel = "Cancel",
@@ -89,6 +91,7 @@ const SetForm: React.FC<SetFormProps> = ({
             <FormField
               control={form.control}
               name="numReps"
+              disabled={!isOwner}
               render={({ field }) => (
                 <FormItem className="flex flex-col md:flex-row md:space-x-4 md:items-center">
                   <FormControl>
@@ -112,6 +115,7 @@ const SetForm: React.FC<SetFormProps> = ({
             <FormField
               control={form.control}
               name="numDrops"
+              disabled={!isOwner}
               render={({ field }) => (
                 <FormItem className="flex flex-col md:flex-row md:space-x-4 md:items-center">
                   <FormControl>
@@ -135,6 +139,7 @@ const SetForm: React.FC<SetFormProps> = ({
             <FormField
               control={form.control}
               name="setWeight"
+              disabled={!isOwner}
               render={({ field }) => (
                 <FormItem className="flex flex-col md:flex-row md:space-x-4 md:items-center">
                   <FormControl>
@@ -149,19 +154,21 @@ const SetForm: React.FC<SetFormProps> = ({
           </div>
         </div>
 
-        <div className="flex space-x-4">
-          <Button
-            type="button"
-            variant="destructive"
-            className="mt-4"
-            onClick={handleCancel}
-          >
-            {cancelLabel}
-          </Button>
-          <Button type="submit" className="mt-4">
-            {set ? "Update Set" : "Create Set"}
-          </Button>
-        </div>
+        {isOwner ? (
+          <div className="flex space-x-4">
+            <Button
+              type="button"
+              variant="destructive"
+              className="mt-4"
+              onClick={handleCancel}
+            >
+              {cancelLabel}
+            </Button>
+            <Button type="submit" className="mt-4">
+              {set ? "Update Set" : "Create Set"}
+            </Button>
+          </div>
+        ) : null}
       </form>
     </Form>
   );

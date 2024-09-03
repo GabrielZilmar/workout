@@ -38,15 +38,22 @@ export class StartRoutine
   private async saveWorkout(
     workoutRepository: Repository<Workout>,
     workout: WorkoutDomain,
+    userId: string,
   ): Promise<Workout> {
     const { id: _, ...workoutPersistence } =
       this.workoutMapper.toPersistence(workout);
 
+    const removeDateRegex =
+      /\-\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z/;
     return workoutRepository.save(
       workoutRepository.create({
         ...workoutPersistence,
+        userId,
         isPrivate: true,
-        name: `${workout.name.value}-${new Date().toISOString()}`,
+        name: `${workout.name.value.replace(
+          removeDateRegex,
+          '',
+        )}-${new Date().toISOString()}`,
       }),
     );
   }
@@ -130,7 +137,7 @@ export class StartRoutine
     }
 
     const canStartRoutine =
-      workout.userId === userId || !workout.privateStatus.isPrivate;
+      workout.userId === userId || !workout.privateStatus.isPrivate();
     if (!canStartRoutine) {
       throw new ForbiddenException(
         WorkoutUseCaseError.messages.cannotStartRoutineFromThisWorkout,
@@ -152,7 +159,11 @@ export class StartRoutine
         }
 
         try {
-          const newWorkout = await this.saveWorkout(workoutRepository, workout);
+          const newWorkout = await this.saveWorkout(
+            workoutRepository,
+            workout,
+            userId,
+          );
 
           await this.cloneWorkoutExercises(
             workoutExerciseRepository,

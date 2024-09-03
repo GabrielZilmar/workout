@@ -12,8 +12,10 @@ import {
   AlertDialogTitle,
   Button,
 } from "@workout/ui";
+import Link from "next/link";
 import { useState } from "react";
 import { useStartRoutine } from "~/hooks";
+import { ALL_ROUTES } from "~/routes";
 import { PublicWorkoutUser } from "~/types/user";
 import { Workout } from "~/types/workout";
 
@@ -65,8 +67,17 @@ const PublicWorkoutActionColumn: React.FC<PublicWorkoutActionColumnProps> = ({
 
 export const publicWorkoutsColumns: ColumnDef<Workout>[] = [
   {
-    accessorKey: "name",
+    accessorKey: "id",
     header: "Name",
+    cell: ({ row }) => {
+      const id = row.getValue<string>("id");
+
+      return (
+        <Link href={ALL_ROUTES.workoutDetails(id)}>
+          {row.original.name || "-"}
+        </Link>
+      );
+    },
   },
   {
     accessorKey: "user",

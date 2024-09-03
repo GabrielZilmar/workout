@@ -5,6 +5,7 @@ import { GenericResponseError } from "~/types/api/errors";
 import { Workout } from "~/types/workout";
 
 export type UpdateWorkoutPayload = Omit<CreateWorkoutPayload, "name"> & {
+  id: string;
   name?: string;
 };
 type UpdateWorkoutError = GenericResponseError & {
@@ -13,10 +14,11 @@ type UpdateWorkoutError = GenericResponseError & {
 export type UpdateWorkoutErrorResult = AxiosError<UpdateWorkoutError>;
 export type UpdateWorkoutResult = AxiosResponse<Workout>;
 
-export const updateWorkout = async (
-  payload: UpdateWorkoutPayload
-): Promise<UpdateWorkoutResult> => {
-  return axiosInstance.patch<Workout>("/workouts", {
+export const updateWorkout = async ({
+  id,
+  ...payload
+}: UpdateWorkoutPayload): Promise<UpdateWorkoutResult> => {
+  return axiosInstance.patch<Workout>(`/workouts/${id}`, {
     ...payload,
   });
 };
