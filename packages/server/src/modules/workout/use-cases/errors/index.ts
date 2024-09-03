@@ -10,6 +10,7 @@ export class WorkoutUseCaseError extends Error {
     cannotDeleteOthersWorkout: 'Cannot delete others workout.',
     cannotStartRoutineFromThisWorkout:
       'Cannot start routine from this workout. This workout belongs to another user',
+    workoutDomainIdNotFound: 'Workout domain id not found',
   };
 
   constructor(message: string, code: number, payload?: unknown) {

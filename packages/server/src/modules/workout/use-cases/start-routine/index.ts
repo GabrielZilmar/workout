@@ -5,11 +5,12 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Set } from '~/modules/set/entities/set.entity';
 import SetMapper from '~/modules/set/mappers/set.mapper';
 import { WorkoutExercise } from '~/modules/workout-exercise/entities/workout-exercise.entity';
 import WorkoutExerciseMapper from '~/modules/workout-exercise/mappers/workout-exercise.mapper';
+import WorkoutDomain from '~/modules/workout/domain/workout.domain';
 import { StartRoutineBodyDTO } from '~/modules/workout/dto/start-routine.dto';
 import { WorkoutDto } from '~/modules/workout/dto/workout.dto';
 import { Workout } from '~/modules/workout/entities/workout.entity';
@@ -17,6 +18,7 @@ import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
 import { WorkoutUseCaseError } from '~/modules/workout/use-cases/errors';
 import WorkoutRepository from '~/services/database/typeorm/repositories/workout-repository';
 import { UseCase } from '~/shared/core/use-case';
+import { Mapper } from '~/shared/domain/mapper';
 
 export type StartRoutineParams = StartRoutineBodyDTO & { userId: string };
 export type StartRoutineResult = Promise<WorkoutDto>;
@@ -32,6 +34,88 @@ export class StartRoutine
     private readonly setMapper: SetMapper,
     private readonly dataSource: DataSource,
   ) {}
+
+  private async saveWorkout(
+    workoutRepository: Repository<Workout>,
+    workout: WorkoutDomain,
+  ): Promise<Workout> {
+    const { id: _, ...workoutPersistence } =
+      this.workoutMapper.toPersistence(workout);
+
+    return workoutRepository.save(
+      workoutRepository.create({
+        ...workoutPersistence,
+        name: `${workout.name.value}-${new Date().toISOString()}`,
+      }),
+    );
+  }
+
+  private async cloneWorkoutExercises(
+    workoutExerciseRepository: Repository<WorkoutExercise>,
+    setRepository: Repository<Set>,
+    oldWorkoutId: string,
+    newWorkoutId: string,
+  ): Promise<void> {
+    const workoutExercises = await workoutExerciseRepository.find({
+      where: { workoutId: oldWorkoutId },
+    });
+
+    await Promise.all(
+      workoutExercises.map(async (we) => {
+        const newWorkoutExercise = await this.toDomainOrThrow(
+          this.workoutExerciseMapper,
+          we,
+        );
+
+        const { id: _, ...persistenceData } =
+          this.workoutExerciseMapper.toPersistence(newWorkoutExercise);
+
+        const workoutExerciseCreated = await workoutExerciseRepository.save(
+          workoutExerciseRepository.create({
+            ...persistenceData,
+            workoutId: newWorkoutId,
+          }),
+        );
+
+        await this.cloneSets(setRepository, we.id, workoutExerciseCreated.id);
+      }),
+    );
+  }
+
+  private async cloneSets(
+    setRepository: Repository<Set>,
+    oldWorkoutExerciseId: string,
+    newWorkoutExerciseId: string,
+  ): Promise<void> {
+    const sets = await setRepository.find({
+      where: { workoutExerciseId: oldWorkoutExerciseId },
+    });
+
+    await Promise.all(
+      sets.map(async (set) => {
+        const newSet = await this.toDomainOrThrow(this.setMapper, {
+          ...set,
+          workoutExerciseId: newWorkoutExerciseId,
+        });
+
+        const { id: _, ...persistenceData } =
+          this.setMapper.toPersistence(newSet);
+
+        await setRepository.save(setRepository.create(persistenceData));
+      }),
+    );
+  }
+
+  private async toDomainOrThrow<T, D>(
+    mapper: Mapper<T, D>,
+    entity: D,
+  ): Promise<T> {
+    const domainOrError = await mapper.toDomain(entity);
+    if (domainOrError.isLeft()) {
+      throw new InternalServerErrorException(domainOrError.value.message);
+    }
+    return domainOrError.value;
+  }
 
   public async execute({
     workoutId,
@@ -60,95 +144,26 @@ export class StartRoutine
           transactionalEntityManager.getRepository(WorkoutExercise);
         const setRepository = transactionalEntityManager.getRepository(Set);
 
-        const { id: workoutId, ...workoutPersistence } =
-          this.workoutMapper.toPersistence(workout);
-        let newWorkout: Workout;
+        if (!workout?.id) {
+          throw new InternalServerErrorException(
+            WorkoutUseCaseError.messages.workoutDomainIdNotFound,
+          );
+        }
+
         try {
-          newWorkout = await workoutRepository.save(
-            workoutRepository.create({
-              ...workoutPersistence,
-              name: `${workout.name.value}-${new Date().toISOString()}`,
-            }),
+          const newWorkout = await this.saveWorkout(workoutRepository, workout);
+
+          await this.cloneWorkoutExercises(
+            workoutExerciseRepository,
+            setRepository,
+            workout.id.toValue(),
+            newWorkout.id,
           );
+
+          return this.toDomainOrThrow(this.workoutMapper, newWorkout);
         } catch (err) {
-          throw new InternalServerErrorException((err as Error).message);
+          throw new InternalServerErrorException(err.message);
         }
-
-        const workoutExercises = await workoutExerciseRepository.find({
-          where: { workoutId },
-        });
-        await Promise.all(
-          workoutExercises.map(async (we) => {
-            const newWorkoutExerciseDomainOrError =
-              await this.workoutExerciseMapper.toDomain(we);
-            if (newWorkoutExerciseDomainOrError.isLeft()) {
-              throw new HttpException(
-                newWorkoutExerciseDomainOrError.value.message,
-                newWorkoutExerciseDomainOrError.value.code,
-              );
-            }
-
-            let workoutExerciseCreated: WorkoutExercise;
-            try {
-              const { id: _, ...persistenceData } =
-                this.workoutExerciseMapper.toPersistence(
-                  newWorkoutExerciseDomainOrError.value,
-                );
-
-              workoutExerciseCreated = await workoutExerciseRepository.save(
-                workoutExerciseRepository.create({
-                  ...persistenceData,
-                  workoutId: newWorkout.id,
-                }),
-              );
-            } catch (err) {
-              throw new InternalServerErrorException((err as Error).message);
-            }
-
-            const sets = await setRepository.find({
-              where: { workoutExerciseId: we.id },
-            });
-            await Promise.all(
-              sets.map(async (set) => {
-                const setDomainOrError = this.setMapper.toDomain({
-                  ...set,
-                  workoutExerciseId: workoutExerciseCreated.id,
-                });
-                if (setDomainOrError.isLeft()) {
-                  throw new HttpException(
-                    setDomainOrError.value.message,
-                    setDomainOrError.value.code,
-                  );
-                }
-
-                try {
-                  const { id: _, ...persistenceData } =
-                    this.setMapper.toPersistence(setDomainOrError.value);
-                  await setRepository.save(
-                    setRepository.create(persistenceData),
-                  );
-                } catch (err) {
-                  throw new InternalServerErrorException(
-                    (err as Error).message,
-                  );
-                }
-              }),
-            );
-          }),
-        );
-
-        const workoutDomainOrError = await this.workoutMapper.toDomain(
-          newWorkout,
-        );
-
-        if (workoutDomainOrError.isLeft()) {
-          throw new HttpException(
-            workoutDomainOrError.value.message,
-            workoutDomainOrError.value.code,
-          );
-        }
-
-        return workoutDomainOrError.value;
       },
     );
 
