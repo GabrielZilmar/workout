@@ -71,6 +71,7 @@ jobs:
             fi
             echo "Running Docker image..."
             docker run -d --name workout --restart unless-stopped \
+              -e NODE_ENV=${{ secrets.NODE_ENV }} \
               -e PORT=${{ secrets.PORT }} \
               -e DATABASE_HOST=${{ secrets.DATABASE_HOST }} \
               -e DB_PORT=${{ secrets.DB_PORT }} \
