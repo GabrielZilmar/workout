@@ -17,3 +17,4 @@ export * from "./useUpdateSet";
 export * from "./useDeleteSet";
 export * from "./useCreateWorkoutExercise";
 export * from "./useDeleteWorkoutExercise";
+export * from "./useStartRoutine";
