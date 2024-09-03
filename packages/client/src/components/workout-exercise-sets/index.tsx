@@ -11,6 +11,7 @@ const NEW_SET_PREFIX = "new-item";
 
 type WorkoutExerciseSetsProps = {
   workoutExerciseId: string;
+  isOwner?: boolean;
 };
 type SetsState = {
   id: string;
@@ -19,6 +20,7 @@ type SetsState = {
 
 const WorkoutExerciseSets: React.FC<WorkoutExerciseSetsProps> = ({
   workoutExerciseId,
+  isOwner = false,
 }) => {
   const {
     data,
@@ -81,15 +83,18 @@ const WorkoutExerciseSets: React.FC<WorkoutExerciseSetsProps> = ({
           key={id}
           workoutExerciseId={workoutExerciseId}
           set={set}
+          isOwner={isOwner}
           onCancel={() => handleDeleteSet(set ? set.id : id)}
           cancelLabel={<Trash2>Remove Set</Trash2>}
         />
       ))}
-      <div className="flex justify-end">
-        <Button onClick={handleInsert}>
-          <PlusCircle />
-        </Button>
-      </div>
+      {isOwner ? (
+        <div className="flex justify-end">
+          <Button onClick={handleInsert}>
+            <PlusCircle />
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 };
