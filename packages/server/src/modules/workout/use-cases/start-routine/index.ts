@@ -45,6 +45,7 @@ export class StartRoutine
     return workoutRepository.save(
       workoutRepository.create({
         ...workoutPersistence,
+        isPrivate: true,
         name: `${workout.name.value}-${new Date().toISOString()}`,
       }),
     );
