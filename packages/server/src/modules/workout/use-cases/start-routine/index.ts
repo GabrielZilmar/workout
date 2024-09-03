@@ -43,12 +43,17 @@ export class StartRoutine
     const { id: _, ...workoutPersistence } =
       this.workoutMapper.toPersistence(workout);
 
+    const removeDateRegex =
+      /\-\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z/;
     return workoutRepository.save(
       workoutRepository.create({
         ...workoutPersistence,
         userId,
         isPrivate: true,
-        name: `${workout.name.value}-${new Date().toISOString()}`,
+        name: `${workout.name.value.replace(
+          removeDateRegex,
+          '',
+        )}-${new Date().toISOString()}`,
       }),
     );
   }
