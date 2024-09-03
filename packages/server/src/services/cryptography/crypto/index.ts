@@ -5,13 +5,13 @@ import Env from '~/shared/env';
 @Injectable()
 export default class Crypto {
   private readonly algorithm: string;
-  private readonly securityKey: string;
-  private readonly initVector: string;
+  private readonly securityKey: Buffer;
+  private readonly initVector: Buffer;
 
   constructor() {
     this.algorithm = Env.cryptographyAlgorithm;
-    this.securityKey = Env.cryptographySecurityKey;
-    this.initVector = Env.cryptographyInitVector;
+    this.securityKey = Buffer.from(Env.cryptographySecurityKey, 'base64url');
+    this.initVector = Buffer.from(Env.cryptographyInitVector, 'base64url');
   }
 
   public encryptValue(value: string): string {
