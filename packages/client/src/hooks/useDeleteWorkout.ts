@@ -26,6 +26,9 @@ export const useDeleteWorkout = () => {
       queryClient.invalidateQueries({
         queryKey: ["workouts"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["public-workouts"],
+      });
       enqueueSnackbar("Workout deleted!", { variant: "success" });
     },
     onError: () => {
