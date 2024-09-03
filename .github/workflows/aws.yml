@@ -70,7 +70,7 @@ jobs:
               docker rm workout
             fi
             echo "Running Docker image..."
-            docker run -d --name workout --restart unless-stopped \
+            docker run -d --name workout -p ${{ secrets.PORT }}:${{ secrets.PORT }} --restart unless-stopped \
               -e NODE_ENV=${{ secrets.NODE_ENV }} \
               -e PORT=${{ secrets.PORT }} \
               -e DATABASE_HOST=${{ secrets.DATABASE_HOST }} \
