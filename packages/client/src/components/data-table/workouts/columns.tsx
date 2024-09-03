@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useState } from "react";
+import GenericDialog from "~/components/dialogs/generic";
 import WorkoutDialog from "~/components/dialogs/workout";
 import { useDeleteWorkout, useStartRoutine } from "~/hooks";
 import { ALL_ROUTES } from "~/routes";
@@ -108,28 +109,13 @@ const WorkoutActionColumn: React.FC<WorkoutActionColumnProps> = ({
 
   return (
     <>
-      <AlertDialog open={alertDialog.isOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{alertDialog.title}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {alertDialog.description}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel
-              onClick={() => {
-                setAlertDialog({ ...alertDialog, isOpen: false });
-              }}
-            >
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={alertDialog.confirmAction}>
-              Confirm
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <GenericDialog
+        isOpen={alertDialog.isOpen}
+        title={alertDialog.title}
+        description={alertDialog.description}
+        onConfirm={alertDialog.confirmAction}
+        onCancel={() => setAlertDialog({ ...alertDialog, isOpen: false })}
+      />
 
       {isHeader ? (
         isMultipleRowsSelected ? (
