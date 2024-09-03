@@ -13,7 +13,7 @@ ConfigModule.forRoot({
 
 export default class Env {
   static get port(): number {
-    const port = this.getEnvOrDefault('PORT', '3000');
+    const port = this.getEnvOrDefault('PORT', '3030');
 
     return Number(port);
   }

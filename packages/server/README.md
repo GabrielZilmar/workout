@@ -37,7 +37,7 @@ npm install
 Create a .env file in the root directory and define the following variables:
 
 ```config
-PORT=3000
+PORT=3030
 
 DATABASE_URL=postgres://username:password@localhost:5432/workout_app
 DB_PORT=5432
