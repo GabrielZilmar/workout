@@ -70,7 +70,9 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({
   const { createWorkoutMutation } = useCreateWorkout();
   const { updateWorkoutMutation } = useUpdateWorkout();
   const handleSubmit: SubmitHandler<FormSchema> = async (data) => {
-    !!workout ? updateWorkoutMutation(data) : createWorkoutMutation(data);
+    !!workout
+      ? updateWorkoutMutation({ id: workout.id, ...data })
+      : createWorkoutMutation(data);
 
     if (onSubmit) {
       onSubmit(data);
@@ -186,7 +188,7 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({
             Cancel
           </Button>
           <Button fullWidth type="submit" className="mt-4">
-            Create
+            {workout ? "Update" : "Create"}
           </Button>
         </div>
       </form>
