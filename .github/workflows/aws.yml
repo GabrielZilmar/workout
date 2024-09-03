@@ -1,0 +1,101 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and Push to ECR
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_ECR: ${{ secrets.AWS_ECR }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Amazon ECR registry
+        run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR }}
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./packages/server
+          file: ./packages/server/Dockerfile
+          push: true
+          tags: ${{ secrets.AWS_ECR }}/workout:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    name: Deploy to EC2 via SSH
+    runs-on: ubuntu-latest
+    needs: build
+    environment: prod
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: SSH and deploy
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: "${{ secrets.EC2_DNS }}"
+          username: "ec2-user"
+          key: ${{ secrets.PROD_EC2_SSH_KEY }}
+          script: |
+            echo "Checking if Docker is installed..."
+            if ! command -v docker &> /dev/null
+            then
+              echo "Docker not found, installing..."
+              sudo dnf update -y
+              sudo dnf install -y docker
+              echo "Starting Docker service..."
+              sudo systemctl start docker
+              sudo systemctl enable docker
+              sudo usermod -aG docker ec2-user
+            else
+              echo "Docker is already installed."
+            fi
+            echo "Setting up AWS credentials..."
+            export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+            export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            echo "Logging into ECR..."
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR }}
+            echo "Pulling Docker image..."
+            docker pull ${{ secrets.AWS_ECR }}/workout:latest
+            if [ "$(docker ps -aq -f name=workout)" ]; then
+              docker stop workout
+              docker rm workout
+            fi
+            echo "Running Docker image..."
+            docker run -d --name workout -p ${{ secrets.PORT }}:${{ secrets.PORT }} --restart unless-stopped \
+              -e NODE_ENV=${{ secrets.NODE_ENV }} \
+              -e PORT=${{ secrets.PORT }} \
+              -e DATABASE_HOST=${{ secrets.DATABASE_HOST }} \
+              -e DB_PORT=${{ secrets.DB_PORT }} \
+              -e USERNAME=${{ secrets.USERNAME }} \
+              -e PASSWORD=${{ secrets.PASSWORD }} \
+              -e DATABASE=${{ secrets.DATABASE }} \
+              -e PASSWORD_SALT=${{ secrets.PASSWORD_SALT }} \
+              -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+              -e EMAIL_HOST=${{ secrets.EMAIL_HOST }} \
+              -e EMAIL_PORT=${{ secrets.EMAIL_PORT }} \
+              -e EMAIL_SERVICE=${{ secrets.EMAIL_SERVICE }} \
+              -e EMAIL_SENDER=${{ secrets.EMAIL_SENDER }} \
+              -e EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }} \
+              -e ALGORITHM=${{ secrets.ALGORITHM }} \
+              -e ALGORITHM_SECURITY_KEY=${{ secrets.ALGORITHM_SECURITY_KEY }} \
+              -e ALGORITHM_IV=${{ secrets.ALGORITHM_IV }} \
+              -e VERIFY_EMAIL_URL=${{ secrets.VERIFY_EMAIL_URL }} \
+              -e ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }} \
+              -e ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }} \
+              -e ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }} \
+              -d ${{ secrets.AWS_ECR }}/workout:latest
+            docker system prune -f
+      - name: Delete old ECR images
+        run: |
+          export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+          export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws ecr batch-delete-image --repository-name workout --region us-east-1 --image-ids imageTag=latest
