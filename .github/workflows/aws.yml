@@ -22,7 +22,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./packages/server
           file: ./packages/server/Dockerfile
           push: true
           tags: ${{ secrets.AWS_ECR }}/workout:latest
