@@ -1,37 +1,69 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Button, Checkbox } from "@workout/ui";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  Button,
+} from "@workout/ui";
+import { useState } from "react";
+import { useStartRoutine } from "~/hooks";
 import { PublicWorkoutUser } from "~/types/user";
 import { Workout } from "~/types/workout";
 
-const PublicWorkoutActionColumn: React.FC = () => {
-  return <Button disabled>Comming soon: Start routine</Button>;
+type PublicWorkoutActionColumnProps = {
+  workoutId: string;
+};
+const PublicWorkoutActionColumn: React.FC<PublicWorkoutActionColumnProps> = ({
+  workoutId,
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { startRoutineMutation } = useStartRoutine();
+
+  const handleStartRoutine = () => {
+    startRoutineMutation({ workoutId });
+    setIsOpen(false);
+  };
+
+  const handleToggleDialog = () => {
+    setIsOpen((isOpen) => !isOpen);
+  };
+
+  return (
+    <div>
+      <Button onClick={handleToggleDialog}>Start routine</Button>
+      <AlertDialog open={isOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Are you sure to start this routine?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              It will create a new workout exercise, copying all exercises and
+              sets.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleToggleDialog}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleStartRoutine}>
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
 };
 
 export const publicWorkoutsColumns: ColumnDef<Workout>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
   {
     accessorKey: "name",
     header: "Name",
@@ -44,6 +76,8 @@ export const publicWorkoutsColumns: ColumnDef<Workout>[] = [
   {
     id: "actions",
     header: "Start routine",
-    cell: () => <PublicWorkoutActionColumn />,
+    cell: ({ row }) => (
+      <PublicWorkoutActionColumn workoutId={row.original.id} />
+    ),
   },
 ];
