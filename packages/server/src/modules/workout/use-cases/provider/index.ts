@@ -3,6 +3,7 @@ import DeleteWorkout from '~/modules/workout/use-cases/delete-workout';
 import { GetWorkout } from '~/modules/workout/use-cases/get-workout';
 import { ListPublicWorkouts } from '~/modules/workout/use-cases/list-public-workouts';
 import { ListWorkouts } from '~/modules/workout/use-cases/list-workouts';
+import { StartRoutine } from '~/modules/workout/use-cases/start-routine';
 import { UpdateWorkout } from '~/modules/workout/use-cases/update-workout';
 
 const workoutUseCaseProviders = [
@@ -12,6 +13,7 @@ const workoutUseCaseProviders = [
   GetWorkout,
   UpdateWorkout,
   DeleteWorkout,
+  StartRoutine,
 ];
 
 export default workoutUseCaseProviders;
