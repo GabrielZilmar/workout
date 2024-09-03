@@ -18,11 +18,13 @@ import {
   BookLock,
   BookOpen,
   CircleX,
+  Edit2,
   Repeat,
   Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useState } from "react";
+import WorkoutDialog from "~/components/dialogs/workout";
 import { useDeleteWorkout, useStartRoutine } from "~/hooks";
 import { ALL_ROUTES } from "~/routes";
 import { Workout } from "~/types/workout";
@@ -52,10 +54,15 @@ const WorkoutActionColumn: React.FC<WorkoutActionColumnProps> = ({
     description: "",
     confirmAction: () => {},
   });
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
   const selectedRows = table.getSelectedRowModel().rows;
   const isMultipleRowsSelected = selectedRows.length > 1;
   const { deleteWorkoutMutation } = useDeleteWorkout();
   const { startRoutineMutation } = useStartRoutine();
+
+  const handleToggleUpdateDialog = useCallback(() => {
+    setIsUpdateDialogOpen((isOpen) => !isOpen);
+  }, []);
 
   const handleDelete = useCallback(() => {
     setAlertDialog({ ...alertDialog, isOpen: false });
@@ -123,6 +130,7 @@ const WorkoutActionColumn: React.FC<WorkoutActionColumnProps> = ({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
       {isHeader ? (
         isMultipleRowsSelected ? (
           <div>
@@ -138,9 +146,19 @@ const WorkoutActionColumn: React.FC<WorkoutActionColumnProps> = ({
           <Button className="p-2 h-fit" onClick={handleStartRoutineDialog}>
             <Repeat size={16} />
           </Button>
+          <Button className="p-2 h-fit" onClick={handleToggleUpdateDialog}>
+            <Edit2 size={16} />
+          </Button>
           <Button className="p-2 h-fit" onClick={handleDeleteDialog}>
             <Trash2 size={16} />
           </Button>
+
+          <WorkoutDialog
+            isOpen={isUpdateDialogOpen}
+            workout={(params as RowProps).row.original}
+            onOpenChange={handleToggleUpdateDialog}
+            onClose={handleToggleUpdateDialog}
+          />
         </div>
       ) : null}
     </>
