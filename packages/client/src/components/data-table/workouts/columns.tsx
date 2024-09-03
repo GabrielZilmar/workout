@@ -142,7 +142,7 @@ const WorkoutActionColumn: React.FC<WorkoutActionColumnProps> = ({
           <span>Action</span>
         )
       ) : !isMultipleRowsSelected ? (
-        <div className="h-fit space-x-2">
+        <div className="h-fit space-x-2 flex">
           <Button className="p-2 h-fit" onClick={handleStartRoutineDialog}>
             <Repeat size={16} />
           </Button>
