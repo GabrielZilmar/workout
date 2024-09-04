@@ -176,16 +176,13 @@ export const workoutColumns: ColumnDef<Workout>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "id",
+    accessorKey: "name",
     header: "Name",
     cell: ({ row }) => {
-      const id = row.getValue<string>("id");
+      const id = row.original.id;
+      const name = row.getValue<string>("name");
 
-      return (
-        <Link href={ALL_ROUTES.workoutDetails(id)}>
-          {row.original.name || "-"}
-        </Link>
-      );
+      return <Link href={ALL_ROUTES.workoutDetails(id)}>{name || "-"}</Link>;
     },
   },
   {
