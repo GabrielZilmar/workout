@@ -15,7 +15,7 @@ const INITIAL_PAGE = 1;
 
 export function WorkoutDataTable() {
   const [isAddWorkoutModalOpen, setIsAddWorkoutModalOpen] = useState(false);
-  const [search, setSearch] = useState<string | undefined>(undefined);
+  const [search, setSearch] = useState<string>("");
   const [page, setPage] = useState<number>(INITIAL_PAGE);
   const { isLoading, isError, error, data } = useListWorkouts({
     skip: (page - 1) * DEFAULT_PER_PAGE,
@@ -49,7 +49,7 @@ export function WorkoutDataTable() {
         columns={workoutColumns}
         data={data.items}
         isServerSearch
-        search={search || ""}
+        search={search}
         onSearch={handleSearch}
         addButton={
           <Button onClick={handleToggleAddWorkoutModal}>Add Workout</Button>
