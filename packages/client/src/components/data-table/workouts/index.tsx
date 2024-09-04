@@ -1,7 +1,6 @@
 "use client";
 
 import { Button, DataTable } from "@workout/ui";
-import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { workoutColumns } from "~/components/data-table/workouts/columns";
 import WorkoutDialog from "~/components/dialogs/workout";
@@ -11,12 +10,10 @@ import Pagination from "~/components/pagination";
 import { DEFAULT_PER_PAGE } from "~/constants/pagination";
 import { useListWorkouts } from "~/hooks";
 import { debounce } from "~/lib/utils";
-import { ALL_ROUTES } from "~/routes";
 
 const INITIAL_PAGE = 1;
 
 export function WorkoutDataTable() {
-  const router = useRouter();
   const [isAddWorkoutModalOpen, setIsAddWorkoutModalOpen] = useState(false);
   const [search, setSearch] = useState<string>("");
   const [page, setPage] = useState<number>(INITIAL_PAGE);
@@ -54,9 +51,6 @@ export function WorkoutDataTable() {
         isServerSearch
         search={search}
         onSearch={handleSearch}
-        onRowClick={(row) =>
-          router.push(ALL_ROUTES.workoutDetails(row.original.id))
-        }
         addButton={
           <Button onClick={handleToggleAddWorkoutModal}>Add Workout</Button>
         }
