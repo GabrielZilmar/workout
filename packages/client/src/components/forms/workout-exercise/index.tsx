@@ -115,7 +115,7 @@ const WorkoutExerciseForm: React.FC<WorkoutExerciseFormProps> = ({
                     {isLoading ? (
                       <Loading className="h-fit" />
                     ) : (
-                      <CommandList>
+                      <CommandList className="max-h-64">
                         <CommandEmpty>No exercise found.</CommandEmpty>
                         <CommandGroup>
                           {exercises.map((exercise) => (
