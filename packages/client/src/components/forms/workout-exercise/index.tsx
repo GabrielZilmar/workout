@@ -21,6 +21,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  ScrollArea,
 } from "@workout/ui";
 
 import { Check, ChevronsUpDown } from "lucide-react";
@@ -87,7 +88,7 @@ const WorkoutExerciseForm: React.FC<WorkoutExerciseFormProps> = ({
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel> Select a new exercise for your workout</FormLabel>
-              <Popover>
+              <Popover modal={true}>
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
