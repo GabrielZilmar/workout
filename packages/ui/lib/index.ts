@@ -18,5 +18,6 @@ export * from "./skeleton";
 export * from "./accordion";
 export * from "./command";
 export * from "./popover";
+export * from "./scroll-area";
 
 export * from "./utils";
