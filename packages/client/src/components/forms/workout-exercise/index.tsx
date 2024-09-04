@@ -111,37 +111,39 @@ const WorkoutExerciseForm: React.FC<WorkoutExerciseFormProps> = ({
                   </FormControl>
                 </PopoverTrigger>
                 <PopoverContent className="w-[200px] p-0">
-                  <Command>
-                    <CommandInput placeholder="Search exercise..." />
-                    {isLoading ? (
-                      <Loading className="h-fit" />
-                    ) : (
-                      <CommandList className="max-h-64">
-                        <CommandEmpty>No exercise found.</CommandEmpty>
-                        <CommandGroup>
-                          {exercises.map((exercise) => (
-                            <CommandItem
-                              key={exercise.id}
-                              value={exercise.name}
-                              onSelect={() => {
-                                form.setValue("exerciseId", exercise.id);
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  exercise.id === field.value
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                              />
-                              {exercise.name}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    )}
-                  </Command>
+                  <ScrollArea>
+                    <Command>
+                      <CommandInput placeholder="Search exercise..." />
+                      {isLoading ? (
+                        <Loading className="h-fit" />
+                      ) : (
+                        <CommandList className="max-h-64">
+                          <CommandEmpty>No exercise found.</CommandEmpty>
+                          <CommandGroup>
+                            {exercises.map((exercise) => (
+                              <CommandItem
+                                key={exercise.id}
+                                value={exercise.name}
+                                onSelect={() => {
+                                  form.setValue("exerciseId", exercise.id);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    exercise.id === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                                {exercise.name}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      )}
+                    </Command>
+                  </ScrollArea>
                 </PopoverContent>
               </Popover>
               <FormMessage />
