@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { Brackets, DeepPartial, FindManyOptions } from 'typeorm';
+import { Brackets, DeepPartial } from 'typeorm';
 import WorkoutDomain from '~/modules/workout/domain/workout.domain';
 import { Workout } from '~/modules/workout/entities/workout.entity';
 import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
@@ -49,7 +49,7 @@ export default class WorkoutRepository extends BaseRepository<
         RepositoryError.create(
           RepositoryError.messages.itemDuplicated,
           { name, userId },
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.CONFLICT,
         ),
       );
     }
