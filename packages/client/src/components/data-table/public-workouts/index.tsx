@@ -47,6 +47,7 @@ export function PublicWorkoutsDataTable() {
         isServerSearch
         search={search || ""}
         onSearch={handleSearch}
+        hideSelectedRowsInfo
       />
       <Pagination
         currentPage={page}
