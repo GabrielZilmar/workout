@@ -1,6 +1,7 @@
 "use client";
 
 import { DataTable } from "@workout/ui";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { publicWorkoutsColumns } from "~/components/data-table/public-workouts/columns";
 import Error from "~/components/error";
@@ -9,10 +10,12 @@ import Pagination from "~/components/pagination";
 import { DEFAULT_PER_PAGE } from "~/constants/pagination";
 import { useListPublicWorkouts } from "~/hooks";
 import { debounce } from "~/lib/utils";
+import { ALL_ROUTES } from "~/routes";
 
 const INITIAL_PAGE = 1;
 
 export function PublicWorkoutsDataTable() {
+  const router = useRouter();
   const [search, setSearch] = useState<string | undefined>(undefined);
   const [page, setPage] = useState<number>(INITIAL_PAGE);
   const { isLoading, isError, error, data } = useListPublicWorkouts({
@@ -48,6 +51,9 @@ export function PublicWorkoutsDataTable() {
         search={search || ""}
         onSearch={handleSearch}
         hideSelectedRowsInfo
+        onRowClick={(row) =>
+          router.push(ALL_ROUTES.workoutDetails(row.original.id))
+        }
       />
       <Pagination
         currentPage={page}

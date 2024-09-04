@@ -1,18 +1,7 @@
 "use client";
 
 import { ColumnDef, Table, Row } from "@tanstack/react-table";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  Button,
-  Checkbox,
-} from "@workout/ui";
+import { Button, Checkbox } from "@workout/ui";
 import {
   AlarmClockCheck,
   ArrowUpDown,
@@ -23,12 +12,10 @@ import {
   Repeat,
   Trash2,
 } from "lucide-react";
-import Link from "next/link";
 import { useCallback, useState } from "react";
 import GenericDialog from "~/components/dialogs/generic";
 import WorkoutDialog from "~/components/dialogs/workout";
 import { useDeleteWorkout, useStartRoutine } from "~/hooks";
-import { ALL_ROUTES } from "~/routes";
 import { Workout } from "~/types/workout";
 
 type RowProps = { row: Row<Workout> };
@@ -179,10 +166,8 @@ export const workoutColumns: ColumnDef<Workout>[] = [
     accessorKey: "name",
     header: "Name",
     cell: ({ row }) => {
-      const id = row.original.id;
       const name = row.getValue<string>("name");
-
-      return <Link href={ALL_ROUTES.workoutDetails(id)}>{name || "-"}</Link>;
+      return name || "-";
     },
   },
   {

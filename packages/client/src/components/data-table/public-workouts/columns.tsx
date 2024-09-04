@@ -12,10 +12,8 @@ import {
   AlertDialogTitle,
   Button,
 } from "@workout/ui";
-import Link from "next/link";
 import { useState } from "react";
 import { useStartRoutine } from "~/hooks";
-import { ALL_ROUTES } from "~/routes";
 import { PublicWorkoutUser } from "~/types/user";
 import { Workout } from "~/types/workout";
 
@@ -70,10 +68,8 @@ export const publicWorkoutsColumns: ColumnDef<Workout>[] = [
     accessorKey: "name",
     header: "Name",
     cell: ({ row }) => {
-      const id = row.original.id;
       const name = row.getValue<string>("name");
-
-      return <Link href={ALL_ROUTES.workoutDetails(id)}>{name || "-"}</Link>;
+      return name || "-";
     },
   },
   {
