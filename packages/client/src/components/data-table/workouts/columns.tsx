@@ -15,6 +15,7 @@ import {
 } from "@workout/ui";
 import {
   AlarmClockCheck,
+  ArrowUpDown,
   BookLock,
   BookOpen,
   CircleX,
@@ -189,7 +190,17 @@ export const workoutColumns: ColumnDef<Workout>[] = [
   },
   {
     accessorKey: "isPrivate",
-    header: "Private/Public",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Private/Public
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       const isPrivate = row.getValue("isPrivate");
 
@@ -208,7 +219,17 @@ export const workoutColumns: ColumnDef<Workout>[] = [
   },
   {
     accessorKey: "isRoutine",
-    header: "Is Routine?",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Is Routine?
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       const isRoutine = row.getValue("isRoutine");
 
