@@ -6,6 +6,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  Row,
   SortingState,
   useReactTable,
   VisibilityState,
@@ -38,6 +39,7 @@ type DataTableProps<TData, TValue> = {
   data: TData[];
   addButton?: React.ReactNode;
   hideSelectedRowsInfo?: boolean;
+  onRowClick?: (row: Row<TData>) => void;
 } & (
   | ({
       isServerSearch: true;
@@ -53,6 +55,7 @@ export function DataTable<TData, TValue>({
   isServerSearch,
   addButton,
   hideSelectedRowsInfo = false,
+  onRowClick,
   ...params
 }: DataTableProps<TData, TValue>) {
   const [search, setSearch] = useState<string | undefined>(
@@ -158,6 +161,11 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
+                  onClick={() => {
+                    if (onRowClick) {
+                      onRowClick(row);
+                    }
+                  }}
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
