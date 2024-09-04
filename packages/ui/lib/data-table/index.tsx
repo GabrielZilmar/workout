@@ -6,6 +6,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  Row,
   SortingState,
   useReactTable,
   VisibilityState,
@@ -37,6 +38,8 @@ type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   addButton?: React.ReactNode;
+  hideSelectedRowsInfo?: boolean;
+  onRowClick?: (row: Row<TData>) => void;
 } & (
   | ({
       isServerSearch: true;
@@ -51,6 +54,8 @@ export function DataTable<TData, TValue>({
   data,
   isServerSearch,
   addButton,
+  hideSelectedRowsInfo = false,
+  onRowClick,
   ...params
 }: DataTableProps<TData, TValue>) {
   const [search, setSearch] = useState<string | undefined>(
@@ -156,6 +161,11 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
+                  onClick={() => {
+                    if (onRowClick) {
+                      onRowClick(row);
+                    }
+                  }}
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -182,10 +192,12 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
+        {!hideSelectedRowsInfo ? (
+          <div className="flex-1 text-sm text-muted-foreground">
+            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+            {table.getFilteredRowModel().rows.length} row(s) selected.
+          </div>
+        ) : null}
         {(table.getCanPreviousPage() || table.getCanNextPage()) && (
           <div className="space-x-2">
             <Button

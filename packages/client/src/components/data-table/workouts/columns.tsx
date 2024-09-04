@@ -1,20 +1,10 @@
 "use client";
 
 import { ColumnDef, Table, Row } from "@tanstack/react-table";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  Button,
-  Checkbox,
-} from "@workout/ui";
+import { Button, Checkbox } from "@workout/ui";
 import {
   AlarmClockCheck,
+  ArrowUpDown,
   BookLock,
   BookOpen,
   CircleX,
@@ -22,12 +12,10 @@ import {
   Repeat,
   Trash2,
 } from "lucide-react";
-import Link from "next/link";
 import { useCallback, useState } from "react";
 import GenericDialog from "~/components/dialogs/generic";
 import WorkoutDialog from "~/components/dialogs/workout";
 import { useDeleteWorkout, useStartRoutine } from "~/hooks";
-import { ALL_ROUTES } from "~/routes";
 import { Workout } from "~/types/workout";
 
 type RowProps = { row: Row<Workout> };
@@ -175,21 +163,26 @@ export const workoutColumns: ColumnDef<Workout>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "id",
+    accessorKey: "name",
     header: "Name",
     cell: ({ row }) => {
-      const id = row.getValue<string>("id");
-
-      return (
-        <Link href={ALL_ROUTES.workoutDetails(id)}>
-          {row.original.name || "-"}
-        </Link>
-      );
+      const name = row.getValue<string>("name");
+      return name || "-";
     },
   },
   {
     accessorKey: "isPrivate",
-    header: "Private/Public",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Private/Public
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       const isPrivate = row.getValue("isPrivate");
 
@@ -208,7 +201,17 @@ export const workoutColumns: ColumnDef<Workout>[] = [
   },
   {
     accessorKey: "isRoutine",
-    header: "Is Routine?",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Is Routine?
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       const isRoutine = row.getValue("isRoutine");
 
