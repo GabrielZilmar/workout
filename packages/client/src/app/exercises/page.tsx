@@ -8,14 +8,26 @@ import {
   CardTitle,
   cn,
 } from "@workout/ui";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ReactPlayer from "react-player/lazy";
+import ExerciseDialog from "~/components/dialogs/exercise";
 import Error from "~/components/error";
 import Loading from "~/components/loading";
-import { useListPaginatedExercises } from "~/hooks";
+import { useListPaginatedExercises, useUser } from "~/hooks";
 import GlobalLayout from "~/layouts/global.layout";
+import { Exercise } from "~/types/exercise";
+
+type ExerciseDialogState = {
+  exercise?: Exercise;
+  isOpen: boolean;
+};
 
 const ExercisesPage: React.FC = () => {
+  const { user, isLoading: userIsLoading } = useUser();
+  const [exerciseDialog, setExerciseDialog] = useState<ExerciseDialogState>({
+    isOpen: false,
+  });
+
   const {
     data: exercises,
     isLoading,
@@ -32,6 +44,22 @@ const ExercisesPage: React.FC = () => {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+  const handleOpenDialog = (exercise: Exercise) => {
+    if (!user?.isAdmin) return;
+
+    setExerciseDialog({
+      exercise,
+      isOpen: true,
+    });
+  };
+
+  const handleCloseDialog = () => {
+    setExerciseDialog({
+      ...exerciseDialog,
+      isOpen: false,
+    });
+  };
+
   if (isError) {
     const errorMessage = `${error?.response?.data?.message || ""}\n ${
       error?.response?.statusText || ""
@@ -39,7 +67,7 @@ const ExercisesPage: React.FC = () => {
     return <Error errorMessage={errorMessage} />;
   }
 
-  if (isLoading) {
+  if (isLoading || userIsLoading) {
     return <Loading />;
   }
 
@@ -53,7 +81,7 @@ const ExercisesPage: React.FC = () => {
       >
         {exercises.map((exercise) => (
           <Card key={exercise.id}>
-            <CardHeader>
+            <CardHeader onClick={() => handleOpenDialog(exercise)}>
               <CardTitle>{exercise.name}</CardTitle>
               <CardDescription>{exercise.muscle?.name || ""}</CardDescription>
             </CardHeader>
@@ -68,6 +96,13 @@ const ExercisesPage: React.FC = () => {
           </Card>
         ))}
       </div>
+
+      <ExerciseDialog
+        isOpen={exerciseDialog.isOpen}
+        exercise={exerciseDialog.exercise}
+        onOpenChange={handleCloseDialog}
+        onClose={handleCloseDialog}
+      />
     </GlobalLayout>
   );
 };
