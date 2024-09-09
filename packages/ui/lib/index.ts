@@ -19,5 +19,6 @@ export * from "./accordion";
 export * from "./command";
 export * from "./popover";
 export * from "./scroll-area";
+export * from "./textarea";
 
 export * from "./utils";
