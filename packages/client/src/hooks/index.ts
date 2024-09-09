@@ -21,3 +21,4 @@ export * from "./useStartRoutine";
 export * from "./useCreateExercise";
 export * from "./useListMuscles";
 export * from "./useUpdateExercise";
+export * from "./useDeleteExercise";
