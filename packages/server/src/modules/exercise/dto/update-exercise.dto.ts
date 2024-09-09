@@ -4,7 +4,9 @@ import {
   IsString,
   IsUUID,
   IsUrl,
+  MaxLength,
 } from 'class-validator';
+import { MAX_VARCHAR_LENGTH } from '~/shared/constants/values';
 
 export class UpdateExerciseParamsDto {
   @IsUUID()
@@ -14,6 +16,7 @@ export class UpdateExerciseParamsDto {
 
 export class UpdateExerciseBodyDto {
   @IsString()
+  @MaxLength(MAX_VARCHAR_LENGTH)
   @IsOptional()
   name?: string;
 
@@ -22,6 +25,7 @@ export class UpdateExerciseBodyDto {
   muscleId?: string;
 
   @IsUrl()
+  @MaxLength(MAX_VARCHAR_LENGTH)
   @IsOptional()
   tutorialUrl?: string;
 

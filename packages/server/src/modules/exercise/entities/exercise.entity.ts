@@ -16,7 +16,7 @@ export class Exercise {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column({ type: 'varchar', length: 255, unique: true })
   name: string;
 
   @ManyToOne(() => Muscle)
@@ -27,10 +27,10 @@ export class Exercise {
   muscleId: string;
 
   @Column({ nullable: true, type: 'text' })
-  info: string;
+  info: string | null;
 
-  @Column({ nullable: true })
-  tutorialUrl: string;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  tutorialUrl: string | null;
 
   @OneToMany(
     () => WorkoutExercise,

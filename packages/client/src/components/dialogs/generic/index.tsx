@@ -9,7 +9,7 @@ import {
   AlertDialogTitle,
 } from "@workout/ui";
 
-export type GenericDialogProps = {
+export type GenericAlertDialogProps = {
   isOpen: boolean;
   title?: string;
   description?: string;
@@ -17,7 +17,7 @@ export type GenericDialogProps = {
   onCancel: () => void;
 };
 
-const GenericDialog: React.FC<GenericDialogProps> = ({
+const GenericAlertDialog: React.FC<GenericAlertDialogProps> = ({
   isOpen,
   title = "",
   description = "",
@@ -40,4 +40,4 @@ const GenericDialog: React.FC<GenericDialogProps> = ({
   );
 };
 
-export default GenericDialog;
+export default GenericAlertDialog;

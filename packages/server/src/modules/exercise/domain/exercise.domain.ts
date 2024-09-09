@@ -73,6 +73,9 @@ export default class ExerciseDomain extends AggregateRoot<ExerciseDomainProps> {
       this.props.name = nameOrError.value;
     }
 
+    if (info === null) {
+      this.props.info = null;
+    }
     if (info) {
       const infoOrError = ExerciseInfo.create({ value: info });
       if (infoOrError.isLeft()) {
@@ -82,6 +85,9 @@ export default class ExerciseDomain extends AggregateRoot<ExerciseDomainProps> {
       this.props.info = infoOrError.value;
     }
 
+    if (tutorialUrl === null) {
+      this.props.tutorialUrl = null;
+    }
     if (tutorialUrl) {
       const tutorialUrlOrError = ExerciseTutorialUrl.create({
         value: tutorialUrl,

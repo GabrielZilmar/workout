@@ -28,6 +28,7 @@ export class ListExercises
       skip,
       take,
       relations: ['muscle'],
+      order: { muscleId: 'ASC', id: 'ASC' },
     });
 
     const exercisesDto: ExerciseDto[] = [];

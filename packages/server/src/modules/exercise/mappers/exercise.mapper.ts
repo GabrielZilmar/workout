@@ -33,7 +33,7 @@ export default class ExerciseMapper
     const exerciseDomainOrError = ExerciseDomain.create(
       {
         name,
-        info,
+        info: info ?? undefined,
         tutorialUrl: tutorialUrl ?? undefined,
         muscleId,
         muscleDomain,
@@ -54,8 +54,8 @@ export default class ExerciseMapper
     const exerciseEntity: Partial<ExerciseEntity> = {
       id: id?.toString(),
       name: name.value,
-      info: info?.value,
-      tutorialUrl: tutorialUrl?.value,
+      info: info === null ? info : info?.value,
+      tutorialUrl: tutorialUrl === null ? tutorialUrl : tutorialUrl?.value,
       muscleId,
     };
 

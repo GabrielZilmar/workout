@@ -5,6 +5,7 @@ export type PublicWorkoutUser = {
 };
 
 export type WorkoutUser = PublicWorkoutUser & {
+  isAdmin: boolean;
   age: number | null;
   height: number | null;
   weight: number | null;
