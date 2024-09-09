@@ -34,9 +34,9 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import Loading from "~/components/loading";
 
 const formSchema = z.object({
-  name: z.string(),
+  name: z.string().max(255),
   muscleId: z.string().uuid(),
-  tutorialUrl: z.string().url().optional(),
+  tutorialUrl: z.string().url().max(255).optional(),
   info: z.string().optional(),
 });
 type FormSchema = z.infer<typeof formSchema>;

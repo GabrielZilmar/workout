@@ -54,12 +54,14 @@ export class UserDomainMock {
     const passwordVO = await Password.create({
       value: password?.value ?? this.userMockParams.password,
     });
-    const ageVO = Age.create({ value: age ?? this.userMockParams.age });
+    const ageVO = Age.create({
+      value: age ?? (this.userMockParams.age as number),
+    });
     const weightVO = Weight.create({
-      value: weight ?? this.userMockParams.weight,
+      value: weight ?? (this.userMockParams.weight as number),
     });
     const heightVO = Height.create({
-      value: height ?? this.userMockParams.height,
+      value: height ?? (this.userMockParams.height as number),
     });
     const emailVerifiedVO = EmailVerification.create({
       value: isEmailVerified,
@@ -93,9 +95,9 @@ export class UserDomainMock {
       password: props?.password || {
         value: user.password,
       },
-      age: props?.age || user.age,
-      weight: props?.weight || user.weight,
-      height: props?.height || user.height,
+      age: props?.age || user.age || undefined,
+      weight: props?.weight || user.weight || undefined,
+      height: props?.height || user.height || undefined,
       isEmailVerified: props?.isEmailVerified || user.isEmailVerified,
       isAdmin: props?.isAdmin || user.isAdmin,
       deletedAt: props?.deletedAt || user.deletedAt,

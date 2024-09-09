@@ -44,9 +44,9 @@ export type UserDomainProps = {
   username: Username;
   email: Email;
   password: Password;
-  age?: Age;
-  weight?: Weight;
-  height?: Height;
+  age: Age | null;
+  weight: Weight | null;
+  height: Height | null;
   emailVerification: EmailVerification;
   isAdmin: IsAdmin;
   deletedAt: DeletedAt;
@@ -65,15 +65,15 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
     return this.props.password;
   }
 
-  get age(): Age | undefined {
+  get age(): Age | null {
     return this.props.age;
   }
 
-  get weight(): Weight | undefined {
+  get weight(): Weight | null {
     return this.props.weight;
   }
 
-  get height(): Height | undefined {
+  get height(): Height | null {
     return this.props.height;
   }
 
@@ -180,6 +180,9 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
       username: usernameOrError.value,
       email: emailOrError.value,
       password: passwordOrError.value,
+      age: null,
+      weight: null,
+      height: null,
       emailVerification,
       isAdmin,
       deletedAt,

@@ -29,8 +29,8 @@ import SessionLayout from "~/layouts/session.layout";
 import { ALL_ROUTES } from "~/routes";
 
 const formSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
+  email: z.string().max(255).email(),
+  password: z.string().max(255).min(8),
 });
 
 export default function SignIn() {

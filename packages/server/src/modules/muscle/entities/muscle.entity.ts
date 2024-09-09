@@ -11,7 +11,7 @@ export class Muscle {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column({ type: 'varchar', length: 255, unique: true })
   name: string;
 
   @CreateDateColumn()
