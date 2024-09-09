@@ -12,13 +12,13 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column({ type: 'varchar', length: 255, unique: true })
   username: string;
 
-  @Column({ unique: true })
+  @Column({ type: 'varchar', length: 255, unique: true })
   email: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 255 })
   password: string;
 
   @Column({ default: false })
@@ -27,14 +27,14 @@ export class User {
   @Column({ default: false })
   isAdmin: boolean;
 
-  @Column({ nullable: true })
-  age?: number;
+  @Column({ type: 'integer', nullable: true })
+  age?: number | null;
 
-  @Column({ nullable: true })
-  weight?: number;
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+  weight?: number | null;
 
-  @Column({ nullable: true })
-  height?: number;
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+  height?: number | null;
 
   @DeleteDateColumn()
   deletedAt: Date | null;
