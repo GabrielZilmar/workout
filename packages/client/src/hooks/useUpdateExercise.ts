@@ -26,6 +26,9 @@ export const useUpdateExercise = () => {
       queryClient.invalidateQueries({
         queryKey: ["exercises"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["list-infinite-exercises"],
+      });
     },
     onError: () => {
       return enqueueSnackbar("Ops.. Error updating exercise. Try again!", {
