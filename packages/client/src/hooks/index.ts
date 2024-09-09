@@ -20,3 +20,4 @@ export * from "./useDeleteWorkoutExercise";
 export * from "./useStartRoutine";
 export * from "./useCreateExercise";
 export * from "./useListMuscles";
+export * from "./useUpdateExercise";
