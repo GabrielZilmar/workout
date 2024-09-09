@@ -1,6 +1,6 @@
 import { IsUUID } from 'class-validator';
 
-export class SendRecoverPasswordEmailParamsDTO {
+export class SendRecoverPasswordEmailBodyDTO {
   @IsUUID()
   userId: string;
 }

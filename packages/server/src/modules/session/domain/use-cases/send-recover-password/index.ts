@@ -8,7 +8,7 @@ import {
 import SessionMapper from '~/modules/session/domain/mappers/session.mapper';
 import SessionDomain from '~/modules/session/domain/session.domain';
 import { SessionUseCaseError } from '~/modules/session/domain/use-cases/errors';
-import { SendRecoverPasswordEmailParamsDTO } from '~/modules/session/dto/send-recover-password-email';
+import { SendRecoverPasswordEmailBodyDTO } from '~/modules/session/dto/send-recover-password-email';
 import { TokenTypeMap } from '~/modules/session/entities/token.entity';
 import TokenRepository from '~/services/database/typeorm/repositories/token-repository';
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
@@ -20,7 +20,7 @@ import ForgotPasswordTemplate from '~/shared/templates/email/forgot-password';
 
 const EXPIRES_IN_15_MIN = '15min';
 
-export type SendRecoverPasswordParams = SendRecoverPasswordEmailParamsDTO;
+export type SendRecoverPasswordParams = SendRecoverPasswordEmailBodyDTO;
 export type SendRecoverPasswordResult = Promise<boolean>;
 
 @Injectable()
