@@ -55,9 +55,9 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: exercise?.name || "",
-      muscleId: exercise?.muscleId || "",
-      tutorialUrl: exercise?.tutorialUrl || "",
-      info: exercise?.info || "",
+      muscleId: exercise?.muscleId || undefined,
+      tutorialUrl: exercise?.tutorialUrl || undefined,
+      info: exercise?.info || undefined,
     },
   });
   const { errors: formErrors } = form.formState;

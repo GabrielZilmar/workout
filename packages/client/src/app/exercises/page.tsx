@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Button,
   Card,
   CardContent,
   CardDescription,
@@ -8,6 +9,7 @@ import {
   CardTitle,
   cn,
 } from "@workout/ui";
+import { PlusIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player/lazy";
 import ExerciseDialog from "~/components/dialogs/exercise";
@@ -44,7 +46,7 @@ const ExercisesPage: React.FC = () => {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const handleOpenDialog = (exercise: Exercise) => {
+  const handleOpenDialog = (exercise?: Exercise) => {
     if (!user?.isAdmin) return;
 
     setExerciseDialog({
@@ -73,6 +75,17 @@ const ExercisesPage: React.FC = () => {
 
   return (
     <GlobalLayout>
+      {user?.isAdmin && (
+        <div className="flex justify-end mb-4">
+          <Button
+            fullWidth
+            className="p-2 h-fit max-w-24"
+            onClick={() => handleOpenDialog()}
+          >
+            <PlusIcon size={16} />
+          </Button>
+        </div>
+      )}
       <div
         className={cn(
           "gap-4",
