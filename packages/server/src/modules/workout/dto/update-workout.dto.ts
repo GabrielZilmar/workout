@@ -1,4 +1,11 @@
-import { IsBoolean, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsBoolean,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+} from 'class-validator';
+import { MAX_VARCHAR_LENGTH } from '~/shared/constants/values';
 
 export class UpdateWorkoutParamsDto {
   @IsString()
@@ -8,6 +15,7 @@ export class UpdateWorkoutParamsDto {
 
 export class UpdateWorkoutBodyDto {
   @IsString()
+  @MaxLength(MAX_VARCHAR_LENGTH)
   @IsOptional()
   name?: string;
 
