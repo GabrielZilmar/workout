@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import GenericDialog from "~/components/dialogs/generic";
+import GenericAlertDialog from "~/components/dialogs/generic";
 import WorkoutDialog from "~/components/dialogs/workout";
 import { useDeleteWorkout, useStartRoutine } from "~/hooks";
 import { ALL_ROUTES } from "~/routes";
@@ -99,7 +99,7 @@ const WorkoutActionColumn: React.FC<WorkoutActionColumnProps> = ({
 
   return (
     <>
-      <GenericDialog
+      <GenericAlertDialog
         isOpen={alertDialog.isOpen}
         title={alertDialog.title}
         description={alertDialog.description}

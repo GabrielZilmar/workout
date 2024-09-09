@@ -13,7 +13,7 @@ import { PlusIcon, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player/lazy";
 import ExerciseDialog from "~/components/dialogs/exercise";
-import GenericDialog from "~/components/dialogs/generic";
+import GenericAlertDialog from "~/components/dialogs/generic";
 import Error from "~/components/error";
 import Loading from "~/components/loading";
 import { useDeleteExercise, useListPaginatedExercises, useUser } from "~/hooks";
@@ -154,7 +154,7 @@ const ExercisesPage: React.FC = () => {
         ))}
       </div>
 
-      <GenericDialog
+      <GenericAlertDialog
         isOpen={deleteExerciseDialog.isOpen}
         title={"Are you sure to delete this exercise?"}
         description={
