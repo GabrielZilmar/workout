@@ -1,7 +1,9 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateWorkoutExercise, useListPaginatedExercises } from "~/hooks";
+import { Check, ChevronsUpDown } from "lucide-react";
 import {
   Button,
   cn,
@@ -17,15 +19,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  Label,
   Popover,
   PopoverContent,
   PopoverTrigger,
   ScrollArea,
 } from "@workout/ui";
 
-import { Check, ChevronsUpDown } from "lucide-react";
-import { useEffect } from "react";
 import Loading from "~/components/loading";
 
 const formSchema = z.object({
@@ -53,7 +52,6 @@ const WorkoutExerciseForm: React.FC<WorkoutExerciseFormProps> = ({
   const {
     data: exercises,
     isLoading,
-
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
