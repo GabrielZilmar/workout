@@ -5,6 +5,7 @@ import {
   IsString,
   IsUUID,
   IsEmail,
+  IsBoolean,
 } from 'class-validator';
 import { UserDomain } from '~/modules/users/domain/users.domain';
 import { UserDtoError } from '~/modules/users/dto/errors/user-dto-errors';
@@ -21,6 +22,9 @@ export class UserDto {
   @IsEmail()
   email: string;
 
+  @IsBoolean()
+  isAdmin: boolean;
+
   @IsNumber()
   @IsOptional()
   age?: number;
@@ -34,7 +38,7 @@ export class UserDto {
   height?: number;
 
   public static domainToDto(domain: UserDomain): Either<UserDtoError, UserDto> {
-    const { id, username, email, age, weight, height } = domain;
+    const { id, username, email, isAdmin, age, weight, height } = domain;
 
     if (!id) {
       return left(
@@ -49,6 +53,7 @@ export class UserDto {
     userDto.id = id.toString();
     userDto.username = username.value;
     userDto.email = email.value;
+    userDto.isAdmin = isAdmin.value;
     userDto.age = age?.value;
     userDto.weight = weight?.value;
     userDto.height = height?.value;

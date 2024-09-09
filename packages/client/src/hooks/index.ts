@@ -18,3 +18,7 @@ export * from "./useDeleteSet";
 export * from "./useCreateWorkoutExercise";
 export * from "./useDeleteWorkoutExercise";
 export * from "./useStartRoutine";
+export * from "./useCreateExercise";
+export * from "./useListMuscles";
+export * from "./useUpdateExercise";
+export * from "./useDeleteExercise";

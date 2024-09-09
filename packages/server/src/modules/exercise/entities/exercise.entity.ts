@@ -27,10 +27,10 @@ export class Exercise {
   muscleId: string;
 
   @Column({ nullable: true, type: 'text' })
-  info: string;
+  info: string | null;
 
-  @Column({ nullable: true })
-  tutorialUrl: string;
+  @Column({ type: String, nullable: true })
+  tutorialUrl: string | null;
 
   @OneToMany(
     () => WorkoutExercise,
