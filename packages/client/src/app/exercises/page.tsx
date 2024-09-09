@@ -9,18 +9,23 @@ import {
   CardTitle,
   cn,
 } from "@workout/ui";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player/lazy";
 import ExerciseDialog from "~/components/dialogs/exercise";
+import GenericDialog from "~/components/dialogs/generic";
 import Error from "~/components/error";
 import Loading from "~/components/loading";
-import { useListPaginatedExercises, useUser } from "~/hooks";
+import { useDeleteExercise, useListPaginatedExercises, useUser } from "~/hooks";
 import GlobalLayout from "~/layouts/global.layout";
 import { Exercise } from "~/types/exercise";
 
 type ExerciseDialogState = {
   exercise?: Exercise;
+  isOpen: boolean;
+};
+type DeleteExerciseDialogState = {
+  exerciseId?: string;
   isOpen: boolean;
 };
 
@@ -29,6 +34,10 @@ const ExercisesPage: React.FC = () => {
   const [exerciseDialog, setExerciseDialog] = useState<ExerciseDialogState>({
     isOpen: false,
   });
+  const [deleteExerciseDialog, setDeleteExerciseDialog] =
+    useState<DeleteExerciseDialogState>({
+      isOpen: false,
+    });
 
   const {
     data: exercises,
@@ -58,6 +67,18 @@ const ExercisesPage: React.FC = () => {
   const handleCloseDialog = () => {
     setExerciseDialog({
       ...exerciseDialog,
+      isOpen: false,
+    });
+  };
+
+  const { deleteDeleteMutation } = useDeleteExercise();
+  const handleDeleteExercise = () => {
+    if (!deleteExerciseDialog.exerciseId) {
+      return;
+    }
+
+    deleteDeleteMutation({ id: deleteExerciseDialog.exerciseId });
+    setDeleteExerciseDialog({
       isOpen: false,
     });
   };
@@ -95,7 +116,30 @@ const ExercisesPage: React.FC = () => {
         {exercises.map((exercise) => (
           <Card key={exercise.id}>
             <CardHeader onClick={() => handleOpenDialog(exercise)}>
-              <CardTitle>{exercise.name}</CardTitle>
+              <CardTitle>
+                <div
+                  className={cn({
+                    "flex justify-between": user?.isAdmin,
+                  })}
+                >
+                  {exercise.name}
+                  {user?.isAdmin && (
+                    <Button
+                      fullWidth
+                      className="p-2 h-fit max-w-16"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDeleteExerciseDialog({
+                          exerciseId: exercise.id,
+                          isOpen: true,
+                        });
+                      }}
+                    >
+                      <Trash2 size={16} />
+                    </Button>
+                  )}
+                </div>
+              </CardTitle>
               <CardDescription>{exercise.muscle?.name || ""}</CardDescription>
             </CardHeader>
             <CardContent>
@@ -110,6 +154,15 @@ const ExercisesPage: React.FC = () => {
         ))}
       </div>
 
+      <GenericDialog
+        isOpen={deleteExerciseDialog.isOpen}
+        title={"Are you sure to delete this exercise?"}
+        description={
+          "This action cannot be undone. This will permanently delete this exercise."
+        }
+        onConfirm={handleDeleteExercise}
+        onCancel={() => setDeleteExerciseDialog({ isOpen: false })}
+      />
       <ExerciseDialog
         isOpen={exerciseDialog.isOpen}
         exercise={exerciseDialog.exercise}
