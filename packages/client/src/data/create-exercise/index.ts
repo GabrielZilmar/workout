@@ -6,8 +6,8 @@ import { Exercise } from "~/types/exercise";
 export type CreateExercisePayload = {
   name: string;
   muscleId: string;
-  tutorialUrl?: string;
-  info?: string;
+  tutorialUrl?: string | null;
+  info?: string | null;
 };
 
 type CreateExerciseError = GenericResponseError & {
