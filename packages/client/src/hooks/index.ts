@@ -23,3 +23,4 @@ export * from "./useListMuscles";
 export * from "./useUpdateExercise";
 export * from "./useDeleteExercise";
 export * from "./useSendRecoverPasswordEmail";
+export * from "./useRecoverPassword";
