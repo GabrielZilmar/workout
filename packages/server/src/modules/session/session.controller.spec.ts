@@ -1,5 +1,7 @@
 import { MailerModule } from '@nestjs-modules/mailer';
+import { Provider } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { DataSource } from 'typeorm';
 import SessionMapper from '~/modules/session/domain/mappers/session.mapper';
 import SessionUseCaseProviders from '~/modules/session/domain/use-cases/providers';
 import { SessionController } from '~/modules/session/session.controller';
@@ -14,6 +16,15 @@ describe('SessionController', () => {
   let controller: SessionController;
 
   beforeEach(async () => {
+    const dataSourceProvider = {
+      provide: DataSource,
+      useValue: {
+        manager: {
+          transaction: jest.fn().mockImplementation((callback) => callback()),
+        },
+      },
+    } as Provider;
+
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         MailerModule.forRoot({
@@ -32,6 +43,7 @@ describe('SessionController', () => {
       providers: [
         UserRepository,
         UserMapper,
+        dataSourceProvider,
         EmailSender,
         SessionMapper,
         TokenRepository,
