@@ -12,6 +12,8 @@ export const useSendRecoverPasswordEmail = () => {
     mutate: sendRecoverPasswordEmailMutation,
     isError,
     isSuccess,
+    isPending,
+    isIdle,
     error,
     data,
   } = useMutation<
@@ -46,6 +48,8 @@ export const useSendRecoverPasswordEmail = () => {
     sendRecoverPasswordEmailMutation,
     isError,
     isSuccess,
+    isPending,
+    isIdle,
     error: error?.response?.data,
     data,
   };
