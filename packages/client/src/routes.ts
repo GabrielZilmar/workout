@@ -4,6 +4,7 @@ type PublicRoute = {
   signIn: string;
   signUp: string;
   forgotPassword: string;
+  recoverPassword: string;
   resetPassword: string;
   verifyEmail: string;
 };
@@ -21,6 +22,7 @@ export const PUBLIC_ROUTES: PublicRoute = {
   signIn: "/sign-in",
   signUp: "/sign-up",
   forgotPassword: "/forgot-password",
+  recoverPassword: "/recover-password",
   resetPassword: "/reset-password",
   verifyEmail: "/verify-email",
 };
