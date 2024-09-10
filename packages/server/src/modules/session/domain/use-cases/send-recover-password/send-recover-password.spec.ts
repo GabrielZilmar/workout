@@ -86,7 +86,7 @@ describe('SendRecoverPassword Use Case', () => {
     );
 
     await sendForgotEmail.execute({
-      userId: userDomain.id?.toValue() as string,
+      email: userDomain.email.value,
     });
     expect(sendMailSpy).toHaveBeenCalled();
   });
@@ -95,14 +95,17 @@ describe('SendRecoverPassword Use Case', () => {
     const sendForgotEmail =
       module.get<SendRecoverPassword>(SendRecoverPassword);
 
-    const sessionDomain = SessionDomainMock.mountSessionDomain();
+    const userDomain = await UserDomainMock.mountUserDomain();
+    const sessionDomain = SessionDomainMock.mountSessionDomain({
+      userId: userDomain.id?.toValue(),
+    });
     jest
       .spyOn(sendForgotEmail['tokenRepository'], 'findLastByUserIdAndType')
       .mockResolvedValue(sessionDomain);
 
     await expect(
       sendForgotEmail.execute({
-        userId: sessionDomain.userId,
+        email: userDomain.email.value,
       }),
     ).rejects.toThrow(
       new BadRequestException({
@@ -115,17 +118,17 @@ describe('SendRecoverPassword Use Case', () => {
     const sendForgotEmail =
       module.get<SendRecoverPassword>(SendRecoverPassword);
     jest
-      .spyOn(sendForgotEmail['userRepository'], 'findOneById')
+      .spyOn(sendForgotEmail['userRepository'], 'findOneByEmail')
       .mockResolvedValue(null);
 
-    const userId = 'non-existing-id';
+    const email = 'notfound@email.com';
     await expect(
       sendForgotEmail.execute({
-        userId,
+        email,
       }),
     ).rejects.toThrow(
       new NotFoundException({
-        message: SessionUseCaseError.messages.userIdNotFound(userId),
+        message: SessionUseCaseError.messages.userNotExits(email),
       }),
     );
   });
@@ -141,7 +144,7 @@ describe('SendRecoverPassword Use Case', () => {
 
     await expect(
       sendForgotEmail.execute({
-        userId: 'user-id',
+        email: userDomain.email.value,
       }),
     ).rejects.toThrow(
       new HttpException(

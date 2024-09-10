@@ -1,6 +1,6 @@
-import { IsUUID } from 'class-validator';
+import { IsEmail } from 'class-validator';
 
 export class SendRecoverPasswordEmailBodyDTO {
-  @IsUUID()
-  userId: string;
+  @IsEmail()
+  email: string;
 }

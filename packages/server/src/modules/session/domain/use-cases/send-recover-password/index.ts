@@ -35,18 +35,19 @@ export class SendRecoverPassword
   ) {}
 
   public async execute({
-    userId,
+    email,
   }: SendRecoverPasswordParams): Promise<SendRecoverPasswordResult> {
-    const userDomain = await this.userRepository.findOneById(userId);
+    const userDomain = await this.userRepository.findOneByEmail(email);
 
     if (!userDomain?.id) {
       throw new NotFoundException({
-        message: SessionUseCaseError.messages.userIdNotFound(userId),
+        message: SessionUseCaseError.messages.userNotExits(email),
       });
     }
 
+    const userId = userDomain.id.toValue();
     const sessionDomainOrError = SessionDomain.create({
-      userId: userDomain.id.toValue(),
+      userId,
       token: {
         value: { userId },
         expiresIn: EXPIRES_IN_15_MIN,
