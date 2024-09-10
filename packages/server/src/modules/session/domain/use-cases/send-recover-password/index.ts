@@ -63,7 +63,7 @@ export class SendRecoverPassword
 
     const lastToken = await this.tokenRepository.findLastByUserIdAndType(
       userDomain.id.toValue(),
-      TokenTypeMap.EMAIL_AUTH,
+      TokenTypeMap.RECOVER_PASSWORD,
     );
     if (lastToken) {
       throw new BadRequestException({
