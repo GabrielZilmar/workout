@@ -11,10 +11,6 @@ import {
   FormField,
   FormMessage,
   PasswordInput,
-  Tooltip,
-  TooltipProvider,
-  TooltipTrigger,
-  TooltipContent,
 } from "@workout/ui";
 import z from "zod";
 import { Lock, Mail } from "lucide-react";
@@ -114,30 +110,16 @@ export default function SignIn() {
                 >
                   Password
                 </Label>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="text-sm cursor-not-allowed">
-                        <a
-                          href="#"
-                          className={cn(
-                            "font-semibold text-indigo-600 hover:text-indigo-500",
-                            "disabled pointer-events-none"
-                          )}
-                        >
-                          Forgot password?
-                        </a>
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <div>
-                        <p className="text-sm text-gray-500">
-                          This feature is not available yet. 😔
-                        </p>
-                      </div>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <div className="text-sm">
+                  <Link
+                    href={ALL_ROUTES.forgotPassword}
+                    className={cn(
+                      "font-semibold text-indigo-600 hover:text-indigo-500"
+                    )}
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
               </div>
               <div className="mt-2">
                 <FormField
