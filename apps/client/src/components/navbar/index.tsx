@@ -118,7 +118,7 @@ export default function Navbar() {
               >
                 <MenuItem>
                   <Link
-                    href="#"
+                    href={ALL_ROUTES.userSettings}
                     className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
                   >
                     Your Profile
