@@ -8,7 +8,6 @@ import { Workout } from "~/types/workout";
 import { useCreateWorkout, useUpdateWorkout } from "~/hooks";
 import {
   Button,
-  cn,
   Form,
   FormControl,
   FormField,
@@ -19,6 +18,7 @@ import {
   RadioGroup,
   RadioGroupItem,
 } from "@workout/ui";
+import { cn } from "@workout/ui/utils";
 import { Dumbbell } from "lucide-react";
 
 type RadioGroupItems = {

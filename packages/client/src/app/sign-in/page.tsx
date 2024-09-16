@@ -3,7 +3,6 @@
 import {
   Button,
   Input,
-  cn,
   Label,
   Form,
   FormItem,
@@ -12,6 +11,7 @@ import {
   FormMessage,
   PasswordInput,
 } from "@workout/ui";
+import { cn } from "@workout/ui/utils";
 import z from "zod";
 import { Lock, Mail } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";

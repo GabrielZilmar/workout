@@ -9,7 +9,6 @@ import {
 } from "~/hooks";
 import {
   Button,
-  cn,
   Command,
   CommandEmpty,
   CommandGroup,
@@ -29,6 +28,7 @@ import {
   ScrollArea,
   Textarea,
 } from "@workout/ui";
+import { cn } from "@workout/ui/utils";
 import { useEffect } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import Loading from "~/components/loading";

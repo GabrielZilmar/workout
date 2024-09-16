@@ -1,4 +1,4 @@
-import { cn } from "@workout/ui";
+import { cn } from "@workout/ui/utils";
 import LoadingSvgComponent from "~/icons/loading";
 
 type LoadingProps = {
