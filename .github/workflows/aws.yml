@@ -89,6 +89,7 @@ jobs:
               -e ALGORITHM_SECURITY_KEY=${{ secrets.ALGORITHM_SECURITY_KEY }} \
               -e ALGORITHM_IV=${{ secrets.ALGORITHM_IV }} \
               -e VERIFY_EMAIL_URL=${{ secrets.VERIFY_EMAIL_URL }} \
+              -e RECOVER_PASSWORD_URL=${{ secrets.RECOVER_PASSWORD_URL }} \
               -e ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }} \
               -e ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }} \
               -e ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }} \
