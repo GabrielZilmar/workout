@@ -1,6 +1,7 @@
 "use client";
 
-import { Button, buttonVariants, cn } from "@workout/ui";
+import { Button, buttonVariants } from "@workout/ui";
+import { cn } from "@workout/ui/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
 import { Suspense, useEffect } from "react";

@@ -1,6 +1,3 @@
-"use client";
-
-import { cn } from "@workout/ui";
 import React from "react";
 import Navbar from "~/components/navbar";
 

@@ -57,6 +57,7 @@
     "./globals.css": "./lib/globals.css",
     "./postcss.config": "./postcss.config.js",
     "./tailwind.config": "./tailwind.config.ts",
-    "./lib/*": "./lib/*.ts"
+    "./lib/*": "./lib/*.ts",
+    "./lib/utils/": "./lib/utils/index.ts"
   }
 }
