@@ -6,7 +6,6 @@ import { useCreateWorkoutExercise, useListPaginatedExercises } from "~/hooks";
 import { Check, ChevronsUpDown } from "lucide-react";
 import {
   Button,
-  cn,
   Command,
   CommandEmpty,
   CommandGroup,
@@ -24,6 +23,7 @@ import {
   PopoverTrigger,
   ScrollArea,
 } from "@workout/ui";
+import { cn } from "@workout/ui/utils";
 
 import Loading from "~/components/loading";
 

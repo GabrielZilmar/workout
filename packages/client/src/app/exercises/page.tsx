@@ -7,8 +7,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  cn,
 } from "@workout/ui";
+import { cn } from "@workout/ui/utils";
 import { PlusIcon, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player/lazy";

@@ -128,4 +128,23 @@ describe('UserDomain', () => {
     const userDeleted = (user.value as UserDomain).delete();
     expect(userDeleted.props.deletedAt.value).toBeTruthy();
   });
+
+  it('Should update the user password', async () => {
+    const password = 'ValidAndStrongPassword!!007';
+    const userDomain = await UserDomainMock.mountUserDomain({
+      password: { value: password },
+    });
+
+    const newPassword = 'New-ValidAndStrongPassword!!007';
+    const userDomainUpdate = await userDomain.changePassword({
+      value: newPassword,
+    });
+
+    expect(userDomainUpdate.value).toBeInstanceOf(UserDomain);
+    expect(
+      await (userDomainUpdate.value as UserDomain).password.comparePassword(
+        newPassword,
+      ),
+    ).toBeTruthy();
+  });
 });

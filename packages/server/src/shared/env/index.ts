@@ -66,6 +66,10 @@ export default class Env {
     return this.getEnvOrThrow('VERIFY_EMAIL_URL');
   }
 
+  static get recoverPasswordUrl(): string {
+    return this.getEnvOrThrow('RECOVER_PASSWORD_URL');
+  }
+
   static get adminPassword(): string {
     return this.getEnvOrThrow('ADMIN_PASSWORD');
   }

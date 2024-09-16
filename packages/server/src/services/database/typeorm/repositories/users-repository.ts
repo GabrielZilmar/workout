@@ -129,4 +129,16 @@ export default class UserRepository extends BaseRepository<User, UserDomain> {
 
     return user;
   }
+
+  async findOneByEmail(
+    email: string,
+    withDeleted = false,
+  ): Promise<UserDomain | null> {
+    const user = await this.findOne({
+      where: { email },
+      withDeleted,
+    });
+
+    return user;
+  }
 }

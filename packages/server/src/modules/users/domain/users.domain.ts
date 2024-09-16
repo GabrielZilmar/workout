@@ -18,13 +18,15 @@ import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 import { Either, left, right } from '~/shared/either';
 import { SimpleUserDto } from '~/modules/users/dto/simple-user.dto';
 
+type UserDomainPasswordParams = {
+  value: string;
+  isHashed?: boolean;
+};
+
 export type UserDomainCreateParams = {
   username: string;
   email: string;
-  password: {
-    value: string;
-    isHashed?: boolean;
-  };
+  password: UserDomainPasswordParams;
   age?: number;
   weight?: number;
   height?: number;
@@ -138,6 +140,18 @@ export class UserDomain extends AggregateRoot<UserDomainProps> {
       this.props.height = heightOrError.value;
     }
 
+    return right(this);
+  }
+
+  public async changePassword(
+    params: UserDomainPasswordParams,
+  ): Promise<Either<UserDomainError, this>> {
+    const passwordOrError = await Password.create(params);
+    if (passwordOrError.isLeft()) {
+      return left(passwordOrError.value);
+    }
+
+    this.props.password = passwordOrError.value;
     return right(this);
   }
 
