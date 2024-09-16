@@ -174,7 +174,7 @@ export class StartRoutine
 
           return this.toDomainOrThrow(this.workoutMapper, newWorkout);
         } catch (err) {
-          throw new InternalServerErrorException(err.message);
+          throw new InternalServerErrorException((err as Error).message);
         }
       },
     );

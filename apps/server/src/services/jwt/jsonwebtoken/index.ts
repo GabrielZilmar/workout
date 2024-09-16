@@ -19,7 +19,10 @@ export default class JwtService implements JwtContract<JwtPayload> {
     return result;
   }
 
-  public signToken(payload: JwtPayload, expiresIn = '1h'): string {
+  public signToken(
+    payload: JwtPayload,
+    expiresIn: string | number = '1h',
+  ): string {
     const result = jwt.sign(payload, this.jwtSecret, { expiresIn });
 
     return result;
