@@ -42,7 +42,7 @@ const formSchema = z
         } catch (e) {
           return false;
         }
-      }, "Email is already taken"),
+      }, "Username is already taken"),
     email: z
       .string()
       .email()
