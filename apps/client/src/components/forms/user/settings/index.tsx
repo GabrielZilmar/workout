@@ -18,17 +18,7 @@ import {
 } from "@workout/ui";
 
 const formSchema = z.object({
-  username: z
-    .string()
-    .min(4)
-    .refine(async (value) => {
-      try {
-        const { data: isAvail } = await isUsernameAvailable(value);
-        return isAvail;
-      } catch (e) {
-        return false;
-      }
-    }, "Username is already taken"),
+  username: z.string().min(4).optional(),
   age: z.coerce.number().min(12).max(100).optional(),
   weight: z.coerce.number().min(36).optional(),
   height: z.coerce.number().min(140).optional(),
@@ -50,7 +40,6 @@ const UserSettingForm: React.FC<UserSettingsFormProps> = ({
 }) => {
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
-    mode: "onBlur",
     defaultValues: {
       username: user.username,
       age: user.age ?? undefined,
@@ -60,7 +49,27 @@ const UserSettingForm: React.FC<UserSettingsFormProps> = ({
   });
   const { errors: formErrors } = form.formState;
 
-  const handleSubmit: SubmitHandler<FormSchema> = (data) => {
+  const checkUsernameAvailability = async (username: string) => {
+    try {
+      const { data: isAvail } = await isUsernameAvailable(username);
+      return isAvail;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const handleSubmit: SubmitHandler<FormSchema> = async (data) => {
+    if (data.username && data.username !== user.username) {
+      const isAvailable = await checkUsernameAvailability(data.username);
+      if (!isAvailable) {
+        form.setError("username", {
+          type: "manual",
+          message: "Username is not available",
+        });
+        return;
+      }
+    }
+
     onSubmit(data);
   };
 
