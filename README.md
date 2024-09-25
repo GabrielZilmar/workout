@@ -103,3 +103,5 @@ In the root dir, run:
 ```bash
   npm run dev
 ```
+
+## [Example video 📹](https://www.loom.com/share/6febea8d5e1845d18d445579140d2992)
