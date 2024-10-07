@@ -90,71 +90,75 @@ const ExercisesPage: React.FC = () => {
     return <Error errorMessage={errorMessage} />;
   }
 
-  if (isLoading || userIsLoading) {
-    return <Loading />;
-  }
-
   return (
     <GlobalLayout>
-      {user?.isAdmin && (
-        <div className="flex justify-end mb-4">
-          <Button
-            fullWidth
-            className="p-2 h-fit max-w-24"
-            onClick={() => handleOpenDialog()}
+      {isLoading || userIsLoading ? (
+        <Loading />
+      ) : (
+        <>
+          {user?.isAdmin && (
+            <div className="flex justify-end mb-4">
+              <Button
+                fullWidth
+                className="p-2 h-fit max-w-24"
+                onClick={() => handleOpenDialog()}
+              >
+                <PlusIcon size={16} />
+              </Button>
+            </div>
+          )}
+          <div
+            className={cn(
+              "gap-4",
+              "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+            )}
           >
-            <PlusIcon size={16} />
-          </Button>
-        </div>
-      )}
-      <div
-        className={cn(
-          "gap-4",
-          "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-        )}
-      >
-        {exercises.map((exercise) => (
-          <Card key={exercise.id}>
-            <CardHeader onClick={() => handleOpenDialog(exercise)}>
-              <CardTitle>
-                <div
-                  className={cn({
-                    "flex justify-between": user?.isAdmin,
-                  })}
-                >
-                  {exercise.name}
-                  {user?.isAdmin && (
-                    <Button
-                      fullWidth
-                      className="p-2 h-fit max-w-16"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setDeleteExerciseDialog({
-                          exerciseId: exercise.id,
-                          isOpen: true,
-                        });
-                      }}
+            {exercises.map((exercise) => (
+              <Card key={exercise.id}>
+                <CardHeader onClick={() => handleOpenDialog(exercise)}>
+                  <CardTitle>
+                    <div
+                      className={cn({
+                        "flex justify-between": user?.isAdmin,
+                      })}
                     >
-                      <Trash2 size={16} />
-                    </Button>
-                  )}
-                </div>
-              </CardTitle>
-              <CardDescription>{exercise.muscle?.name || ""}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {exercise?.tutorialUrl ? (
-                <ReactPlayer
-                  height={264}
-                  width="100%"
-                  url={exercise.tutorialUrl || ""}
-                  controls
-                />
-              ) : null}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                      {exercise.name}
+                      {user?.isAdmin && (
+                        <Button
+                          fullWidth
+                          className="p-2 h-fit max-w-16"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeleteExerciseDialog({
+                              exerciseId: exercise.id,
+                              isOpen: true,
+                            });
+                          }}
+                        >
+                          <Trash2 size={16} />
+                        </Button>
+                      )}
+                    </div>
+                  </CardTitle>
+                  <CardDescription>
+                    {exercise.muscle?.name || ""}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {exercise?.tutorialUrl ? (
+                    <ReactPlayer
+                      height={264}
+                      width="100%"
+                      url={exercise.tutorialUrl || ""}
+                      controls
+                    />
+                  ) : null}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </>
+      )}
 
       <GenericAlertDialog
         isOpen={deleteExerciseDialog.isOpen}

@@ -68,6 +68,7 @@ export default function Navbar() {
                 alt="WorkoutApp"
                 src={SecondaryLogo}
                 className="h-12 w-auto"
+                priority
                 width={0}
                 height={0}
               />
