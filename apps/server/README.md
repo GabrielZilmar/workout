@@ -22,7 +22,7 @@ Welcome to the Workout App API! This API allows users to register, log in, creat
 1. **Clone the repository:**
 
 ```bash
- git clone https://github.com/your-username/workout-app-api.git
+ git clone https://github.com/GabrielZilmar/workout.git
 ```
 
 **Install dependencies:**
@@ -39,7 +39,7 @@ Create a .env file in the root directory and define the following variables:
 ```config
 PORT=3030
 
-DATABASE_URL=postgres://username:password@localhost:5432/workout_app
+DATABASE_HOST=your_db_host
 DB_PORT=5432
 USERNAME=your_db_username
 PASSWORD=your_db_password
@@ -58,6 +58,13 @@ EMAIL_PASSWORD=your_email_sender_password
 ALGORITHM=cipher_allowed_algorithm
 ALGORITHM_SECURITY_KEY=algorithm_key
 ALGORITHM_IV=initialization_vector_for_the_algorithm
+
+VERIFY_EMAIL_URL=CLIENT_URL/verify-email
+RECOVER_PASSWORD_URL=CLIENT_URL/recover-password
+
+ADMIN_EMAIL=admin_user_email
+ADMIN_PASSWORD=admin_password
+ADMIN_USERNAME=admin_username
 ```
 
 **Database setup:**

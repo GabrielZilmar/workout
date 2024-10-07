@@ -7,17 +7,32 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  Input,
+  ScrollArea,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
 } from "@workout/ui";
 import { cn } from "@workout/ui/utils";
 import { PlusIcon, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import ReactPlayer from "react-player/lazy";
+import { useEffect, useMemo, useState } from "react";
+import ReactPlayer from "react-player/youtube";
 import ExerciseDialog from "~/components/dialogs/exercise";
 import GenericAlertDialog from "~/components/dialogs/generic";
 import Error from "~/components/error";
 import Loading from "~/components/loading";
-import { useDeleteExercise, useListPaginatedExercises, useUser } from "~/hooks";
+import {
+  useDeleteExercise,
+  useListPaginatedExercises,
+  useListPaginatedMuscles,
+  useUser,
+} from "~/hooks";
 import GlobalLayout from "~/layouts/global.layout";
+import { debounce } from "~/lib/utils";
 import { Exercise } from "~/types/exercise";
 
 type ExerciseDialogState = {
@@ -29,11 +44,18 @@ type DeleteExerciseDialogState = {
   isOpen: boolean;
 };
 
+type ListExerciseState = {
+  muscleId?: string;
+  name?: string;
+};
+
 const ExercisesPage: React.FC = () => {
   const { user, isLoading: userIsLoading } = useUser();
   const [exerciseDialog, setExerciseDialog] = useState<ExerciseDialogState>({
     isOpen: false,
   });
+  const [listExerciseParams, setListExerciseParams] =
+    useState<ListExerciseState>();
   const [deleteExerciseDialog, setDeleteExerciseDialog] =
     useState<DeleteExerciseDialogState>({
       isOpen: false,
@@ -41,19 +63,33 @@ const ExercisesPage: React.FC = () => {
 
   const {
     data: exercises,
-    isLoading,
+    isLoading: isLoadingExercises,
     isError,
     error,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useListPaginatedExercises();
+    fetchNextPage: fetchNextExercisePage,
+    hasNextPage: hasNextExercisePage,
+    isFetchingNextPage: isFetchingNextExercisePage,
+  } = useListPaginatedExercises({ ...listExerciseParams });
+
+  const {
+    data: muscles,
+    isLoading: isLoadingMuscles,
+    fetchNextPage: fetchNextMusclePage,
+    hasNextPage: hasNextMusclePage,
+    isFetchingNextPage: isFetchingNextMusclePage,
+  } = useListPaginatedMuscles();
 
   useEffect(() => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
+    if (hasNextExercisePage && !isFetchingNextExercisePage) {
+      fetchNextExercisePage();
     }
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  }, [hasNextExercisePage, isFetchingNextExercisePage, fetchNextExercisePage]);
+
+  useEffect(() => {
+    if (hasNextMusclePage && !isFetchingNextMusclePage) {
+      fetchNextMusclePage();
+    }
+  }, [hasNextMusclePage, isFetchingNextMusclePage, fetchNextMusclePage]);
 
   const handleOpenDialog = (exercise?: Exercise) => {
     if (!user?.isAdmin) return;
@@ -83,6 +119,18 @@ const ExercisesPage: React.FC = () => {
     });
   };
 
+  const handleSearch = debounce((search: string) =>
+    setListExerciseParams({
+      ...listExerciseParams,
+      name: search || undefined,
+    })
+  );
+
+  const isLoading = useMemo(
+    () => isLoadingMuscles || isLoadingExercises || userIsLoading,
+    [isLoadingMuscles, isLoadingExercises, userIsLoading]
+  );
+
   if (isError) {
     const errorMessage = `${error?.response?.data?.message || ""}\n ${
       error?.response?.statusText || ""
@@ -90,69 +138,125 @@ const ExercisesPage: React.FC = () => {
     return <Error errorMessage={errorMessage} />;
   }
 
-  if (isLoading || userIsLoading) {
-    return <Loading />;
-  }
-
   return (
     <GlobalLayout>
-      {user?.isAdmin && (
-        <div className="flex justify-end mb-4">
-          <Button
-            fullWidth
-            className="p-2 h-fit max-w-24"
-            onClick={() => handleOpenDialog()}
-          >
-            <PlusIcon size={16} />
-          </Button>
-        </div>
-      )}
       <div
         className={cn(
-          "gap-4",
-          "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+          "flex flex-col sm:flex-row",
+          "space-y-4 sm:space-y-0 space-x-4",
+          "mb-4"
         )}
       >
-        {exercises.map((exercise) => (
-          <Card key={exercise.id}>
-            <CardHeader onClick={() => handleOpenDialog(exercise)}>
-              <CardTitle>
-                <div
-                  className={cn({
-                    "flex justify-between": user?.isAdmin,
-                  })}
+        <Input
+          className="max-w-full sm:max-w-72"
+          placeholder="Exercise name"
+          onChange={(e) => {
+            handleSearch(e.target.value);
+          }}
+        />
+        <div className="flex items-center justify-end mb-4 space-x-2">
+          <Select
+            value={listExerciseParams?.muscleId || ""}
+            onValueChange={(id) =>
+              setListExerciseParams({
+                ...listExerciseParams,
+                muscleId: id,
+              })
+            }
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Muscle" />
+            </SelectTrigger>
+            <SelectContent>
+              <ScrollArea>
+                <SelectGroup>
+                  {muscles.map((muscle) => (
+                    <SelectItem key={muscle.id} value={muscle.id}>
+                      {muscle.name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+                <SelectSeparator />
+                <Button
+                  className="w-full px-2"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setListExerciseParams({
+                      ...listExerciseParams,
+                      muscleId: undefined,
+                    });
+                  }}
                 >
-                  {exercise.name}
-                  {user?.isAdmin && (
-                    <Button
-                      fullWidth
-                      className="p-2 h-fit max-w-16"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setDeleteExerciseDialog({
-                          exerciseId: exercise.id,
-                          isOpen: true,
-                        });
-                      }}
-                    >
-                      <Trash2 size={16} />
-                    </Button>
-                  )}
-                </div>
-              </CardTitle>
-              <CardDescription>{exercise.muscle?.name || ""}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ReactPlayer
-                height={264}
-                width="100%"
-                url={exercise.tutorialUrl || ""}
-                controls
-              />
-            </CardContent>
-          </Card>
-        ))}
+                  Clear
+                </Button>
+              </ScrollArea>
+            </SelectContent>
+          </Select>
+          {user?.isAdmin && (
+            <Button
+              fullWidth
+              className="p-2 h-fit max-w-24"
+              onClick={() => handleOpenDialog()}
+            >
+              <PlusIcon size={16} />
+            </Button>
+          )}
+        </div>
       </div>
+
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <div
+          className={cn(
+            "gap-4",
+            "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+          )}
+        >
+          {exercises.map((exercise) => (
+            <Card key={exercise.id}>
+              <CardHeader onClick={() => handleOpenDialog(exercise)}>
+                <CardTitle>
+                  <div
+                    className={cn({
+                      "flex justify-between": user?.isAdmin,
+                    })}
+                  >
+                    {exercise.name}
+                    {user?.isAdmin && (
+                      <Button
+                        fullWidth
+                        className="p-2 h-fit max-w-16"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeleteExerciseDialog({
+                            exerciseId: exercise.id,
+                            isOpen: true,
+                          });
+                        }}
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+                    )}
+                  </div>
+                </CardTitle>
+                <CardDescription>{exercise.muscle?.name || ""}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {exercise?.tutorialUrl ? (
+                  <ReactPlayer
+                    height={264}
+                    width="100%"
+                    url={exercise.tutorialUrl || ""}
+                    controls
+                  />
+                ) : null}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
       <GenericAlertDialog
         isOpen={deleteExerciseDialog.isOpen}
