@@ -11,7 +11,7 @@ import {
 import { cn } from "@workout/ui/utils";
 import { PlusIcon, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import ReactPlayer from "react-player/lazy";
+import ReactPlayer from "react-player/youtube";
 import ExerciseDialog from "~/components/dialogs/exercise";
 import GenericAlertDialog from "~/components/dialogs/generic";
 import Error from "~/components/error";
@@ -143,12 +143,14 @@ const ExercisesPage: React.FC = () => {
               <CardDescription>{exercise.muscle?.name || ""}</CardDescription>
             </CardHeader>
             <CardContent>
-              <ReactPlayer
-                height={264}
-                width="100%"
-                url={exercise.tutorialUrl || ""}
-                controls
-              />
+              {exercise?.tutorialUrl ? (
+                <ReactPlayer
+                  height={264}
+                  width="100%"
+                  url={exercise.tutorialUrl || ""}
+                  controls
+                />
+              ) : null}
             </CardContent>
           </Card>
         ))}
