@@ -2,7 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import ExerciseDomain from '~/modules/exercise/domain/exercise.domain';
 import { SetDto } from '~/modules/set/dto/set.dto';
 import { WorkoutExerciseDomainError } from '~/modules/workout-exercise/domain/errors';
-import WorkoutExerciseOrder from '~/modules/workout-exercise/domain/value-objects/order';
+import WorkoutExerciseOrder from '~/shared/domain/value-objects/order';
 import { WorkoutExerciseDetailsDto } from '~/modules/workout-exercise/dto/workout-exercise-details.dto';
 import { WorkoutExerciseDto } from '~/modules/workout-exercise/dto/workout-exercise.dto';
 import { WorkoutDomainError } from '~/modules/workout/domain/errors';

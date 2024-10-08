@@ -7,6 +7,7 @@ import WorkoutExerciseDomain, {
   WorkoutExerciseDomainCreateParams,
   WorkoutExerciseDomainProps,
 } from '~/modules/workout-exercise/domain/workout-exercise.domain';
+import { SharedValueObjectError } from '~/shared/domain/value-objects/errors';
 import { Either } from '~/shared/either';
 
 type WorkoutExerciseDomainPublicClass = WorkoutExerciseDomain & {
@@ -83,7 +84,7 @@ describe('WorkoutExerciseDomain', () => {
     expect(workoutExercise.isLeft()).toBeTruthy();
     expect(workoutExercise.value).toEqual(
       WorkoutExerciseDomainError.create(
-        WorkoutExerciseDomainError.messages.invalidOrder,
+        SharedValueObjectError.messages.invalidOrder,
         HttpStatus.BAD_REQUEST,
       ),
     );
@@ -150,7 +151,7 @@ describe('WorkoutExerciseDomain', () => {
     expect(updatedWorkoutExercise.isLeft()).toBeTruthy();
     expect(updatedWorkoutExercise.value).toEqual(
       WorkoutExerciseDomainError.create(
-        WorkoutExerciseDomainError.messages.invalidOrder,
+        SharedValueObjectError.messages.invalidOrder,
         HttpStatus.BAD_REQUEST,
       ),
     );
