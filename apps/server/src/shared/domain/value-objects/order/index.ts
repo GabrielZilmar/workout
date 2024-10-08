@@ -1,12 +1,12 @@
 import { HttpStatus } from '@nestjs/common';
-import { WorkoutExerciseDomainError } from '~/modules/workout-exercise/domain/errors';
+import { SharedValueObjectError } from '~/shared/domain/value-objects/errors';
 import { Either, left, right } from '~/shared/either';
 
 export type OrderProps = {
   value: number | null;
 };
 
-export default class WorkoutExerciseOrder {
+export default class Order {
   private constructor(private props: OrderProps) {}
 
   get value(): number | null {
@@ -19,17 +19,17 @@ export default class WorkoutExerciseOrder {
 
   public static create(
     props: OrderProps,
-  ): Either<WorkoutExerciseDomainError, WorkoutExerciseOrder> {
+  ): Either<SharedValueObjectError, Order> {
     const isValid = this.isValid(props.value);
     if (!isValid) {
       return left(
-        WorkoutExerciseDomainError.create(
-          WorkoutExerciseDomainError.messages.invalidOrder,
+        SharedValueObjectError.create(
+          SharedValueObjectError.messages.invalidOrder,
           HttpStatus.BAD_REQUEST,
         ),
       );
     }
 
-    return right(new WorkoutExerciseOrder(props));
+    return right(new Order(props));
   }
 }

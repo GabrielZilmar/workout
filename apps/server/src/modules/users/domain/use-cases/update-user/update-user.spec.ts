@@ -1,4 +1,9 @@
-import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { UserDomainMock } from 'test/utils/domains/user-domain-mock';
 import { v4 as uuid } from 'uuid';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
@@ -19,14 +24,17 @@ describe('Update user use case', () => {
   let userDomain: UserDomain;
 
   const id = uuid();
+  const userId = uuid();
   const updateUserParams: UpdateUserParams = {
     id: id,
     username: 'valid_username',
     age: 20,
     weight: 80,
     height: 180,
+    userId,
   };
   const userParams = {
+    id: userId,
     username: 'valid_username',
     email: 'valid@email.com',
     password: {
@@ -62,6 +70,21 @@ describe('Update user use case', () => {
   it('Should update a user', async () => {
     const userHasBeenUpdated = await updateUser.execute(updateUserParams);
     expect(userHasBeenUpdated).toBeTruthy();
+  });
+
+  it('Should not update a user if user is not the owner', async () => {
+    const invalidUser = await UserDomainMock.mountUserDomain({
+      id: uuid(),
+    });
+    const repositoryFindOneByIdMock = jest.fn().mockResolvedValue(invalidUser);
+    userRepository.findOneById = repositoryFindOneByIdMock;
+
+    const id = uuid();
+    await expect(
+      updateUser.execute({ id, userId: userDomain.id?.toValue() as string }),
+    ).rejects.toThrow(
+      new ForbiddenException(UserUseCaseError.messages.cannotUpdateUser),
+    );
   });
 
   it('Should not update a user if it user does not exists', async () => {

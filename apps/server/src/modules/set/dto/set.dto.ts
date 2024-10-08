@@ -1,5 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
-import { IsInt, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsInt, IsNotEmpty, IsUUID, ValidateIf } from 'class-validator';
 import SetDomain from '~/modules/set/domain/set.domain';
 import { SetDtoError } from '~/modules/set/dto/errors/set-dto-errors';
 import { Either, left, right } from '~/shared/either';
@@ -14,6 +14,10 @@ export class SetDto {
   workoutExerciseId: string;
 
   @IsInt()
+  @ValidateIf((_, value) => value !== null)
+  order: number | null;
+
+  @IsInt()
   @IsNotEmpty()
   numReps: number;
 
@@ -26,7 +30,8 @@ export class SetDto {
   numDrops: number;
 
   public static domainToDto(domain: SetDomain): Either<SetDtoError, SetDto> {
-    const { id, workoutExerciseId, numReps, setWeight, numDrops } = domain;
+    const { id, workoutExerciseId, order, numReps, setWeight, numDrops } =
+      domain;
 
     if (!id) {
       return left(
@@ -40,6 +45,7 @@ export class SetDto {
     const setDto = new SetDto();
     setDto.id = id.toString();
     setDto.workoutExerciseId = workoutExerciseId;
+    setDto.order = order.value;
     setDto.numReps = numReps.value;
     setDto.setWeight = setWeight.value;
     setDto.numDrops = numDrops.value;

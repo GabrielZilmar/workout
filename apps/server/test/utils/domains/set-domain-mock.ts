@@ -8,6 +8,7 @@ import NumDrops from '~/modules/set/domain/value-objects/num-drops';
 import NumReps from '~/modules/set/domain/value-objects/num-reps';
 import SetWeight from '~/modules/set/domain/value-objects/set-weight';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
+import SetOrder from '~/shared/domain/value-objects/order';
 
 type MountSetDomainParams = Partial<SetDomainCreateParams> &
   GenericCreateDomainParams;
@@ -16,6 +17,7 @@ export class SetDomainMock {
   public static readonly setMockCreateParams: Required<SetDomainCreateParams> =
     {
       workoutExerciseId: uuid(),
+      order: 0,
       numReps: 10,
       setWeight: 20,
       numDrops: 3,
@@ -30,10 +32,14 @@ export class SetDomainMock {
 
   public static getSetDomainProps({
     workoutExerciseId,
+    order,
     numReps,
     setWeight,
     numDrops,
   }: Partial<SetDomainCreateParams> = {}): SetDomainProps {
+    const orderValueObject = SetOrder.create({
+      value: order ?? this.setMockCreateParams.order,
+    }).value as SetOrder;
     const numRepsValueObject = NumReps.create({
       value: numReps ?? this.setMockCreateParams.numReps,
     }).value as NumReps;
@@ -50,6 +56,7 @@ export class SetDomainMock {
       numReps: numRepsValueObject,
       setWeight: setWeightValueObject,
       numDrops: numDropsValueObject,
+      order: orderValueObject,
     };
   }
 

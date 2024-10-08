@@ -11,7 +11,6 @@ import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
 import MuscleMapper from '~/modules/muscle/mappers/muscle.mapper';
 import SetMapper from '~/modules/set/mappers/set.mapper';
 import UserMapper from '~/modules/users/domain/mappers/users.mapper';
-import { WorkoutExerciseDomainError } from '~/modules/workout-exercise/domain/errors';
 import WorkoutExerciseDomain from '~/modules/workout-exercise/domain/workout-exercise.domain';
 import WorkoutExerciseMapper from '~/modules/workout-exercise/mappers/workout-exercise.mapper';
 import { WorkoutExerciseUseCaseError } from '~/modules/workout-exercise/use-cases/errors';
@@ -19,6 +18,7 @@ import { UpdateWorkoutExercise } from '~/modules/workout-exercise/use-cases/upda
 import WorkoutDomain from '~/modules/workout/domain/workout.domain';
 import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
 import { RepositoryError } from '~/services/database/typeorm/repositories/error';
+import { SharedValueObjectError } from '~/shared/domain/value-objects/errors';
 import { left } from '~/shared/either';
 
 describe('UpdateWorkoutExercise use case', () => {
@@ -205,7 +205,7 @@ describe('UpdateWorkoutExercise use case', () => {
 
     await expect(updateWorkoutExercise.execute(workoutParams)).rejects.toThrow(
       new HttpException(
-        WorkoutExerciseDomainError.messages.invalidOrder,
+        SharedValueObjectError.messages.invalidOrder,
         HttpStatus.BAD_REQUEST,
       ),
     );

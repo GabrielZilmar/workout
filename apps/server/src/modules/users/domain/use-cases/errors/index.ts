@@ -5,6 +5,8 @@ export class UserUseCaseError extends Error {
   public readonly payload?: unknown;
   public static messages = {
     userNotFound: (item: string) => `User ${item} not found.`,
+    cannotUpdateUser: "Can't update others users",
+    cannotDeleteUser: "Can't delete others users",
   };
 
   constructor(message: string, code: number, payload?: unknown) {

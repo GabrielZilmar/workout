@@ -83,18 +83,20 @@ export class UsersController {
   @Patch(':id')
   @UseGuards(AuthGuard, UserDataGuard)
   update(
+    @Req() req: RequestWithUser,
     @Param() id: CreateUserParamsDto,
     @Body() updateUserDto: UpdateUserBodyDto,
   ) {
     return this.updateUser.execute({
       ...id,
       ...updateUserDto,
+      userId: req.user.id,
     });
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard, UserDataGuard)
-  remove(@Param() params: DeleteUserParamsDto) {
-    return this.deleteUser.execute(params);
+  remove(@Req() req: RequestWithUser, @Param() params: DeleteUserParamsDto) {
+    return this.deleteUser.execute({ ...params, userId: req.user.id });
   }
 }

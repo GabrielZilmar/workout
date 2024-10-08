@@ -16,6 +16,10 @@ export class WorkoutExerciseSubscriber
   }
 
   async beforeInsert({ entity, manager }: InsertEvent<WorkoutExercise>) {
+    if (entity.order !== null) {
+      return entity;
+    }
+
     const queryResult = await manager
       .createQueryBuilder(WorkoutExercise, 'we')
       .select('MAX(we.order)', 'maxOrder')

@@ -1,6 +1,4 @@
 import {
-  IsBoolean,
-  IsDate,
   IsEmail,
   IsNotEmpty,
   IsNumber,
@@ -52,16 +50,4 @@ export class CreateUserDto {
   @Min(MIN_HEIGHT)
   @IsOptional()
   height?: number;
-
-  @IsBoolean()
-  @IsOptional()
-  isEmailVerified?: boolean;
-
-  @IsBoolean()
-  @IsOptional()
-  isAdmin?: boolean;
-
-  @IsDate()
-  @IsOptional()
-  deletedAt?: Date | null;
 }

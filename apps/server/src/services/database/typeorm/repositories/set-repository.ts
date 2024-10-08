@@ -67,7 +67,7 @@ export default class SetRepository extends BaseRepository<Set, SetDomain> {
       .groupBy('Set.id')
       .skip(skip)
       .take(take)
-      .orderBy('Set.createdAt', 'ASC')
+      .orderBy('Set.order', 'ASC')
       .getManyAndCount();
 
     const itemsToDomain: SetDomain[] = [];
