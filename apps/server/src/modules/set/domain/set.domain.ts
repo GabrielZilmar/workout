@@ -6,10 +6,12 @@ import SetWeight from '~/modules/set/domain/value-objects/set-weight';
 import { SetDto } from '~/modules/set/dto/set.dto';
 import { AggregateRoot } from '~/shared/domain/aggregate-root';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
+import SetOrder from '~/shared/domain/value-objects/order';
 import { Either, left, right } from '~/shared/either';
 
 export type SetDomainProps = {
   workoutExerciseId: string;
+  order: SetOrder;
   numReps: NumReps;
   setWeight: SetWeight;
   numDrops: NumDrops;
@@ -17,6 +19,7 @@ export type SetDomainProps = {
 
 export type SetDomainCreateParams = {
   workoutExerciseId: string;
+  order?: number | null;
   numReps?: number;
   setWeight?: number;
   numDrops?: number;
@@ -27,6 +30,10 @@ export type SetDomainUpdateParams = Partial<SetDomainCreateParams>;
 export default class SetDomain extends AggregateRoot<SetDomainProps> {
   get workoutExerciseId(): string {
     return this.props.workoutExerciseId;
+  }
+
+  get order(): SetOrder {
+    return this.props.order;
   }
 
   get numReps(): NumReps {
@@ -46,10 +53,19 @@ export default class SetDomain extends AggregateRoot<SetDomainProps> {
   }
 
   public update({
+    order,
     numReps,
     setWeight,
     numDrops,
   }: SetDomainUpdateParams): Either<SetDomainError, SetDomain> {
+    if (order !== undefined) {
+      const orderOrError = SetOrder.create({ value: order });
+      if (orderOrError.isLeft()) {
+        return left(orderOrError.value);
+      }
+      this.props.order = orderOrError.value;
+    }
+
     if (numReps) {
       const numRepsOrError = NumReps.create({ value: numReps });
       if (numRepsOrError.isLeft()) {
@@ -79,9 +95,16 @@ export default class SetDomain extends AggregateRoot<SetDomainProps> {
     return right(this);
   }
 
-  private static mountValueObjects(
-    props: SetDomainCreateParams,
-  ): Either<SetDomainError, SetDomainProps> {
+  private static mountValueObjects({
+    order = null,
+    ...props
+  }: SetDomainCreateParams): Either<SetDomainError, SetDomainProps> {
+    const orderOrError = SetOrder.create({ value: order });
+
+    if (orderOrError && orderOrError.isLeft()) {
+      return left(orderOrError.value);
+    }
+
     const numRepsOrError = NumReps.create({ value: props.numReps ?? 0 });
     if (numRepsOrError.isLeft()) {
       return left(numRepsOrError.value);
@@ -100,6 +123,7 @@ export default class SetDomain extends AggregateRoot<SetDomainProps> {
     }
 
     const setDomainProps: SetDomainProps = {
+      order: orderOrError.value,
       workoutExerciseId: props.workoutExerciseId,
       numReps: numRepsOrError.value,
       setWeight: setWeightOrError.value,
