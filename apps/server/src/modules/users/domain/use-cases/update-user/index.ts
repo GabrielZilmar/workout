@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -13,7 +14,8 @@ import {
 import UserRepository from '~/services/database/typeorm/repositories/users-repository';
 import { UseCase } from '~/shared/core/use-case';
 
-export type UpdateUserParams = CreateUserParamsDto & UpdateUserBodyDto;
+export type UpdateUserParams = CreateUserParamsDto &
+  UpdateUserBodyDto & { userId: string };
 export type UpdateUserResult = Promise<boolean>;
 
 @Injectable()
@@ -23,13 +25,21 @@ export class UpdateUser implements UseCase<UpdateUserParams, UpdateUserResult> {
     private readonly userMapper: UserMapper,
   ) {}
 
-  public async execute({ id, ...params }: UpdateUserParams): UpdateUserResult {
+  public async execute({
+    id,
+    userId,
+    ...params
+  }: UpdateUserParams): UpdateUserResult {
     const user = await this.userRepository.findOneById(id);
     if (!user) {
       throw new HttpException(
         UserUseCaseError.messages.userNotFound(id),
         HttpStatus.NOT_FOUND,
       );
+    }
+
+    if (user.id?.toValue() !== userId) {
+      throw new ForbiddenException(UserUseCaseError.messages.cannotUpdateUser);
     }
 
     const updateUserDomainOrError = await user.update(params);

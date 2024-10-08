@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   HttpException,
   HttpStatus,
   InternalServerErrorException,
@@ -43,8 +44,26 @@ describe('Delete user use case', () => {
   });
 
   it('Should delete a user', async () => {
-    const userHasBeenUpdated = await deleteUser.execute({ id: uuid() });
+    const userHasBeenUpdated = await deleteUser.execute({
+      id: uuid(),
+      userId: userDomain.id?.toValue() as string,
+    });
     expect(userHasBeenUpdated).toBeTruthy();
+  });
+
+  it('Should not delete a user if user is not the owner', async () => {
+    const invalidUser = await UserDomainMock.mountUserDomain({
+      id: uuid(),
+    });
+    const repositoryFindOneByIdMock = jest.fn().mockResolvedValue(invalidUser);
+    userRepository.findOneById = repositoryFindOneByIdMock;
+
+    const id = uuid();
+    await expect(
+      deleteUser.execute({ id, userId: userDomain.id?.toValue() as string }),
+    ).rejects.toThrow(
+      new ForbiddenException(UserUseCaseError.messages.cannotDeleteUser),
+    );
   });
 
   it('Should not delete a user if it user does not exists', async () => {
@@ -52,7 +71,9 @@ describe('Delete user use case', () => {
     userRepository.findOneById = repositoryFindOneByIdMock;
 
     const id = uuid();
-    await expect(deleteUser.execute({ id })).rejects.toThrowError(
+    await expect(
+      deleteUser.execute({ id, userId: userDomain.id?.toValue() as string }),
+    ).rejects.toThrow(
       new HttpException(
         UserUseCaseError.messages.userNotFound(id),
         HttpStatus.NOT_FOUND,
@@ -64,8 +85,11 @@ describe('Delete user use case', () => {
     const deleteRepositoryMock = jest.fn().mockRejectedValue(false);
     userRepository.repository.softDelete = deleteRepositoryMock;
 
-    await expect(deleteUser.execute({ id: uuid() })).rejects.toThrow(
-      InternalServerErrorException,
-    );
+    await expect(
+      deleteUser.execute({
+        id: uuid(),
+        userId: userDomain.id?.toValue() as string,
+      }),
+    ).rejects.toThrow(InternalServerErrorException);
   });
 });

@@ -1,6 +1,6 @@
 import { GenericCreateDomainParams } from 'test/utils/types/domain';
 import { v4 as uuid } from 'uuid';
-import WorkoutExerciseOrder from '~/modules/workout-exercise/domain/value-objects/order';
+import WorkoutExerciseOrder from '~/shared/domain/value-objects/order';
 import WorkoutExerciseDomain, {
   WorkoutExerciseDomainCreateParams,
   WorkoutExerciseDomainProps,

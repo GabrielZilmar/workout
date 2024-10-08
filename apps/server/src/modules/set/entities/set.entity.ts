@@ -28,6 +28,9 @@ export class Set {
   @Column({ default: 0, type: 'integer' })
   numDrops: number;
 
+  @Column({ type: 'integer', nullable: true })
+  order: number | null;
+
   @CreateDateColumn()
   createdAt: Date;
 

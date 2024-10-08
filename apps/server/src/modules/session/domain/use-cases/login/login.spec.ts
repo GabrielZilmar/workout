@@ -45,7 +45,7 @@ describe('Login Use Case', () => {
 
     const [type, token] = result.accessToken.split(' ') ?? [];
     expect(type).toBe('Bearer');
-    const decodedToken = jwtService.decodeToken(token);
+    const decodedToken = jwtService.decodeToken(token as string);
     expect(decodedToken).toEqual({
       id: userDomainParams.id,
       email: userDomainParams.email,

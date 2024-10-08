@@ -20,9 +20,6 @@ export class CreateUser implements UseCase<CreateUserParams, CreateUserResult> {
     age,
     weight,
     height,
-    isEmailVerified,
-    isAdmin,
-    deletedAt,
   }: CreateUserParams): Promise<CreateUserResult> {
     const userDomainOrError = await UserDomain.create({
       username,
@@ -33,9 +30,6 @@ export class CreateUser implements UseCase<CreateUserParams, CreateUserResult> {
       age,
       weight,
       height,
-      isEmailVerified,
-      isAdmin,
-      deletedAt,
     });
     if (userDomainOrError.isLeft()) {
       throw new HttpException(
