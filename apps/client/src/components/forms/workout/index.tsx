@@ -53,7 +53,7 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: workout?.name || "",
-      isPrivate: workout?.isPrivate || true,
+      isPrivate: workout?.isPrivate === undefined ? true : workout.isPrivate,
       isRoutine: workout?.isRoutine || false,
     },
   });
