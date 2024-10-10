@@ -5,12 +5,17 @@ import { WorkoutDomainMock } from 'test/utils/domains/workout-domain-mock';
 import { WorkoutExerciseDomainMock } from 'test/utils/domains/workout-exercise-domain.mock';
 import getSetRepositoryProvider from 'test/utils/providers/set-repository-mock';
 import getWorkoutExerciseRepositoryProvider from 'test/utils/providers/workout-exercise-repository-mock';
+import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
+import MuscleMapper from '~/modules/muscle/mappers/muscle.mapper';
 import SetDomain from '~/modules/set/domain/set.domain';
 import { DeleteSet } from '~/modules/set/domain/use-cases/delete-set';
 import { SetUseCaseError } from '~/modules/set/domain/use-cases/errors';
 import SetMapper from '~/modules/set/mappers/set.mapper';
+import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import WorkoutExerciseDomain from '~/modules/workout-exercise/domain/workout-exercise.domain';
+import WorkoutExerciseMapper from '~/modules/workout-exercise/mappers/workout-exercise.mapper';
 import WorkoutDomain from '~/modules/workout/domain/workout.domain';
+import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
 import { RepositoryError } from '~/services/database/typeorm/repositories/error';
 import { left } from '~/shared/either';
 
@@ -54,6 +59,11 @@ describe('DeleteSet use case', () => {
         setRepositoryProvider,
         workoutExerciseRepositoryProvider,
         SetMapper,
+        WorkoutExerciseMapper,
+        WorkoutMapper,
+        ExerciseMapper,
+        UserMapper,
+        MuscleMapper,
         DeleteSet,
       ],
     }).compile();

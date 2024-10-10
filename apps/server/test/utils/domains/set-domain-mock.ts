@@ -14,14 +14,15 @@ type MountSetDomainParams = Partial<SetDomainCreateParams> &
   GenericCreateDomainParams;
 
 export class SetDomainMock {
-  public static readonly setMockCreateParams: Required<SetDomainCreateParams> =
-    {
-      workoutExerciseId: uuid(),
-      order: 0,
-      numReps: 10,
-      setWeight: 20,
-      numDrops: 3,
-    };
+  public static readonly setMockCreateParams: Required<
+    Omit<SetDomainCreateParams, 'workoutExerciseDomain'>
+  > = {
+    workoutExerciseId: uuid(),
+    order: 0,
+    numReps: 10,
+    setWeight: 20,
+    numDrops: 3,
+  };
 
   public static getSetCreateParams(props?: Partial<SetDomainCreateParams>) {
     return {
