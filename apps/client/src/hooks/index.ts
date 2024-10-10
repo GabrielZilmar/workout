@@ -25,3 +25,4 @@ export * from "./useDeleteExercise";
 export * from "./useSendRecoverPasswordEmail";
 export * from "./useRecoverPassword";
 export * from "./useUpdateUser";
+export * from "./useChangeWorkoutExercisesOrders";
