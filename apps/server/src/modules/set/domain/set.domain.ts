@@ -4,6 +4,7 @@ import NumDrops from '~/modules/set/domain/value-objects/num-drops';
 import NumReps from '~/modules/set/domain/value-objects/num-reps';
 import SetWeight from '~/modules/set/domain/value-objects/set-weight';
 import { SetDto } from '~/modules/set/dto/set.dto';
+import WorkoutExerciseDomain from '~/modules/workout-exercise/domain/workout-exercise.domain';
 import { AggregateRoot } from '~/shared/domain/aggregate-root';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
 import SetOrder from '~/shared/domain/value-objects/order';
@@ -15,10 +16,12 @@ export type SetDomainProps = {
   numReps: NumReps;
   setWeight: SetWeight;
   numDrops: NumDrops;
+  workoutExerciseDomain?: WorkoutExerciseDomain;
 };
 
 export type SetDomainCreateParams = {
   workoutExerciseId: string;
+  workoutExerciseDomain?: WorkoutExerciseDomain;
   order?: number | null;
   numReps?: number;
   setWeight?: number;
@@ -30,6 +33,10 @@ export type SetDomainUpdateParams = Partial<SetDomainCreateParams>;
 export default class SetDomain extends AggregateRoot<SetDomainProps> {
   get workoutExerciseId(): string {
     return this.props.workoutExerciseId;
+  }
+
+  get workoutExerciseDomain(): WorkoutExerciseDomain | undefined {
+    return this.props.workoutExerciseDomain;
   }
 
   get order(): SetOrder {
@@ -66,7 +73,7 @@ export default class SetDomain extends AggregateRoot<SetDomainProps> {
       this.props.order = orderOrError.value;
     }
 
-    if (numReps) {
+    if (numReps !== undefined) {
       const numRepsOrError = NumReps.create({ value: numReps });
       if (numRepsOrError.isLeft()) {
         return left(numRepsOrError.value);
@@ -74,7 +81,7 @@ export default class SetDomain extends AggregateRoot<SetDomainProps> {
       this.props.numReps = numRepsOrError.value;
     }
 
-    if (setWeight) {
+    if (setWeight !== undefined) {
       const setWeightOrError = SetWeight.create({ value: setWeight });
       if (setWeightOrError.isLeft()) {
         return left(setWeightOrError.value);
@@ -83,7 +90,7 @@ export default class SetDomain extends AggregateRoot<SetDomainProps> {
       this.props.setWeight = setWeightOrError.value;
     }
 
-    if (numDrops) {
+    if (numDrops !== undefined) {
       const numDropsOrError = NumDrops.create({ value: numDrops });
       if (numDropsOrError.isLeft()) {
         return left(numDropsOrError.value);
@@ -125,6 +132,7 @@ export default class SetDomain extends AggregateRoot<SetDomainProps> {
     const setDomainProps: SetDomainProps = {
       order: orderOrError.value,
       workoutExerciseId: props.workoutExerciseId,
+      workoutExerciseDomain: props.workoutExerciseDomain,
       numReps: numRepsOrError.value,
       setWeight: setWeightOrError.value,
       numDrops: numDropsOrError.value,
@@ -134,8 +142,13 @@ export default class SetDomain extends AggregateRoot<SetDomainProps> {
 
   private static isValid({
     workoutExerciseId,
+    workoutExerciseDomain,
   }: SetDomainCreateParams): boolean {
-    return !!workoutExerciseId;
+    const isWorkoutExerciseDomainValid =
+      !workoutExerciseDomain ||
+      workoutExerciseDomain.id?.toValue() === workoutExerciseId;
+
+    return !!workoutExerciseId && isWorkoutExerciseDomainValid;
   }
 
   public static create(

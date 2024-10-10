@@ -71,8 +71,8 @@ export default class SetRepository extends BaseRepository<Set, SetDomain> {
       .getManyAndCount();
 
     const itemsToDomain: SetDomain[] = [];
-    for await (const item of items) {
-      const itemToDomain = this.mapper.toDomain(item);
+    for (const item of items) {
+      const itemToDomain = await this.mapper.toDomain(item);
 
       if (itemToDomain.isRight()) {
         itemsToDomain.push(itemToDomain.value);

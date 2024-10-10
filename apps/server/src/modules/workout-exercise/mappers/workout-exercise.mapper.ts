@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import ExerciseDomain from '~/modules/exercise/domain/exercise.domain';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
 import { SetDto } from '~/modules/set/dto/set.dto';
@@ -20,6 +20,7 @@ export default class WorkoutExerciseMapper
   constructor(
     private readonly workoutMapper: WorkoutMapper,
     private readonly exerciseMapper: ExerciseMapper,
+    @Inject(forwardRef(() => SetMapper))
     private readonly setMapper: SetMapper,
   ) {}
 
@@ -51,7 +52,7 @@ export default class WorkoutExerciseMapper
     const setDtos: SetDto[] = [];
     if (sets?.length) {
       for (const set of sets) {
-        const setDomain = this.setMapper.toDomain(set);
+        const setDomain = await this.setMapper.toDomain(set);
         if (setDomain.isLeft()) {
           return left(setDomain.value);
         }
