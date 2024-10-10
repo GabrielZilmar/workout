@@ -1,10 +1,29 @@
-import { Button } from "@workout/ui";
-import { PlusCircle, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Button, SortableItem } from "@workout/ui";
+import { PlusCircle, Trash2 } from "lucide-react";
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import Error from "~/components/error";
 import SetForm from "~/components/forms/set";
 import Loading from "~/components/loading";
-import { useDeleteSet, useListInfiniteSets } from "~/hooks";
+import {
+  useDeleteSet,
+  useListInfiniteSets,
+  useUpdateManySetOrders,
+} from "~/hooks";
 import { Set } from "~/types/set";
 
 const NEW_SET_PREFIX = "new-item";
@@ -32,7 +51,14 @@ const WorkoutExerciseSets: React.FC<WorkoutExerciseSetsProps> = ({
     isFetchingNextPage,
   } = useListInfiniteSets({ workoutExerciseId });
   const [sets, setSets] = useState<SetsState[]>([]);
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
   const { deleteSetMutation } = useDeleteSet();
+  const { updateManySetOrdersMutation } = useUpdateManySetOrders();
 
   useEffect(() => {
     if (hasNextPage && !isFetchingNextPage) {
@@ -65,6 +91,29 @@ const WorkoutExerciseSets: React.FC<WorkoutExerciseSetsProps> = ({
     deleteSetMutation({ id });
   };
 
+  const handleDragEnd = (event: DragEndEvent) => {
+    const items = sets;
+    if (!items) {
+      return;
+    }
+
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      const oldIndex = items.findIndex((item) => item.id === active.id);
+      const newIndex = items.findIndex((item) => item.id === over?.id);
+
+      const updatedItems = arrayMove(items, oldIndex, newIndex);
+      setSets(updatedItems);
+      updateManySetOrdersMutation({
+        items: updatedItems.map((item, index) => ({
+          id: item.id,
+          order: index,
+        })),
+      });
+    }
+  };
+
   if (isError) {
     const errorMessage = `${error?.response?.data?.message || ""}\n ${
       error?.response?.statusText || ""
@@ -78,23 +127,32 @@ const WorkoutExerciseSets: React.FC<WorkoutExerciseSetsProps> = ({
 
   return (
     <div className="flex flex-col gap-4 px-2">
-      {sets.map(({ id, set }) => (
-        <SetForm
-          key={id}
-          workoutExerciseId={workoutExerciseId}
-          set={set}
-          isOwner={isOwner}
-          onCancel={() => handleDeleteSet(set ? set.id : id)}
-          cancelLabel={<Trash2>Remove Set</Trash2>}
-        />
-      ))}
-      {isOwner ? (
-        <div className="flex justify-end">
-          <Button onClick={handleInsert}>
-            <PlusCircle />
-          </Button>
-        </div>
-      ) : null}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext items={sets} strategy={verticalListSortingStrategy}>
+          {sets.map(({ id, set }) => (
+            <SortableItem key={id} id={id} className="w-full">
+              <SetForm
+                workoutExerciseId={workoutExerciseId}
+                set={set}
+                isOwner={isOwner}
+                onCancel={() => handleDeleteSet(set ? set.id : id)}
+                cancelLabel={<Trash2>Remove Set</Trash2>}
+              />
+            </SortableItem>
+          ))}
+          {isOwner ? (
+            <div className="flex justify-end">
+              <Button onClick={handleInsert}>
+                <PlusCircle />
+              </Button>
+            </div>
+          ) : null}
+        </SortableContext>
+      </DndContext>
     </div>
   );
 };

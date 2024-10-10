@@ -111,6 +111,7 @@ describe('StartRoutine', () => {
         WorkoutMapper,
         WorkoutExerciseMapper,
         SetMapper,
+        ExerciseMapper,
         StartRoutine,
       ],
     }).compile();

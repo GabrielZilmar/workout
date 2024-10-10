@@ -11,6 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '~/guards/auth.guard';
+import { ChangeWorkoutExerciseOrdersBodyDTO } from '~/modules/workout-exercise/dto/change-workout-exercises-orders.dto';
 import { CreateWorkoutExerciseDto } from '~/modules/workout-exercise/dto/create-workout-exercise.dto';
 import { DeleteWorkoutExerciseDto } from '~/modules/workout-exercise/dto/delete-workout-exercise.dto';
 import { FindByWorkoutIdDto } from '~/modules/workout-exercise/dto/find-by-workout-id.dto';
@@ -19,6 +20,7 @@ import {
   UpdateWorkoutExerciseDto,
   UpdateWorkoutExerciseParamsDto,
 } from '~/modules/workout-exercise/dto/update-workout-exercise.dto';
+import { ChangeWorkoutExercisesOrders } from '~/modules/workout-exercise/use-cases/change-workout-exercises-orders';
 import { CreateWorkoutExercise } from '~/modules/workout-exercise/use-cases/create-workout-exercise';
 import DeleteWorkoutExercise from '~/modules/workout-exercise/use-cases/delete-workout-exercise';
 import { FindByWorkoutId } from '~/modules/workout-exercise/use-cases/find-by-workout-id';
@@ -36,6 +38,7 @@ export class WorkoutExerciseController {
     private readonly updateWorkoutExercise: UpdateWorkoutExercise,
     private readonly deleteWorkoutExercise: DeleteWorkoutExercise,
     private readonly getWorkoutExerciseDetails: GetWorkoutExerciseDetails,
+    private readonly changeWorkoutExercisesOrders: ChangeWorkoutExercisesOrders,
   ) {}
 
   @Post()
@@ -68,6 +71,18 @@ export class WorkoutExerciseController {
     return this.getWorkoutExerciseDetails.execute({
       userId,
       id,
+    });
+  }
+
+  @Patch('/update-workout-exercises-orders')
+  updateWorkoutExercisesOrders(
+    @Req() req: RequestWithUser,
+    @Body() body: ChangeWorkoutExerciseOrdersBodyDTO,
+  ) {
+    const userId = req.user.id;
+    return this.changeWorkoutExercisesOrders.execute({
+      ...body,
+      userId,
     });
   }
 

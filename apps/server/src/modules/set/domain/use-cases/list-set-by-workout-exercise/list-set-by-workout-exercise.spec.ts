@@ -5,12 +5,17 @@ import { WorkoutDomainMock } from 'test/utils/domains/workout-domain-mock';
 import { WorkoutExerciseDomainMock } from 'test/utils/domains/workout-exercise-domain.mock';
 import getSetRepositoryProvider from 'test/utils/providers/set-repository-mock';
 import getWorkoutExerciseRepositoryProvider from 'test/utils/providers/workout-exercise-repository-mock';
+import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
+import MuscleMapper from '~/modules/muscle/mappers/muscle.mapper';
 import SetDomain from '~/modules/set/domain/set.domain';
 import { ListSetByWorkoutExerciseId } from '~/modules/set/domain/use-cases/list-set-by-workout-exercise';
 import { SetDtoError } from '~/modules/set/dto/errors/set-dto-errors';
 import SetMapper from '~/modules/set/mappers/set.mapper';
+import UserMapper from '~/modules/users/domain/mappers/users.mapper';
 import WorkoutExerciseDomain from '~/modules/workout-exercise/domain/workout-exercise.domain';
+import WorkoutExerciseMapper from '~/modules/workout-exercise/mappers/workout-exercise.mapper';
 import WorkoutDomain from '~/modules/workout/domain/workout.domain';
+import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
 
 type GetModuleTestParams = {
   setRepositoryProvider?: Provider;
@@ -63,6 +68,11 @@ describe('ListByWorkoutExercise use case', () => {
         setRepositoryProvider,
         workoutExerciseRepositoryProvider,
         SetMapper,
+        WorkoutExerciseMapper,
+        WorkoutMapper,
+        ExerciseMapper,
+        UserMapper,
+        MuscleMapper,
         ListSetByWorkoutExerciseId,
       ],
     }).compile();
