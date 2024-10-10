@@ -14,7 +14,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   Button,
-  Droppable,
   SortableItem,
 } from "@workout/ui";
 import {
