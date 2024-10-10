@@ -14,7 +14,24 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   Button,
+  Droppable,
+  SortableItem,
 } from "@workout/ui";
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { PlusCircle, Trash2 } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -23,6 +40,7 @@ import Error from "~/components/error";
 import Loading from "~/components/loading";
 import WorkoutExerciseSets from "~/components/workout-exercise-sets";
 import {
+  useChangeWorkoutExercisesOrders,
   useDeleteWorkoutExercise,
   useGetWorkout,
   useGetWorkoutExercises,
@@ -37,6 +55,13 @@ type DeleteWorkoutExerciseDialogState = {
 
 const WorkoutDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   const [isAddWorkoutExerciseModalOpen, setIsAddWorkoutExerciseModalOpen] =
     useState(false);
   const [deleteWorkoutExerciseDialog, setDeleteWorkoutExerciseDialog] =
@@ -48,6 +73,8 @@ const WorkoutDetailsPage = () => {
   const { data: workoutExerciseData, isLoading: isLoadingWorkoutExercises } =
     useGetWorkoutExercises({ workoutId: id });
   const { deleteWorkoutExerciseMutation } = useDeleteWorkoutExercise();
+  const { changeWorkoutExercisesOrdersMutation } =
+    useChangeWorkoutExercisesOrders();
   const { user } = useUser();
   const isOwner = useMemo(() => user?.id === workout?.userId, [user, workout]);
 
@@ -64,6 +91,28 @@ const WorkoutDetailsPage = () => {
       isOpen: false,
       workoutExerciseId: undefined,
     });
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const items = workoutExerciseData.items;
+    if (!items) {
+      return;
+    }
+
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      const oldIndex = items.findIndex((item) => item.id === active.id);
+      const newIndex = items.findIndex((item) => item.id === over?.id);
+
+      const updatedItems = arrayMove(items, oldIndex, newIndex).map(
+        (item, index) => ({
+          id: item.id,
+          order: index,
+        })
+      );
+      changeWorkoutExercisesOrdersMutation({ items: updatedItems });
+    }
   };
 
   if (isError) {
@@ -89,42 +138,56 @@ const WorkoutDetailsPage = () => {
           {isLoadingWorkoutExercises ? (
             <Loading />
           ) : (
-            <div className="px-4">
-              {workoutExerciseData?.items.map((workoutExercise) => (
-                <div
-                  key={workoutExercise.id}
-                  className="flex items-center justify-between space-x-6"
-                >
-                  <div className="w-full">
-                    <Accordion type="single" collapsible>
-                      <AccordionItem value="item-1">
-                        <AccordionTrigger>
-                          {workoutExercise.exercise?.name}
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          <WorkoutExerciseSets
-                            workoutExerciseId={workoutExercise.id}
-                            isOwner={isOwner}
-                          />
-                        </AccordionContent>
-                      </AccordionItem>
-                    </Accordion>
-                  </div>
-                  {isOwner ? (
-                    <Button
-                      onClick={() =>
-                        setDeleteWorkoutExerciseDialog({
-                          workoutExerciseId: workoutExercise.id,
-                          isOpen: true,
-                        })
-                      }
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={workoutExerciseData?.items || []}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="px-4">
+                  {workoutExerciseData?.items.map((workoutExercise) => (
+                    <SortableItem
+                      key={workoutExercise.id}
+                      id={workoutExercise.id}
+                      className="w-full"
                     >
-                      <Trash2 />
-                    </Button>
-                  ) : null}
+                      <div className="flex items-center justify-between space-x-6 w-full">
+                        <div className="w-full">
+                          <Accordion type="single" collapsible>
+                            <AccordionItem value="item-1">
+                              <AccordionTrigger>
+                                {workoutExercise.exercise?.name}
+                              </AccordionTrigger>
+                              <AccordionContent>
+                                <WorkoutExerciseSets
+                                  workoutExerciseId={workoutExercise.id}
+                                  isOwner={isOwner}
+                                />
+                              </AccordionContent>
+                            </AccordionItem>
+                          </Accordion>
+                        </div>
+                        {isOwner ? (
+                          <Button
+                            onClick={() =>
+                              setDeleteWorkoutExerciseDialog({
+                                workoutExerciseId: workoutExercise.id,
+                                isOpen: true,
+                              })
+                            }
+                          >
+                            <Trash2 />
+                          </Button>
+                        ) : null}
+                      </div>
+                    </SortableItem>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </SortableContext>
+            </DndContext>
           )}
         </div>
         {isOwner ? (
