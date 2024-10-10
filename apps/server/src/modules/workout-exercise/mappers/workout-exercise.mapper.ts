@@ -7,6 +7,7 @@ import { WorkoutExerciseDomainError } from '~/modules/workout-exercise/domain/er
 import WorkoutExerciseDomain from '~/modules/workout-exercise/domain/workout-exercise.domain';
 import { WorkoutExercise as WorkoutExerciseEntity } from '~/modules/workout-exercise/entities/workout-exercise.entity';
 import WorkoutDomain from '~/modules/workout/domain/workout.domain';
+import { Workout } from '~/modules/workout/entities/workout.entity';
 import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
 import { Mapper } from '~/shared/domain/mapper';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
@@ -83,7 +84,7 @@ export default class WorkoutExerciseMapper
   public toPersistence(
     item: WorkoutExerciseDomain,
   ): Partial<WorkoutExerciseEntity> {
-    const { id, workoutId, exerciseId, order } = item;
+    const { id, workoutDomain, workoutId, exerciseId, order } = item;
 
     const workoutExerciseEntity: Partial<WorkoutExerciseEntity> = {
       id: id?.toString(),
@@ -91,6 +92,11 @@ export default class WorkoutExerciseMapper
       exerciseId,
       order: order.value,
     };
+    if (workoutDomain) {
+      workoutExerciseEntity.workout = this.workoutMapper.toPersistence(
+        workoutDomain,
+      ) as Workout;
+    }
 
     return workoutExerciseEntity;
   }
