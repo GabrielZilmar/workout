@@ -11,10 +11,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '~/guards/auth.guard';
+import { ChangeManySetOrders } from '~/modules/set/domain/use-cases/change-many-set-orders';
 import { CreateSet } from '~/modules/set/domain/use-cases/create-set';
 import { DeleteSet } from '~/modules/set/domain/use-cases/delete-set';
 import { ListSetByWorkoutExerciseId } from '~/modules/set/domain/use-cases/list-set-by-workout-exercise';
 import { UpdateSet } from '~/modules/set/domain/use-cases/update-set';
+import { ChangeManySetOrdersBodyDTO } from '~/modules/set/dto/change-many-set-orders.dto';
 import { CreateSetDto } from '~/modules/set/dto/create-set.dto';
 import { DeleteSetParamsDto } from '~/modules/set/dto/delete-set.dto';
 import { ListSetByWorkoutExerciseIdDto } from '~/modules/set/dto/list-set-by-workout-exercise-id.dto';
@@ -33,6 +35,7 @@ export class SetController {
     private readonly listSetByWorkoutExerciseId: ListSetByWorkoutExerciseId,
     private readonly updateSet: UpdateSet,
     private readonly deleteSet: DeleteSet,
+    private readonly changeManySetOrders: ChangeManySetOrders,
   ) {}
 
   @Post()
@@ -52,6 +55,18 @@ export class SetController {
       ...query,
       userId,
       workoutExerciseId,
+    });
+  }
+
+  @Patch('/update-set-orders')
+  updateManySetOrders(
+    @Req() req: RequestWithUser,
+    @Body() body: ChangeManySetOrdersBodyDTO,
+  ) {
+    const userId = req.user.id;
+    return this.changeManySetOrders.execute({
+      ...body,
+      userId,
     });
   }
 

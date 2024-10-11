@@ -7,6 +7,8 @@ export class WorkoutDomainError extends Error {
     userNotFound: (userId: string) =>
       `Could not create workout. User ${userId} not found`,
     missingProps: 'Missing props to create workout. Required: name, userId',
+    invalidWorkoutExercise:
+      'Invalid workout exercise. This workout exercise belongs to another workout',
   };
 
   constructor(message: string, code: number) {

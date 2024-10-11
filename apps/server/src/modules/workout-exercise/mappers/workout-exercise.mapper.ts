@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import ExerciseDomain from '~/modules/exercise/domain/exercise.domain';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
 import { SetDto } from '~/modules/set/dto/set.dto';
@@ -7,6 +7,7 @@ import { WorkoutExerciseDomainError } from '~/modules/workout-exercise/domain/er
 import WorkoutExerciseDomain from '~/modules/workout-exercise/domain/workout-exercise.domain';
 import { WorkoutExercise as WorkoutExerciseEntity } from '~/modules/workout-exercise/entities/workout-exercise.entity';
 import WorkoutDomain from '~/modules/workout/domain/workout.domain';
+import { Workout } from '~/modules/workout/entities/workout.entity';
 import WorkoutMapper from '~/modules/workout/mappers/workout.mapper';
 import { Mapper } from '~/shared/domain/mapper';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
@@ -19,6 +20,7 @@ export default class WorkoutExerciseMapper
   constructor(
     private readonly workoutMapper: WorkoutMapper,
     private readonly exerciseMapper: ExerciseMapper,
+    @Inject(forwardRef(() => SetMapper))
     private readonly setMapper: SetMapper,
   ) {}
 
@@ -50,7 +52,7 @@ export default class WorkoutExerciseMapper
     const setDtos: SetDto[] = [];
     if (sets?.length) {
       for (const set of sets) {
-        const setDomain = this.setMapper.toDomain(set);
+        const setDomain = await this.setMapper.toDomain(set);
         if (setDomain.isLeft()) {
           return left(setDomain.value);
         }
@@ -83,7 +85,7 @@ export default class WorkoutExerciseMapper
   public toPersistence(
     item: WorkoutExerciseDomain,
   ): Partial<WorkoutExerciseEntity> {
-    const { id, workoutId, exerciseId, order } = item;
+    const { id, workoutDomain, workoutId, exerciseId, order } = item;
 
     const workoutExerciseEntity: Partial<WorkoutExerciseEntity> = {
       id: id?.toString(),
@@ -91,6 +93,11 @@ export default class WorkoutExerciseMapper
       exerciseId,
       order: order.value,
     };
+    if (workoutDomain) {
+      workoutExerciseEntity.workout = this.workoutMapper.toPersistence(
+        workoutDomain,
+      ) as Workout;
+    }
 
     return workoutExerciseEntity;
   }

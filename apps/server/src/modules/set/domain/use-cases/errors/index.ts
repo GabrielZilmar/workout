@@ -9,6 +9,7 @@ export class SetUseCaseError extends Error {
       `Workout with id: ${workoutId} does not belong to the user. User can't create set for this workout`,
     workoutExerciseNotFound: (workoutExerciseId: string) =>
       `Workout exercise with id: ${workoutExerciseId} was not found`,
+    cannotUpdateOthersWorkout: 'Cannot update Sets from others workout.',
   };
 
   constructor(message: string, code: number, payload?: unknown) {
