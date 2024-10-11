@@ -19,6 +19,7 @@ import {
 } from "@workout/ui";
 import { cn } from "@workout/ui/utils";
 import { PlusIcon, Trash2 } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import ReactPlayer from "react-player/youtube";
 import ExerciseDialog from "~/components/dialogs/exercise";
@@ -33,6 +34,7 @@ import {
 } from "~/hooks";
 import GlobalLayout from "~/layouts/global.layout";
 import { debounce } from "~/lib/utils";
+import { getYouTubeThumbnail } from "~/shared/youtube";
 import { Exercise } from "~/types/exercise";
 
 type ExerciseDialogState = {
@@ -246,10 +248,22 @@ const ExercisesPage: React.FC = () => {
               <CardContent>
                 {exercise?.tutorialUrl ? (
                   <ReactPlayer
+                    light={
+                      <Image
+                        width={1024}
+                        height={0}
+                        style={{ width: "100%", height: 264 }}
+                        src={getYouTubeThumbnail(exercise.tutorialUrl)}
+                        alt="Exercise Video Thumbnail"
+                      />
+                    }
                     height={264}
                     width="100%"
-                    url={exercise.tutorialUrl || ""}
+                    url={exercise.tutorialUrl}
                     controls
+                    config={{
+                      playerVars: { showinfo: 1, modestbranding: 1 },
+                    }}
                   />
                 ) : null}
               </CardContent>
