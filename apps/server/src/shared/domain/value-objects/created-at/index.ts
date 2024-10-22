@@ -1,4 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
+import moment from 'moment';
 import { ValueObject } from '~/shared/domain/value-object';
 import { SharedValueObjectError } from '~/shared/domain/value-objects/errors';
 import { Either, left, right } from '~/shared/either';
@@ -31,6 +32,10 @@ export default class CreatedAt extends ValueObject<CreatedAtProps> {
   public getDateValue(): Date {
     const value = this.props.value;
     return typeof value === 'string' ? new Date(value) : value;
+  }
+
+  public getDateStringValue(): string {
+    return moment(this.value).format('YYYY-MM-DD');
   }
 
   public static create(
