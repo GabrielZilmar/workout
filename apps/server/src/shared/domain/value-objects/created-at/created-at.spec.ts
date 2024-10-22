@@ -31,7 +31,7 @@ describe('CreatedAt value object', () => {
       'isValid',
     );
 
-    const value = new Date().toDateString();
+    const value = new Date().toISOString();
     const createdAt = CreatedAt.create({ value });
 
     expect(createdAt.value).toBeInstanceOf(CreatedAt);

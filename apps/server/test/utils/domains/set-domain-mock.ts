@@ -20,7 +20,7 @@ export class SetDomainMock {
   > = {
     workoutExerciseId: uuid(),
     order: 0,
-    createdAt: new Date().toDateString(),
+    createdAt: new Date().toISOString(),
     numReps: 10,
     setWeight: 20,
     numDrops: 3,

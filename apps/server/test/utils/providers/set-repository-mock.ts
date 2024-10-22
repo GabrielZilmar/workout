@@ -32,6 +32,9 @@ const getSetRepositoryProvider = ({
           items: [setDomain],
           count: 1,
         });
+        setRepository.findProgressHistory = jest
+          .fn()
+          .mockResolvedValue([setDomain]);
         setRepository.update = jest.fn().mockResolvedValue(right(true));
         setRepository.delete = jest.fn().mockResolvedValue(right(true));
       }
