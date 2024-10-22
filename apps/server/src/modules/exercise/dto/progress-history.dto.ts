@@ -21,9 +21,9 @@ export class ProgressHistoryQueryDTO {
   endDate?: string;
 }
 
-type Sales = {
+type Progress = {
   [date: string]: number;
 };
 export class ProgressHistoryDTO {
-  sales: Sales[];
+  progress: Progress[];
 }

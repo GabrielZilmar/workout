@@ -88,7 +88,7 @@ describe('Progress history', () => {
     });
 
     expect(progress).toEqual({
-      sales: [
+      progress: [
         {
           [setDomain.createdAt.getDateStringValue()]: setDomain.setWeight.value,
         },
