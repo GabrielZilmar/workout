@@ -8,6 +8,7 @@ import NumDrops from '~/modules/set/domain/value-objects/num-drops';
 import NumReps from '~/modules/set/domain/value-objects/num-reps';
 import SetWeight from '~/modules/set/domain/value-objects/set-weight';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
+import CreatedAt from '~/shared/domain/value-objects/created-at';
 import SetOrder from '~/shared/domain/value-objects/order';
 
 type MountSetDomainParams = Partial<SetDomainCreateParams> &
@@ -19,6 +20,7 @@ export class SetDomainMock {
   > = {
     workoutExerciseId: uuid(),
     order: 0,
+    createdAt: new Date().toDateString(),
     numReps: 10,
     setWeight: 20,
     numDrops: 3,
@@ -33,11 +35,15 @@ export class SetDomainMock {
 
   public static getSetDomainProps({
     workoutExerciseId,
+    createdAt,
     order,
     numReps,
     setWeight,
     numDrops,
   }: Partial<SetDomainCreateParams> = {}): SetDomainProps {
+    const createdAtValueObject = CreatedAt.create({
+      value: createdAt ?? this.setMockCreateParams.createdAt,
+    }).value as CreatedAt;
     const orderValueObject = SetOrder.create({
       value: order ?? this.setMockCreateParams.order,
     }).value as SetOrder;
@@ -54,6 +60,7 @@ export class SetDomainMock {
     return {
       workoutExerciseId:
         workoutExerciseId ?? this.setMockCreateParams.workoutExerciseId,
+      createdAt: createdAtValueObject,
       numReps: numRepsValueObject,
       setWeight: setWeightValueObject,
       numDrops: numDropsValueObject,
