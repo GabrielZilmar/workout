@@ -7,6 +7,9 @@ import { SetDto } from '~/modules/set/dto/set.dto';
 import WorkoutExerciseDomain from '~/modules/workout-exercise/domain/workout-exercise.domain';
 import { AggregateRoot } from '~/shared/domain/aggregate-root';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
+import CreatedAt, {
+  CreatedAtValueType,
+} from '~/shared/domain/value-objects/created-at';
 import SetOrder from '~/shared/domain/value-objects/order';
 import { Either, left, right } from '~/shared/either';
 
@@ -16,11 +19,13 @@ export type SetDomainProps = {
   numReps: NumReps;
   setWeight: SetWeight;
   numDrops: NumDrops;
+  createdAt: CreatedAt;
   workoutExerciseDomain?: WorkoutExerciseDomain;
 };
 
 export type SetDomainCreateParams = {
   workoutExerciseId: string;
+  createdAt?: CreatedAtValueType;
   workoutExerciseDomain?: WorkoutExerciseDomain;
   order?: number | null;
   numReps?: number;
@@ -37,6 +42,10 @@ export default class SetDomain extends AggregateRoot<SetDomainProps> {
 
   get workoutExerciseDomain(): WorkoutExerciseDomain | undefined {
     return this.props.workoutExerciseDomain;
+  }
+
+  get createdAt(): CreatedAt {
+    return this.props.createdAt;
   }
 
   get order(): SetOrder {
@@ -64,6 +73,7 @@ export default class SetDomain extends AggregateRoot<SetDomainProps> {
     numReps,
     setWeight,
     numDrops,
+    createdAt,
   }: SetDomainUpdateParams): Either<SetDomainError, SetDomain> {
     if (order !== undefined) {
       const orderOrError = SetOrder.create({ value: order });
@@ -99,6 +109,15 @@ export default class SetDomain extends AggregateRoot<SetDomainProps> {
       this.props.numDrops = numDropsOrError.value;
     }
 
+    if (createdAt !== undefined) {
+      const createdAtOrError = CreatedAt.create({ value: createdAt });
+      if (createdAtOrError.isLeft()) {
+        return left(createdAtOrError.value);
+      }
+
+      this.props.createdAt = createdAtOrError.value;
+    }
+
     return right(this);
   }
 
@@ -106,6 +125,13 @@ export default class SetDomain extends AggregateRoot<SetDomainProps> {
     order = null,
     ...props
   }: SetDomainCreateParams): Either<SetDomainError, SetDomainProps> {
+    const createdAtOrError = CreatedAt.create({
+      value: props.createdAt || new Date(),
+    });
+    if (createdAtOrError.isLeft()) {
+      return left(createdAtOrError.value);
+    }
+
     const orderOrError = SetOrder.create({ value: order });
 
     if (orderOrError && orderOrError.isLeft()) {
@@ -131,6 +157,7 @@ export default class SetDomain extends AggregateRoot<SetDomainProps> {
 
     const setDomainProps: SetDomainProps = {
       order: orderOrError.value,
+      createdAt: createdAtOrError.value,
       workoutExerciseId: props.workoutExerciseId,
       workoutExerciseDomain: props.workoutExerciseDomain,
       numReps: numRepsOrError.value,

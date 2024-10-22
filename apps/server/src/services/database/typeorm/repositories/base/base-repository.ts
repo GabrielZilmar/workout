@@ -168,8 +168,8 @@ export abstract class BaseRepository<T extends { id: string }, D>
   ): Promise<{ items: D[]; count: number }> {
     const [items, count] = await this.repository.findAndCount({
       ...options,
-      skip: options?.skip || 0,
-      take: options?.take || 10,
+      skip: options?.skip,
+      take: options?.take,
     });
 
     const itemsToDomain: D[] = [];

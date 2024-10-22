@@ -22,6 +22,12 @@ type FindByWorkoutExerciseIdResult = Promise<{
   items: SetDomain[];
   count: number;
 }>;
+type FindProgressHistoryParams = {
+  exerciseId: string;
+  userId: string;
+  startDate?: string;
+  endDate?: string;
+};
 
 @Injectable()
 export default class SetRepository extends BaseRepository<Set, SetDomain> {
@@ -80,5 +86,51 @@ export default class SetRepository extends BaseRepository<Set, SetDomain> {
     }
 
     return { items: itemsToDomain, count };
+  }
+
+  async findProgressHistory({
+    exerciseId,
+    userId,
+    startDate,
+    endDate,
+  }: FindProgressHistoryParams) {
+    const query = this.repository
+      .createQueryBuilder('set')
+      .leftJoin('set.workoutExercise', 'we')
+      .leftJoin('we.workout', 'w')
+      .innerJoin(
+        (qb) =>
+          qb
+            .subQuery()
+            .select('MAX(setSub.weight)', 'maxWeight')
+            .addSelect('DATE(setSub.createdAt)', 'createdDate')
+            .from(Set, 'setSub')
+            .leftJoin('setSub.workoutExercise', 'weSub')
+            .leftJoin('weSub.workout', 'wSub')
+            .where('weSub.exerciseId = :exerciseId')
+            .andWhere('wSub.userId = :userId')
+            .groupBy('DATE(setSub.createdAt)'),
+        'maxWeightSub',
+        '"maxWeightSub"."createdDate" = DATE(set.createdAt) AND "maxWeightSub"."maxWeight" = set.weight',
+      )
+      .where('we.exerciseId = :exerciseId', { exerciseId })
+      .andWhere('w.userId = :userId', { userId });
+    if (startDate) {
+      query.andWhere('DATE(set.createdAt) >= :startDate', { startDate });
+    }
+    if (endDate) {
+      query.andWhere('DATE(set.createdAt) <= :endDate', { endDate });
+    }
+    const items = await query.getMany();
+
+    const itemsToDomain: SetDomain[] = [];
+    for (const item of items) {
+      const itemToDomain = await this.mapper.toDomain(item);
+
+      if (itemToDomain.isRight()) {
+        itemsToDomain.push(itemToDomain.value);
+      }
+    }
+    return itemsToDomain;
   }
 }

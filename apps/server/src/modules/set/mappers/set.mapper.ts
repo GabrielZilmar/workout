@@ -18,6 +18,7 @@ export default class SetMapper implements Mapper<SetDomain, Partial<Set>> {
   public async toDomain(raw: Set): Promise<Either<SetDomainError, SetDomain>> {
     const {
       id,
+      createdAt,
       workoutExerciseId,
       workoutExercise,
       order,
@@ -44,6 +45,7 @@ export default class SetMapper implements Mapper<SetDomain, Partial<Set>> {
       {
         workoutExerciseId,
         workoutExerciseDomain,
+        createdAt,
         order,
         numReps,
         setWeight: weight,
@@ -64,6 +66,7 @@ export default class SetMapper implements Mapper<SetDomain, Partial<Set>> {
       id,
       workoutExerciseDomain,
       workoutExerciseId,
+      createdAt,
       order,
       numReps,
       setWeight,
@@ -73,6 +76,7 @@ export default class SetMapper implements Mapper<SetDomain, Partial<Set>> {
     const setEntity: Partial<Set> = {
       id: id?.toString(),
       workoutExerciseId,
+      createdAt: createdAt.getDateValue(),
       order: order.value,
       numReps: numReps.value,
       weight: setWeight.value,

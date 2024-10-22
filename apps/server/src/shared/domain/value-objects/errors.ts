@@ -4,6 +4,7 @@ export class SharedValueObjectError extends Error {
   public readonly code: number;
   public static messages = {
     invalidOrder: 'The order must be greater than or equal 0',
+    invalidCreatedAt: 'Created At must to be a valid date',
   };
 
   constructor(message: string, code: number) {
