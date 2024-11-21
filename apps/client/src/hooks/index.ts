@@ -27,3 +27,4 @@ export * from "./useRecoverPassword";
 export * from "./useUpdateUser";
 export * from "./useChangeWorkoutExercisesOrders";
 export * from "./useUpdateManySetOrders";
+export * from "./useProgressHistory";
