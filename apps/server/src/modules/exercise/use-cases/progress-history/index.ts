@@ -45,7 +45,8 @@ export class ExerciseProgress
 
     return {
       progress: sets.map((set) => ({
-        [set.createdAt.getDateStringValue()]: set.setWeight.value,
+        date: set.createdAt.getDateStringValue(),
+        weight: set.setWeight.value,
       })),
     };
   }

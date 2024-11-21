@@ -22,7 +22,8 @@ export class ProgressHistoryQueryDTO {
 }
 
 type Progress = {
-  [date: string]: number;
+  date: string;
+  weight: number;
 };
 export class ProgressHistoryDTO {
   progress: Progress[];
