@@ -90,7 +90,8 @@ describe('Progress history', () => {
     expect(progress).toEqual({
       progress: [
         {
-          [setDomain.createdAt.getDateStringValue()]: setDomain.setWeight.value,
+          date: setDomain.createdAt.getDateStringValue(),
+          weight: setDomain.setWeight.value,
         },
       ],
     });

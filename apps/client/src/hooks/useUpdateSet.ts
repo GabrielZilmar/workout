@@ -25,6 +25,9 @@ export const useUpdateSet = () => {
       queryClient.invalidateQueries({
         queryKey: ["list-infinite-sets"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["progress-history"],
+      });
 
       enqueueSnackbar("Set updated!", { variant: "success" });
     },
