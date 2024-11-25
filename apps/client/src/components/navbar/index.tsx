@@ -24,6 +24,7 @@ const navigation = [
   { name: "Home", href: ALL_ROUTES.home },
   { name: "Public Workouts", href: ALL_ROUTES.publicWorkouts },
   { name: "Exercises", href: ALL_ROUTES.exercises },
+  { name: "Progress", href: ALL_ROUTES.progress },
 ];
 
 function classNames(...classes: string[]) {

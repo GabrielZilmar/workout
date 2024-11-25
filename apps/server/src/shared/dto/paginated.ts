@@ -5,10 +5,10 @@ export class PaginatedDto {
   @IsNumber()
   @Type(() => Number)
   @IsOptional()
-  skip?: number;
+  skip?: number = 0;
 
   @IsNumber()
   @Type(() => Number)
   @IsOptional()
-  take?: number;
+  take?: number = 10;
 }

@@ -15,6 +15,7 @@ type PrivateRoute = {
   exercises: string;
   workoutDetails: GoToRouteFunction;
   userSettings: string;
+  progress: string;
 };
 
 type AllRoutes = PublicRoute & PrivateRoute;
@@ -34,6 +35,7 @@ export const PRIVATE_ROUTES: PrivateRoute = {
   exercises: "/exercises",
   workoutDetails: (id: string) => `/workout/${id}`,
   userSettings: "/user/settings",
+  progress: "/progress",
 };
 
 export const ALL_ROUTES: AllRoutes = {

@@ -22,3 +22,4 @@ export * from "./scroll-area";
 export * from "./textarea";
 export * from "./select";
 export * from "./drag-and-drop";
+export * from "./chart";
