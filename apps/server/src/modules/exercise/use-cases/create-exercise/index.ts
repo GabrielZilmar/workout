@@ -57,6 +57,8 @@ export class CreateExercise
       );
     }
 
+    // TODO: Map translations and create
+
     const exerciseDto = exerciseCreatedOrError.value.toDto();
     if (exerciseDto.isLeft()) {
       throw new HttpException(

@@ -1,4 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
+import ExerciseTranslationDomain from '~/modules/exercise-translations/domain/exercise-translation.domain';
 import { ExerciseDomainError } from '~/modules/exercise/domain/errors';
 import ExerciseInfo from '~/modules/exercise/domain/value-objects/info';
 import ExerciseName from '~/modules/exercise/domain/value-objects/name';
@@ -16,6 +17,7 @@ export type ExerciseDomainProps = {
   tutorialUrl: ExerciseTutorialUrl | null;
   muscleId: string;
   muscleDomain?: MuscleDomain;
+  translations?: ExerciseTranslationDomain[];
 };
 
 export type ExerciseDomainCreateParams = {
@@ -24,6 +26,7 @@ export type ExerciseDomainCreateParams = {
   info?: string;
   tutorialUrl?: string;
   muscleDomain?: MuscleDomain;
+  translations?: ExerciseTranslationDomain[];
 };
 
 export type ExerciseDomainUpdateParams = Partial<ExerciseDomainCreateParams>;
@@ -47,6 +50,10 @@ export default class ExerciseDomain extends AggregateRoot<ExerciseDomainProps> {
 
   get muscleDomain(): MuscleDomain | undefined {
     return this.props.muscleDomain;
+  }
+
+  get translations(): ExerciseTranslationDomain[] {
+    return this.props.translations || [];
   }
 
   public toDto() {
@@ -107,6 +114,10 @@ export default class ExerciseDomain extends AggregateRoot<ExerciseDomainProps> {
       this.props.muscleDomain = muscleDomain;
     }
 
+    if (this.translations) {
+      this.props.translations = this.translations;
+    }
+
     return right(this);
   }
 
@@ -146,6 +157,7 @@ export default class ExerciseDomain extends AggregateRoot<ExerciseDomainProps> {
       info: infoValueObject,
       tutorialUrl: tutorialUrlValueObject,
       muscleDomain: props.muscleDomain,
+      translations: props.translations,
     };
     return right(exerciseDomainProps);
   }

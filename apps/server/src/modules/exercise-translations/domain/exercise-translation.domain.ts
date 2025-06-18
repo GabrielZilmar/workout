@@ -3,6 +3,7 @@ import { ExerciseTranslationDomainError } from '~/modules/exercise-translations/
 import ExerciseTranslationInfo from '~/modules/exercise-translations/domain/value-objects/info';
 import ExerciseTranslationLanguage from '~/modules/exercise-translations/domain/value-objects/language';
 import ExerciseTranslationName from '~/modules/exercise-translations/domain/value-objects/name';
+import { ExerciseTranslationDTO } from '~/modules/exercise-translations/dto/exercise-translation.dto';
 import { Languages } from '~/modules/exercise-translations/entities/exercise-translation.entity';
 import { AggregateRoot } from '~/shared/domain/aggregate-root';
 import { UniqueEntityID } from '~/shared/domain/unique-entity-id';
@@ -37,6 +38,10 @@ export default class ExerciseTranslationDomain extends AggregateRoot<ExerciseTra
 
   get exerciseId(): string {
     return this.props.exerciseId;
+  }
+
+  public toDto() {
+    return ExerciseTranslationDTO.domainToDto(this);
   }
 
   private static mountValueObjects(
