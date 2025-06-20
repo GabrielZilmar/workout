@@ -70,6 +70,7 @@ export default class ExerciseDomain extends AggregateRoot<ExerciseDomainProps> {
     tutorialUrl,
     muscleId,
     muscleDomain,
+    translations,
   }: ExerciseDomainUpdateParams): Either<ExerciseDomainError, ExerciseDomain> {
     if (name) {
       const nameOrError = ExerciseName.create({ value: name });
@@ -114,8 +115,8 @@ export default class ExerciseDomain extends AggregateRoot<ExerciseDomainProps> {
       this.props.muscleDomain = muscleDomain;
     }
 
-    if (this.translations) {
-      this.props.translations = this.translations;
+    if (translations?.length) {
+      this.props.translations = translations;
     }
 
     return right(this);
