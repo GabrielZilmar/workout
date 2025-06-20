@@ -19,7 +19,9 @@ describe('Language Value Object', () => {
     const randomLanguage = LANGUAGE_ENUM[
       Math.floor(Math.random() * languageEnumLength)
     ] as Languages;
-    const language = ExerciseTranslationLanguage.create(randomLanguage);
+    const language = ExerciseTranslationLanguage.create({
+      value: randomLanguage,
+    });
     expect(language.isRight()).toBeTruthy();
     expect(language.value).toBeInstanceOf(ExerciseTranslationLanguage);
     expect(isValidSpy).toHaveBeenCalled();
@@ -33,7 +35,9 @@ describe('Language Value Object', () => {
       'isValid',
     );
     const invalidLanguage = 'invalid_language' as Languages;
-    const language = ExerciseTranslationLanguage.create(invalidLanguage);
+    const language = ExerciseTranslationLanguage.create({
+      value: invalidLanguage,
+    });
     expect(language.isLeft()).toBeTruthy();
     expect(language.value).toBeInstanceOf(Error);
     expect(isValidSpy).toHaveBeenCalled();

@@ -14,7 +14,7 @@ type MountExerciseDomainParams = Partial<ExerciseDomainCreateParams> &
 
 export class ExerciseDomainMock {
   public static readonly exerciseMockCreateParams: Required<
-    Omit<ExerciseDomainCreateParams, 'muscleDomain'>
+    Omit<ExerciseDomainCreateParams, 'muscleDomain' | 'translations'>
   > = {
     name: 'Exercise Test 1',
     muscleId: uuid(),

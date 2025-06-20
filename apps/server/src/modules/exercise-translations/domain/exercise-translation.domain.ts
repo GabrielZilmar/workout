@@ -61,9 +61,9 @@ export default class ExerciseTranslationDomain extends AggregateRoot<ExerciseTra
       }
       infoValueObject = infoOrError.value;
     }
-    const languageValueObjectOrError = ExerciseTranslationLanguage.create(
-      props.language,
-    );
+    const languageValueObjectOrError = ExerciseTranslationLanguage.create({
+      value: props.language,
+    });
     if (languageValueObjectOrError.isLeft()) {
       return left(languageValueObjectOrError.value);
     }

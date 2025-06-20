@@ -23,9 +23,12 @@ export default class ExerciseTranslationLanguage extends ValueObject<ExerciseTra
     return LANGUAGE_ENUM.includes(language);
   }
 
-  public static create(
-    value: Languages,
-  ): Either<ExerciseTranslationDomainError, ExerciseTranslationLanguage> {
+  public static create({
+    value,
+  }: ExerciseTranslationLanguageProps): Either<
+    ExerciseTranslationDomainError,
+    ExerciseTranslationLanguage
+  > {
     if (!this.isValid(value)) {
       return left(
         ExerciseTranslationDomainError.create(
