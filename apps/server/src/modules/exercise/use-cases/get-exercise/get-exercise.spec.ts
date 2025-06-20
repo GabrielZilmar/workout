@@ -8,6 +8,7 @@ import {
 import { Test, TestingModule } from '@nestjs/testing';
 import { ExerciseDomainMock } from 'test/utils/domains/exercise-domain-mock';
 import getExerciseRepositoryProvider from 'test/utils/providers/exercise-repository-mock';
+import ExerciseTranslationMapper from '~/modules/exercise-translations/mappers/exercise-translation.mapper';
 import ExerciseDomain from '~/modules/exercise/domain/exercise.domain';
 import { ExerciseDtoError } from '~/modules/exercise/dto/errors';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
@@ -48,6 +49,7 @@ describe('GetExercise use case', () => {
         exerciseRepositoryProvider,
         ExerciseMapper,
         MuscleMapper,
+        ExerciseTranslationMapper,
         GetExercise,
       ],
     }).compile();

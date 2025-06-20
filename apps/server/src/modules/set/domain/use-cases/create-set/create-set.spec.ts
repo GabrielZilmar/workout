@@ -11,6 +11,7 @@ import { WorkoutDomainMock } from 'test/utils/domains/workout-domain-mock';
 import { WorkoutExerciseDomainMock } from 'test/utils/domains/workout-exercise-domain.mock';
 import getSetRepositoryProvider from 'test/utils/providers/set-repository-mock';
 import getWorkoutExerciseRepositoryProvider from 'test/utils/providers/workout-exercise-repository-mock';
+import ExerciseTranslationMapper from '~/modules/exercise-translations/mappers/exercise-translation.mapper';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
 import MuscleMapper from '~/modules/muscle/mappers/muscle.mapper';
 import { SetDomainError } from '~/modules/set/domain/errors';
@@ -80,6 +81,7 @@ describe('CreateSet use case', () => {
         WorkoutExerciseMapper,
         WorkoutMapper,
         ExerciseMapper,
+        ExerciseTranslationMapper,
         UserMapper,
         MuscleMapper,
         CreateSet,

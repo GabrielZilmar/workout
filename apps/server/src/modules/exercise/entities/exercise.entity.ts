@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ExerciseTranslation } from '~/modules/exercise-translations/entities/exercise-translation.entity';
 import { Muscle } from '~/modules/muscle/entities/muscle.entity';
 import { WorkoutExercise } from '~/modules/workout-exercise/entities/workout-exercise.entity';
 
@@ -37,6 +38,12 @@ export class Exercise {
     (workoutExercise) => workoutExercise.exercise,
   )
   workoutExercises: WorkoutExercise[];
+
+  @OneToMany(
+    () => ExerciseTranslation,
+    (exerciseTranslation) => exerciseTranslation.exercise,
+  )
+  translations: ExerciseTranslation[];
 
   @CreateDateColumn()
   createdAt: Date;
