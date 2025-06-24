@@ -8,6 +8,7 @@ import {
   LanguageMap,
   Languages,
 } from '~/modules/exercise-translations/entities/exercise-translation.entity';
+import UtilFormatter from '~/shared/utils/formatter';
 
 type ExerciseTranslationDomainPublicClass = ExerciseTranslationDomain & {
   props: ExerciseTranslationDomainProps;
@@ -104,5 +105,37 @@ describe('ExerciseTranslationDomain', () => {
 
     expect(domain.info).toBeNull();
     expect(domain.name.value).toBe(validParams.name);
+  });
+
+  it('should update exercise translation', () => {
+    const domain = ExerciseTranslationDomain.create(validParams);
+    let value = domain.value as ExerciseTranslationDomain;
+    const updatedName = 'updated-name';
+    const updatedInfo = 'updated-info';
+    const updatedLanguage = LanguageMap.SPANISH;
+    value = value.update({
+      name: updatedName,
+      info: updatedInfo,
+      language: updatedLanguage,
+    }).value as ExerciseTranslationDomain;
+    expect(value).toBeInstanceOf(ExerciseTranslationDomain);
+    expect(value.name.value).toBe(UtilFormatter.capitalize(updatedName));
+    expect(value.info?.value).toBe(updatedInfo);
+    expect(value.language.value).toBe(updatedLanguage);
+  });
+
+  it('should not update exercise translation if can not create a VO', () => {
+    const domain = ExerciseTranslationDomain.create(validParams);
+    const value = domain.value as ExerciseTranslationDomain;
+
+    const invalidName = 'a';
+    const updatedValue = value.update({ name: invalidName });
+    expect(updatedValue.isLeft()).toBeTruthy();
+    expect(updatedValue.value).toEqual(
+      ExerciseTranslationDomainError.create(
+        ExerciseTranslationDomainError.messages.invalidName,
+        HttpStatus.BAD_REQUEST,
+      ),
+    );
   });
 });

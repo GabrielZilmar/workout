@@ -17,6 +17,11 @@ type PreventDuplicateParams = {
   language?: Languages;
 };
 
+type FindOneByIdAndExerciseIdParams = {
+  id: string;
+  exerciseId: string;
+};
+
 @Injectable()
 export default class ExerciseTranslationRepository extends BaseRepository<
   ExerciseTranslation,
@@ -98,5 +103,14 @@ export default class ExerciseTranslationRepository extends BaseRepository<
     } catch (err) {
       return left(RepositoryError.create((err as Error).message));
     }
+  }
+
+  public async findOneByIdAndExerciseId({
+    id,
+    exerciseId,
+  }: FindOneByIdAndExerciseIdParams): Promise<ExerciseTranslationDomain | null> {
+    return this.findOne({
+      where: { id, exerciseId },
+    });
   }
 }

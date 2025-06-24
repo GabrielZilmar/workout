@@ -38,6 +38,10 @@ const getExerciseTranslationRepositoryProvider = ({
           .fn()
           .mockResolvedValue(exerciseTranslationDomain);
 
+        exerciseTranslationRepository.findOneByIdAndExerciseId = jest
+          .fn()
+          .mockResolvedValue(exerciseTranslationDomain);
+
         exerciseTranslationRepository.update = jest
           .fn()
           .mockResolvedValue(right(true));

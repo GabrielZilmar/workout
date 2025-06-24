@@ -9,6 +9,7 @@ export class ExerciseTranslationDomainError extends Error {
     invalidName: `Invalid exercise translation name. Name can not be an empty string and min length is ${MIN_EXERCISE_TRANSLATION_NAME_LENGTH}`,
     invalidInfo: 'Invalid info, info can not be an empty string',
     invalidLanguage: 'Invalid language.',
+    translationNotFound: 'Translation was not found.',
   };
 
   constructor(message: string, code: number) {

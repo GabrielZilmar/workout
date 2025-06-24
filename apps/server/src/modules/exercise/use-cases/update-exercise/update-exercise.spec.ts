@@ -2,6 +2,9 @@ import { HttpException, NotFoundException, Provider } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ExerciseDomainMock } from 'test/utils/domains/exercise-domain-mock';
 import getExerciseRepositoryProvider from 'test/utils/providers/exercise-repository-mock';
+import getExerciseTranslationRepositoryProvider from 'test/utils/providers/exercise-translation-repository-mock';
+import { v4 as uuid } from 'uuid';
+import { LanguageMap } from '~/modules/exercise-translations/entities/exercise-translation.entity';
 import ExerciseTranslationMapper from '~/modules/exercise-translations/mappers/exercise-translation.mapper';
 import ExerciseDomain from '~/modules/exercise/domain/exercise.domain';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
@@ -13,6 +16,7 @@ import { left } from '~/shared/either';
 
 type GetModuleTestParams = {
   exerciseRepositoryProvider?: Provider;
+  exerciseTranslationRepositoryProvider?: Provider;
 };
 
 describe('UpdateExercise use case', () => {
@@ -31,15 +35,22 @@ describe('UpdateExercise use case', () => {
 
   const getModuleTest = async ({
     exerciseRepositoryProvider,
+    exerciseTranslationRepositoryProvider,
   }: GetModuleTestParams = {}) => {
     if (!exerciseRepositoryProvider) {
       exerciseRepositoryProvider = getExerciseRepositoryProvider();
+    }
+
+    if (!exerciseTranslationRepositoryProvider) {
+      exerciseTranslationRepositoryProvider =
+        getExerciseTranslationRepositoryProvider();
     }
 
     return Test.createTestingModule({
       imports: [],
       providers: [
         exerciseRepositoryProvider,
+        exerciseTranslationRepositoryProvider,
         ExerciseMapper,
         MuscleMapper,
         ExerciseTranslationMapper,
@@ -111,5 +122,66 @@ describe('UpdateExercise use case', () => {
     ).rejects.toThrowError(
       new HttpException({ message: errorMock.message }, errorMock.code),
     );
+  });
+
+  it('Should update the exercise translations', async () => {
+    const updateExerciseUseCase = module.get<UpdateExercise>(UpdateExercise);
+    const updateExerciseParams = {
+      id: exerciseDomain.id?.toString() as string,
+      name: 'New name',
+      translations: [
+        {
+          id: uuid(),
+          name: 'updated-name',
+          info: 'updated-info',
+          language: LanguageMap.PORTUGUESE,
+        },
+      ],
+    };
+
+    const result = await updateExerciseUseCase.execute(updateExerciseParams);
+    expect(result).toBeTruthy();
+  });
+
+  it('Should not update the exercise translations if not found translation', async () => {
+    const module = await getModuleTest({
+      exerciseTranslationRepositoryProvider:
+        getExerciseTranslationRepositoryProvider({
+          exerciseTranslationDomain: null,
+        }),
+    });
+    const updateExerciseUseCase = module.get<UpdateExercise>(UpdateExercise);
+    const updateExerciseParams = {
+      id: exerciseDomain.id?.toString() as string,
+      name: 'New name',
+      translations: [
+        {
+          id: uuid(),
+          name: 'updated-name',
+          info: 'updated-info',
+          language: LanguageMap.PORTUGUESE,
+        },
+      ],
+    };
+    await expect(
+      updateExerciseUseCase.execute(updateExerciseParams),
+    ).rejects.toThrowError(HttpException);
+  });
+
+  it('Should not update the exercise translations with invalid name', async () => {
+    const updateExerciseUseCase = module.get<UpdateExercise>(UpdateExercise);
+    const updateExerciseParams = {
+      id: exerciseDomain.id?.toString() as string,
+      name: 'New name',
+      translations: [
+        {
+          id: uuid(),
+          name: 'a',
+        },
+      ],
+    };
+    await expect(
+      updateExerciseUseCase.execute(updateExerciseParams),
+    ).rejects.toThrowError(HttpException);
   });
 });

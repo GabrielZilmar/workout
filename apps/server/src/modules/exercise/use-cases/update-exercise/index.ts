@@ -1,4 +1,7 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import { ExerciseTranslationDomainError } from '~/modules/exercise-translations/domain/error';
+import ExerciseTranslationDomain from '~/modules/exercise-translations/domain/exercise-translation.domain';
+import ExerciseTranslationMapper from '~/modules/exercise-translations/mappers/exercise-translation.mapper';
 import {
   UpdateExerciseBodyDto,
   UpdateExerciseParamsDto,
@@ -6,6 +9,7 @@ import {
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
 import { ExerciseUseCaseError } from '~/modules/exercise/use-cases/errors';
 import ExerciseRepository from '~/services/database/typeorm/repositories/exercise-repository';
+import ExerciseTranslationRepository from '~/services/database/typeorm/repositories/exercise-translation-repository';
 import { UseCase } from '~/shared/core/use-case';
 
 type UpdateExerciseParams = UpdateExerciseParamsDto & UpdateExerciseBodyDto;
@@ -17,8 +21,60 @@ export class UpdateExercise
 {
   constructor(
     private readonly exerciseRepository: ExerciseRepository,
+    private readonly exerciseTranslationRepository: ExerciseTranslationRepository,
     private readonly exerciseMapper: ExerciseMapper,
+    private readonly exerciseTranslationMapper: ExerciseTranslationMapper,
   ) {}
+
+  private async updateTranslations(
+    exerciseId: string,
+    translations: NonNullable<UpdateExerciseParams['translations']>,
+  ): Promise<ExerciseTranslationDomain[]> {
+    return Promise.all(
+      translations.map(async (item) => {
+        const translation =
+          await this.exerciseTranslationRepository.findOneByIdAndExerciseId({
+            id: item.id,
+            exerciseId,
+          });
+        if (!translation) {
+          throw new NotFoundException({
+            message:
+              ExerciseTranslationDomainError.messages.translationNotFound,
+          });
+        }
+
+        const translationDomainUpdatedOrError = translation.update({
+          name: item.name,
+          language: item.language,
+          info: item.info,
+        });
+        if (translationDomainUpdatedOrError.isLeft()) {
+          throw new HttpException(
+            { message: translationDomainUpdatedOrError.value.message },
+            translationDomainUpdatedOrError.value.code,
+          );
+        }
+
+        const translationData = this.exerciseTranslationMapper.toPersistence(
+          translationDomainUpdatedOrError.value,
+        );
+        const translationUpdatedOrError =
+          await this.exerciseTranslationRepository.update(
+            item.id,
+            translationData,
+          );
+        if (translationUpdatedOrError.isLeft()) {
+          throw new HttpException(
+            { message: translationUpdatedOrError.value.message },
+            translationUpdatedOrError.value.code,
+          );
+        }
+
+        return translationDomainUpdatedOrError.value;
+      }),
+    );
+  }
 
   public async execute({
     id,
@@ -26,6 +82,7 @@ export class UpdateExercise
     muscleId,
     tutorialUrl,
     info,
+    translations,
   }: UpdateExerciseParams): UpdateExerciseResult {
     const exercise = await this.exerciseRepository.findOneById(id);
     if (!exercise) {
@@ -59,6 +116,10 @@ export class UpdateExercise
         { message: updateExerciseOrError.value.message },
         updateExerciseOrError.value.code,
       );
+    }
+
+    if (translations?.length) {
+      await this.updateTranslations(id, translations);
     }
 
     return true;

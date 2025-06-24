@@ -23,6 +23,9 @@ export type ExerciseTranslationDomainCreateParams = {
   exerciseId: string;
 };
 
+export type ExerciseTranslationUpdateParams =
+  Partial<ExerciseTranslationDomainCreateParams>;
+
 export default class ExerciseTranslationDomain extends AggregateRoot<ExerciseTranslationDomainProps> {
   get name(): ExerciseTranslationName {
     return this.props.name;
@@ -42,6 +45,53 @@ export default class ExerciseTranslationDomain extends AggregateRoot<ExerciseTra
 
   public toDto() {
     return ExerciseTranslationDTO.domainToDto(this);
+  }
+
+  public update({
+    name,
+    info,
+    language,
+    exerciseId,
+  }: ExerciseTranslationUpdateParams): Either<
+    ExerciseTranslationDomainError,
+    ExerciseTranslationDomain
+  > {
+    if (name) {
+      const nameValueObjectOrError = ExerciseTranslationName.create({
+        value: name,
+      });
+      if (nameValueObjectOrError.isLeft()) {
+        return left(nameValueObjectOrError.value);
+      }
+      this.props.name = nameValueObjectOrError.value;
+    }
+
+    if (info === null) {
+      this.props.info = null;
+    }
+    if (info) {
+      const infoOrError = ExerciseTranslationInfo.create({ value: info });
+      if (infoOrError.isLeft()) {
+        return left(infoOrError.value);
+      }
+      this.props.info = infoOrError.value;
+    }
+
+    if (language) {
+      const languageValueObjectOrError = ExerciseTranslationLanguage.create({
+        value: language,
+      });
+      if (languageValueObjectOrError.isLeft()) {
+        return left(languageValueObjectOrError.value);
+      }
+      this.props.language = languageValueObjectOrError.value;
+    }
+
+    if (exerciseId) {
+      this.props.exerciseId = exerciseId;
+    }
+
+    return right(this);
   }
 
   private static mountValueObjects(
