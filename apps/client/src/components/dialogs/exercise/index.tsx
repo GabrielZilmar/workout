@@ -28,7 +28,7 @@ const ExerciseDialog: React.FC<ExerciseDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="overflow-auto h-full max-h-[80%]">
         <DialogHeader>
           <DialogTitle>{`${
             isEditing ? "Update" : "Create"

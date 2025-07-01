@@ -32,12 +32,22 @@ import { cn } from "@workout/ui/utils";
 import { useEffect } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import Loading from "~/components/loading";
+import { LANGUAGES_ARRAY } from "~/types/languages";
+
+const languagesEnum = z.enum(LANGUAGES_ARRAY);
+
+const translationSchema = z.object({
+  name: z.string().max(255),
+  info: z.string().optional(),
+  language: languagesEnum,
+});
 
 const formSchema = z.object({
   name: z.string().max(255),
   muscleId: z.string().uuid(),
   tutorialUrl: z.string().url().max(255).optional(),
   info: z.string().optional(),
+  translations: z.array(translationSchema).optional(),
 });
 type FormSchema = z.infer<typeof formSchema>;
 type ExerciseFormProps = {
@@ -58,6 +68,16 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
       muscleId: exercise?.muscleId || undefined,
       tutorialUrl: exercise?.tutorialUrl || undefined,
       info: exercise?.info || undefined,
+      translations: exercise?.translations?.length
+        ? exercise.translations.map((translation) => ({
+            ...translation,
+            info: translation?.info ?? "",
+          }))
+        : LANGUAGES_ARRAY.map((language) => ({
+            name: "",
+            info: "",
+            language,
+          })),
     },
   });
   const { errors: formErrors } = form.formState;
@@ -77,6 +97,7 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
       ...data,
       info: !data.info ? null : data.info,
       tutorialUrl: !data.tutorialUrl ? null : data.tutorialUrl,
+      translations: data.translations?.length ? data.translations : null,
     };
     !!exercise
       ? updateExerciseMutation({ id: exercise.id, ...sanitizedData })
@@ -234,6 +255,45 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
               </FormItem>
             )}
           />
+        </div>
+        <div className="mt-4 space-y-2">
+          <FormLabel className="text-base">Translations</FormLabel>
+          {LANGUAGES_ARRAY.map((lang, index) => (
+            <div key={lang} className="space-y-1 border p-4 rounded-xl">
+              <FormLabel className="text-muted-foreground">{lang}</FormLabel>
+
+              <FormField
+                control={form.control}
+                name={`translations.${index}.name`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder={`Name in ${lang}`} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`translations.${index}.info`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Info</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        name={`translations.${index}.info`}
+                        id={`translations.${index}.info`}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          ))}
         </div>
 
         <div className="flex space-x-4">
