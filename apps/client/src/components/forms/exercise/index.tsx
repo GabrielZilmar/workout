@@ -1,7 +1,7 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Exercise } from "~/types/exercise";
+import { Exercise, ExerciseTranslations } from "~/types/exercise";
 import {
   useCreateExercise,
   useListPaginatedMuscles,
@@ -29,10 +29,10 @@ import {
   Textarea,
 } from "@workout/ui";
 import { cn } from "@workout/ui/utils";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import Loading from "~/components/loading";
-import { LANGUAGES_ARRAY } from "~/types/languages";
+import { Languages, LANGUAGES_ARRAY } from "~/types/languages";
 
 const languagesEnum = z.enum(LANGUAGES_ARRAY);
 
@@ -61,6 +61,13 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
   onSubmit,
   onCancel,
 }) => {
+  const translationMap = useMemo(() => {
+    const map = new Map<Languages, ExerciseTranslations>();
+    exercise?.translations?.forEach((translation) => {
+      map.set(translation.language, translation);
+    });
+    return map;
+  }, [exercise]);
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -68,16 +75,15 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
       muscleId: exercise?.muscleId || undefined,
       tutorialUrl: exercise?.tutorialUrl || undefined,
       info: exercise?.info || undefined,
-      translations: exercise?.translations?.length
-        ? exercise.translations.map((translation) => ({
-            ...translation,
-            info: translation?.info ?? "",
-          }))
-        : LANGUAGES_ARRAY.map((language) => ({
-            name: "",
-            info: "",
-            language,
-          })),
+      translations: LANGUAGES_ARRAY.map((language) => {
+        const translation = translationMap.get(language);
+        return {
+          id: translation?.id || undefined,
+          name: translation?.name || "",
+          info: translation?.info || "",
+          language,
+        };
+      }),
     },
   });
   const { errors: formErrors } = form.formState;
@@ -97,10 +103,21 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
       ...data,
       info: !data.info ? null : data.info,
       tutorialUrl: !data.tutorialUrl ? null : data.tutorialUrl,
-      translations: data.translations?.length ? data.translations : null,
+      translations: data.translations?.length
+        ? data.translations.filter((item) => !!item.name)
+        : null,
     };
     !!exercise
-      ? updateExerciseMutation({ id: exercise.id, ...sanitizedData })
+      ? updateExerciseMutation({
+          id: exercise.id,
+          ...sanitizedData,
+          translations: (sanitizedData.translations || []).map(
+            (translation) => ({
+              id: translationMap.get(translation.language)?.id,
+              ...translation,
+            })
+          ),
+        })
       : createExerciseMutation(sanitizedData);
 
     if (onSubmit) {

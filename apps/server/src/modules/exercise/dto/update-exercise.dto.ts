@@ -18,9 +18,10 @@ import {
 import { MIN_EXERCISE_NAME_LENGTH } from '~/modules/exercise/domain/value-objects/name';
 import { MAX_VARCHAR_LENGTH } from '~/shared/constants/values';
 
-class ExerciseTranslationDto {
+export class UpdateExerciseTranslationDto {
   @IsUUID()
-  id: string;
+  @IsOptional()
+  id?: string;
 
   @IsString()
   @MinLength(MIN_EXERCISE_NAME_LENGTH)
@@ -65,6 +66,6 @@ export class UpdateExerciseBodyDto {
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => ExerciseTranslationDto)
-  translations?: ExerciseTranslationDto[];
+  @Type(() => UpdateExerciseTranslationDto)
+  translations?: UpdateExerciseTranslationDto[];
 }
