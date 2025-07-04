@@ -19,7 +19,7 @@ import { useRecoverPassword } from "~/hooks";
 import { useRouter, useSearchParams } from "next/navigation";
 import Loading from "~/components/loading";
 import Link from "next/link";
-import { ALL_ROUTES } from "~/routes";
+import { getRoutes } from "~/routes";
 import { useEffect } from "react";
 import { enqueueSnackbar } from "notistack";
 
@@ -38,6 +38,7 @@ type FormSchema = z.infer<typeof formSchema>;
 
 const RecoverPasswordForm = () => {
   const router = useRouter();
+  const routes = getRoutes();
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";
 
@@ -66,9 +67,9 @@ const RecoverPasswordForm = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      router.push(ALL_ROUTES.signIn);
+      router.push(routes.signIn);
     }
-  }, [isSuccess, router]);
+  }, [isSuccess, router, routes]);
 
   return (
     <div>
@@ -161,7 +162,7 @@ const RecoverPasswordForm = () => {
 
       <p className="mt-10 text-center text-sm text-gray-500">
         <Link
-          href={ALL_ROUTES.signIn}
+          href={routes.signIn}
           className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
         >
           Return to login

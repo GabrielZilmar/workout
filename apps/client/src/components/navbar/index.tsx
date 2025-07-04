@@ -17,14 +17,15 @@ import { setCookie } from "cookies-next";
 import { COOKIES_NAMES } from "~/constants/cookies";
 import env from "~/shared/env";
 import { usePathname, useRouter } from "next/navigation";
-import { ALL_ROUTES } from "~/routes";
+import { getRoutes } from "~/routes";
 import Link from "next/link";
 
+const routes = getRoutes();
 const navigation = [
-  { name: "Home", href: ALL_ROUTES.home },
-  { name: "Public Workouts", href: ALL_ROUTES.publicWorkouts },
-  { name: "Exercises", href: ALL_ROUTES.exercises },
-  { name: "Progress", href: ALL_ROUTES.progress },
+  { name: "Home", href: routes.home },
+  { name: "Public Workouts", href: routes.publicWorkouts },
+  { name: "Exercises", href: routes.exercises },
+  { name: "Progress", href: routes.progress },
 ];
 
 function classNames(...classes: string[]) {
@@ -41,7 +42,7 @@ export default function Navbar() {
       sameSite: "lax",
       domain: env.appDomain,
     });
-    router.push(ALL_ROUTES.signIn);
+    router.push(routes.signIn);
   };
 
   return (
@@ -120,7 +121,7 @@ export default function Navbar() {
               >
                 <MenuItem>
                   <Link
-                    href={ALL_ROUTES.userSettings}
+                    href={routes.userSettings}
                     className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
                   >
                     Your Profile

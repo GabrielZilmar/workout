@@ -4,19 +4,27 @@ import {
   type NextRequest,
 } from "next/server";
 import { authMiddleware } from "~/middlewares";
-import { ALL_ROUTES } from "~/routes";
+import { getRoutes } from "~/routes";
+import createMiddleware from "next-intl/middleware";
+import { routing } from "./i18n/routing";
+import { DEFAULT_LOCALE } from "~/i18n/locale";
+import { COOKIES_NAMES } from "~/constants/cookies";
+
+export default createMiddleware(routing);
 
 export async function middleware(req: NextRequest, event: NextFetchEvent) {
   const url = req.nextUrl.clone();
+  const locale = req.cookies.get(COOKIES_NAMES.LOCALE)?.value || DEFAULT_LOCALE;
+  const routes = getRoutes(locale);
   const { isAuth } = await authMiddleware(url);
 
-  const isSignInPage = url.pathname === ALL_ROUTES.signIn;
+  const isSignInPage = url.pathname === routes.signIn;
   if (!isAuth && !isSignInPage) {
-    url.pathname = ALL_ROUTES.signIn;
+    url.pathname = routes.signIn;
     return NextResponse.redirect(url);
   }
   if (isAuth && isSignInPage) {
-    url.pathname = "/";
+    url.pathname = `/${locale}/`;
     return NextResponse.redirect(url);
   }
 

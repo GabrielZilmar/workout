@@ -15,7 +15,7 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { useStartRoutine } from "~/hooks";
-import { ALL_ROUTES } from "~/routes";
+import { getRoutes } from "~/routes";
 import { PublicWorkoutUser } from "~/types/user";
 import { Workout } from "~/types/workout";
 
@@ -70,12 +70,13 @@ export const publicWorkoutsColumns: ColumnDef<Workout>[] = [
     accessorKey: "name",
     header: "Name",
     cell: ({ row }) => {
+      const routes = getRoutes();
       const id = row.original.id;
       const name = row.getValue<string>("name");
 
       return (
         <Button variant="link">
-          <Link href={ALL_ROUTES.workoutDetails(id)}>{name || "-"}</Link>
+          <Link href={routes.workoutDetails(id)}>{name || "-"}</Link>
         </Button>
       );
     },
