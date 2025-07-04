@@ -8,8 +8,10 @@ import { HttpStatus } from "~/constants/httpStatus";
 import { setCookie } from "cookies-next";
 import Env from "~/shared/env";
 import { COOKIES_NAMES } from "~/constants/cookies";
+import { getRoutes } from "~/routes";
 
 export const useSignIn = () => {
+  const routes = getRoutes();
   const router = useRouter();
 
   const { mutate: signInMutation } = useMutation<
@@ -25,7 +27,7 @@ export const useSignIn = () => {
         domain: Env.appDomain,
       });
       enqueueSnackbar("Successful login!", { variant: "success" });
-      router.push("/");
+      router.push(routes.home);
     },
     onError: ({ response }: AxiosError) => {
       if (response?.status === HttpStatus.UNAUTHORIZED) {

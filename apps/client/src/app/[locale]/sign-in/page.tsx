@@ -22,7 +22,7 @@ import { SignInPayload } from "~/data/sign-in";
 import { useSignIn } from "~/hooks";
 import Link from "next/link";
 import SessionLayout from "~/layouts/session.layout";
-import { ALL_ROUTES } from "~/routes";
+import { getRoutes } from "~/routes";
 
 const formSchema = z.object({
   email: z.string().max(255).email(),
@@ -38,6 +38,7 @@ export default function SignIn() {
     },
   });
   const { errors: formErrors } = form.formState;
+  const routes = getRoutes();
 
   const { signInMutation } = useSignIn();
 
@@ -112,7 +113,7 @@ export default function SignIn() {
                 </Label>
                 <div className="text-sm">
                   <Link
-                    href={ALL_ROUTES.forgotPassword}
+                    href={routes.forgotPassword}
                     className={cn(
                       "font-semibold text-indigo-600 hover:text-indigo-500"
                     )}
@@ -157,7 +158,7 @@ export default function SignIn() {
         <p className="mt-10 text-center text-sm text-gray-500">
           Not have an account?{" "}
           <Link
-            href={ALL_ROUTES.signUp}
+            href={routes.signUp}
             className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
           >
             Create now

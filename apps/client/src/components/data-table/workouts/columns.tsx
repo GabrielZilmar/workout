@@ -17,7 +17,7 @@ import { useCallback, useState } from "react";
 import GenericAlertDialog from "~/components/dialogs/generic";
 import WorkoutDialog from "~/components/dialogs/workout";
 import { useDeleteWorkout, useStartRoutine } from "~/hooks";
-import { ALL_ROUTES } from "~/routes";
+import { getRoutes } from "~/routes";
 import { Workout } from "~/types/workout";
 
 type RowProps = { row: Row<Workout> };
@@ -168,12 +168,13 @@ export const workoutColumns: ColumnDef<Workout>[] = [
     accessorKey: "name",
     header: "Name",
     cell: ({ row }) => {
+      const routes = getRoutes();
       const id = row.original.id;
       const name = row.getValue<string>("name");
 
       return (
         <Button variant="link">
-          <Link href={ALL_ROUTES.workoutDetails(id)}>{name || "-"}</Link>
+          <Link href={routes.workoutDetails(id)}>{name || "-"}</Link>
         </Button>
       );
     },

@@ -15,7 +15,7 @@ import {
   Label,
 } from "@workout/ui";
 import Link from "next/link";
-import { ALL_ROUTES } from "~/routes";
+import { getRoutes } from "~/routes";
 import { useRouter } from "next/navigation";
 import { useSendRecoverPasswordEmail } from "~/hooks";
 import { useEffect } from "react";
@@ -28,6 +28,7 @@ type FormSchema = z.infer<typeof formSchema>;
 
 const ForgotPasswordForm = () => {
   const router = useRouter();
+  const routes = getRoutes();
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,9 +45,9 @@ const ForgotPasswordForm = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      router.push(ALL_ROUTES.signIn);
+      router.push(routes.signIn);
     }
-  }, [isSuccess, router]);
+  }, [isSuccess, router, routes]);
 
   return (
     <div>
@@ -103,7 +104,7 @@ const ForgotPasswordForm = () => {
 
       <p className="mt-10 text-center text-sm text-gray-500">
         <Link
-          href={ALL_ROUTES.signIn}
+          href={routes.signIn}
           className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
         >
           Return to login

@@ -1,12 +1,19 @@
 import { AxiosError, AxiosResponse } from "axios";
 import axiosInstance from "~/data/api";
-import { CreateExercisePayload } from "~/data/create-exercise";
+import {
+  CreateExercisePayload,
+  CreateExerciseTranslationPayload,
+} from "~/data/create-exercise";
 import { GenericResponseError } from "~/types/api/errors";
 import { Exercise } from "~/types/exercise";
 
-export type UpdateExercisePayload = Omit<CreateExercisePayload, "name"> & {
+export type UpdateExercisePayload = Omit<
+  CreateExercisePayload,
+  "name" | "translations"
+> & {
   id: string;
   name?: string;
+  translations?: Partial<CreateExerciseTranslationPayload[]> | null;
 };
 type UpdateExerciseError = GenericResponseError & {
   duplicatedItems?: Record<string, string>;

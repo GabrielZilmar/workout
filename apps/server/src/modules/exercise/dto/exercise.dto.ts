@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsObject,
   IsOptional,
   IsString,
@@ -7,6 +8,7 @@ import {
   IsUrl,
   ValidateNested,
 } from 'class-validator';
+import { ExerciseTranslationDTO } from '~/modules/exercise-translations/dto/exercise-translation.dto';
 import ExerciseDomain from '~/modules/exercise/domain/exercise.domain';
 import { ExerciseDtoError } from '~/modules/exercise/dto/errors';
 import { MuscleDto } from '~/modules/muscle/dto/muscle.dto';
@@ -36,10 +38,24 @@ export class ExerciseDto {
   @Type(() => MuscleDto)
   muscle?: MuscleDto;
 
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ExerciseTranslationDTO)
+  translations?: ExerciseTranslationDTO[];
+
   public static domainToDto(
     domain: ExerciseDomain,
   ): Either<ExerciseDtoError, ExerciseDto> {
-    const { id, name, muscleId, tutorialUrl, info, muscleDomain } = domain;
+    const {
+      id,
+      name,
+      muscleId,
+      tutorialUrl,
+      info,
+      muscleDomain,
+      translations,
+    } = domain;
 
     if (!id) {
       return left(ExerciseDtoError.create(ExerciseDtoError.messages.missingId));
@@ -59,6 +75,17 @@ export class ExerciseDto {
       }
 
       exerciseDto.muscle = muscleDTO.value;
+    }
+
+    if (translations?.length) {
+      exerciseDto.translations = [];
+      translations.map((translation) => {
+        const translationDTO = translation.toDto();
+        if (translationDTO.isLeft()) {
+          return left(translationDTO.value);
+        }
+        (exerciseDto.translations || []).push(translationDTO.value);
+      });
     }
 
     return right(exerciseDto);

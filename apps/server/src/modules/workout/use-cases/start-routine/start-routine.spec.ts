@@ -11,6 +11,7 @@ import { WorkoutExerciseDomainMock } from 'test/utils/domains/workout-exercise-d
 import getWorkoutRepositoryProvider from 'test/utils/providers/workout-repository';
 import { DataSource } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+import ExerciseTranslationMapper from '~/modules/exercise-translations/mappers/exercise-translation.mapper';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
 import MuscleMapper from '~/modules/muscle/mappers/muscle.mapper';
 import { Set } from '~/modules/set/entities/set.entity';
@@ -54,7 +55,10 @@ describe('StartRoutine', () => {
       case WorkoutExercise:
         const workoutExerciseMapper = new WorkoutExerciseMapper(
           new WorkoutMapper(new UserMapper()),
-          new ExerciseMapper(new MuscleMapper()),
+          new ExerciseMapper(
+            new MuscleMapper(),
+            new ExerciseTranslationMapper(),
+          ),
           new SetMapper(),
         );
         repositoryReturn = workoutExerciseMapper.toPersistence(
@@ -112,6 +116,7 @@ describe('StartRoutine', () => {
         WorkoutExerciseMapper,
         SetMapper,
         ExerciseMapper,
+        ExerciseTranslationMapper,
         StartRoutine,
       ],
     }).compile();
@@ -272,7 +277,10 @@ describe('StartRoutine', () => {
             if (repo === WorkoutExercise) {
               const workoutExerciseMapper = new WorkoutExerciseMapper(
                 new WorkoutMapper(new UserMapper()),
-                new ExerciseMapper(new MuscleMapper()),
+                new ExerciseMapper(
+                  new MuscleMapper(),
+                  new ExerciseTranslationMapper(),
+                ),
                 new SetMapper(),
               );
               const repositoryReturn = workoutExerciseMapper.toPersistence(

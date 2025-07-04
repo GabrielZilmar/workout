@@ -7,10 +7,11 @@ import { enqueueSnackbar } from "notistack";
 import { Suspense, useEffect } from "react";
 import { useVerifyEmail } from "~/hooks";
 import SessionLayout from "~/layouts/session.layout";
-import { ALL_ROUTES } from "~/routes";
+import { getRoutes } from "~/routes";
 
 const VerifyEmailPage: React.FC = () => {
   const router = useRouter();
+  const routes = getRoutes();
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";
   const { isIdle, isPending, errorMessage, verifyEmailMutation } =
@@ -26,7 +27,7 @@ const VerifyEmailPage: React.FC = () => {
   }, [token, verifyEmailMutation]);
 
   const handleGoToSignIn = () => {
-    router.push(ALL_ROUTES.signIn);
+    router.push(routes.signIn);
   };
 
   if (isIdle || isPending) {

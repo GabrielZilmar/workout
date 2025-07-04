@@ -6,6 +6,7 @@ import { WorkoutDomainMock } from 'test/utils/domains/workout-domain-mock';
 import { WorkoutExerciseDomainMock } from 'test/utils/domains/workout-exercise-domain.mock';
 import getExerciseRepositoryProvider from 'test/utils/providers/exercise-repository-mock';
 import getSetRepositoryProvider from 'test/utils/providers/set-repository-mock';
+import ExerciseTranslationMapper from '~/modules/exercise-translations/mappers/exercise-translation.mapper';
 import ExerciseDomain from '~/modules/exercise/domain/exercise.domain';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
 import { ExerciseUseCaseError } from '~/modules/exercise/use-cases/errors';
@@ -48,6 +49,7 @@ describe('Progress history', () => {
         MuscleMapper,
         UserMapper,
         SetMapper,
+        ExerciseTranslationMapper,
         ExerciseProgress,
       ],
     }).compile();

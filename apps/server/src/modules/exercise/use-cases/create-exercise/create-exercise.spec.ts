@@ -6,9 +6,13 @@ import {
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ExerciseDomainMock } from 'test/utils/domains/exercise-domain-mock';
+import { ExerciseTranslationMock } from 'test/utils/domains/exercise-translation-domain-mock';
 import { MuscleDomainMock } from 'test/utils/domains/muscle-domain-mock';
 import getExerciseRepositoryProvider from 'test/utils/providers/exercise-repository-mock';
+import getExerciseTranslationRepositoryProvider from 'test/utils/providers/exercise-translation-repository-mock';
 import getMuscleRepositoryProvider from 'test/utils/providers/muscle-repository';
+import ExerciseTranslationDomain from '~/modules/exercise-translations/domain/exercise-translation.domain';
+import ExerciseTranslationMapper from '~/modules/exercise-translations/mappers/exercise-translation.mapper';
 import { ExerciseDomainError } from '~/modules/exercise/domain/errors';
 import ExerciseDomain from '~/modules/exercise/domain/exercise.domain';
 import { ExerciseDtoError } from '~/modules/exercise/dto/errors';
@@ -22,16 +26,20 @@ import { left } from '~/shared/either';
 type GetModuleTestParams = {
   exerciseRepositoryProvider?: Provider;
   muscleRepositoryProvider?: Provider;
+  exerciseTranslationRepositoryProvider?: Provider;
 };
 
 describe('CreateExercise use case', () => {
   let exerciseDomain: ExerciseDomain;
   let muscleDomain: MuscleDomain;
+  let exerciseTranslationDomain: ExerciseTranslationDomain;
   let module: TestingModule;
 
   beforeEach(async () => {
     exerciseDomain = ExerciseDomainMock.mountExerciseDomain();
     muscleDomain = MuscleDomainMock.mountMuscleDomain();
+    exerciseTranslationDomain =
+      ExerciseTranslationMock.mountExerciseTranslationDomain();
     module = await getModuleTest();
   });
 
@@ -43,6 +51,7 @@ describe('CreateExercise use case', () => {
   const getModuleTest = async ({
     exerciseRepositoryProvider,
     muscleRepositoryProvider,
+    exerciseTranslationRepositoryProvider,
   }: GetModuleTestParams = {}) => {
     if (!exerciseRepositoryProvider) {
       exerciseRepositoryProvider = getExerciseRepositoryProvider({
@@ -56,13 +65,22 @@ describe('CreateExercise use case', () => {
       });
     }
 
+    if (!exerciseTranslationRepositoryProvider) {
+      exerciseTranslationRepositoryProvider =
+        getExerciseTranslationRepositoryProvider({
+          exerciseTranslationDomain,
+        });
+    }
+
     return Test.createTestingModule({
       imports: [],
       providers: [
         exerciseRepositoryProvider,
         muscleRepositoryProvider,
+        exerciseTranslationRepositoryProvider,
         ExerciseMapper,
         MuscleMapper,
+        ExerciseTranslationMapper,
         CreateExercise,
       ],
     }).compile();
@@ -72,9 +90,12 @@ describe('CreateExercise use case', () => {
     const createExerciseUseCase = module.get<CreateExercise>(CreateExercise);
     const createExerciseParams = ExerciseDomainMock.getExerciseCreateParams();
 
-    const exerciseCreated = await createExerciseUseCase.execute(
-      createExerciseParams,
-    );
+    const exerciseCreated = await createExerciseUseCase.execute({
+      name: createExerciseParams.name,
+      muscleId: createExerciseParams.muscleId,
+      tutorialUrl: createExerciseParams.tutorialUrl,
+      info: createExerciseParams.info,
+    });
 
     expect(exerciseCreated).toEqual(exerciseDomain.toDto().value);
   });
@@ -91,7 +112,12 @@ describe('CreateExercise use case', () => {
     });
 
     await expect(
-      createExerciseUseCase.execute(createExerciseParams),
+      createExerciseUseCase.execute({
+        name: createExerciseParams.name,
+        muscleId: createExerciseParams.muscleId,
+        tutorialUrl: createExerciseParams.tutorialUrl,
+        info: createExerciseParams.info,
+      }),
     ).rejects.toThrowError(
       new HttpException(
         { message: ExerciseDomainError.messages.missingProps },
@@ -117,7 +143,12 @@ describe('CreateExercise use case', () => {
     findMuscleByIdSpy.mockResolvedValueOnce(null);
 
     await expect(
-      createExerciseUseCase.execute(createExerciseParams),
+      createExerciseUseCase.execute({
+        name: createExerciseParams.name,
+        muscleId: createExerciseParams.muscleId,
+        tutorialUrl: createExerciseParams.tutorialUrl,
+        info: createExerciseParams.info,
+      }),
     ).rejects.toThrowError(
       new NotFoundException(
         ExerciseUseCaseError.messages.muscleNotFound(
@@ -148,7 +179,12 @@ describe('CreateExercise use case', () => {
     );
 
     await expect(
-      createExerciseUseCase.execute(createExerciseParams),
+      createExerciseUseCase.execute({
+        name: createExerciseParams.name,
+        muscleId: createExerciseParams.muscleId,
+        tutorialUrl: createExerciseParams.tutorialUrl,
+        info: createExerciseParams.info,
+      }),
     ).rejects.toThrowError(
       new HttpException({ message: mockErrorMessage }, mockErrorCode),
     );
@@ -174,12 +210,43 @@ describe('CreateExercise use case', () => {
     const createExerciseParams = ExerciseDomainMock.getExerciseCreateParams();
 
     await expect(
-      createExerciseUseCase.execute(createExerciseParams),
+      createExerciseUseCase.execute({
+        name: createExerciseParams.name,
+        muscleId: createExerciseParams.muscleId,
+        tutorialUrl: createExerciseParams.tutorialUrl,
+        info: createExerciseParams.info,
+      }),
     ).rejects.toThrowError(
       new HttpException(
         { message: ExerciseDtoError.messages.missingId },
         HttpStatus.INTERNAL_SERVER_ERROR,
       ),
     );
+  });
+
+  it('Should create an exercise with translations', async () => {
+    const createExerciseUseCase = module.get<CreateExercise>(CreateExercise);
+    const createExerciseParams = ExerciseDomainMock.getExerciseCreateParams();
+
+    const exerciseCreated = await createExerciseUseCase.execute({
+      name: createExerciseParams.name,
+      muscleId: createExerciseParams.muscleId,
+      tutorialUrl: createExerciseParams.tutorialUrl,
+      info: createExerciseParams.info,
+      translations: [
+        {
+          name: exerciseTranslationDomain.name.value,
+          info: exerciseTranslationDomain.info
+            ? exerciseTranslationDomain.info.value
+            : undefined,
+          language: exerciseTranslationDomain.language.value,
+        },
+      ],
+    });
+
+    exerciseDomain = exerciseDomain.update({
+      translations: [exerciseTranslationDomain],
+    }).value as ExerciseDomain;
+    expect(exerciseCreated).toEqual(exerciseDomain.toDto().value);
   });
 });

@@ -17,7 +17,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import Image from "next/image";
 import { Lock, Mail, User } from "lucide-react";
 import Logo from "/public/logo.svg";
-import { ALL_ROUTES } from "~/routes";
+import { getRoutes } from "~/routes";
 import Link from "next/link";
 import SessionLayout from "~/layouts/session.layout";
 import { SignUpPayload } from "~/data/sign-up";
@@ -66,6 +66,7 @@ const formSchema = z
 
 const SignUp: React.FC = () => {
   const router = useRouter();
+  const routes = getRoutes();
   const form = useForm<FormFieldValues>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
@@ -85,9 +86,9 @@ const SignUp: React.FC = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      router.push(ALL_ROUTES.signIn);
+      router.push(routes.signIn);
     }
-  }, [isSuccess, router]);
+  }, [isSuccess, router, routes]);
 
   return (
     <SessionLayout>
@@ -254,7 +255,7 @@ const SignUp: React.FC = () => {
         <p className="mt-4 text-center text-sm text-gray-500">
           Already have an account?{" "}
           <Link
-            href={ALL_ROUTES.signIn}
+            href={routes.signIn}
             className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
           >
             Sign In
