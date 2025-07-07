@@ -24,7 +24,7 @@ export async function middleware(req: NextRequest, event: NextFetchEvent) {
     return NextResponse.redirect(url);
   }
   if (isAuth && isSignInPage) {
-    url.pathname = `/${locale}/`;
+    url.pathname = `/${locale}/home`;
     return NextResponse.redirect(url);
   }
 
