@@ -125,29 +125,33 @@ export default function Navbar() {
                 </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="mt-2 w-48 bg-white shadow-lg ring-1 ring-black ring-opacity-5">
-                <DropdownMenuItem>
+                <DropdownMenuItem className="hover:bg-gray-100 focus:bg-gray-100">
                   <Link
                     href={routes.userSettings}
-                    className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100"
                   >
                     Your Profile
                   </Link>
                 </DropdownMenuItem>
                 <Select value={localActive} onValueChange={handleChangeLocale}>
-                  <SelectTrigger className="flex w-full px-4 py-2 text-sm text-gray-700 bg-white hover:bg-gray-100">
+                  <SelectTrigger className="flex w-full px-6 py-5 text-sm text-gray-700 bg-white hover:bg-gray-100">
                     <SelectValue placeholder="Language" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
+                  <SelectContent className="bg-white">
+                    <SelectGroup className="bg-white text-gray-700">
                       {LOCALE_ITEMS.map(({ label, value }) => (
-                        <SelectItem key={value} value={value}>
+                        <SelectItem
+                          key={value}
+                          value={value}
+                          className="text-gray-700 hover:text-gray-700 focus:text-gray-700 hover:bg-gray-100 focus:bg-gray-100hover:bg-gray-100 focus:bg-gray-100"
+                        >
                           {label}
                         </SelectItem>
                       ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-                <DropdownMenuItem>
+                <DropdownMenuItem className="hover:bg-gray-100 focus:bg-gray-100">
                   <button
                     className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     onClick={handleLogout}
