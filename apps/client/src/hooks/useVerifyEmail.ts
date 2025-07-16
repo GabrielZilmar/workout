@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { enqueueSnackbar } from "notistack";
 import { useState } from "react";
 import {
@@ -9,6 +10,7 @@ import {
 } from "~/data/verify-email";
 
 export const useVerifyEmail = () => {
+  const t = useTranslations("Hooks");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const {
@@ -22,18 +24,17 @@ export const useVerifyEmail = () => {
   } = useMutation<VerifyEmailResult, VerifyEmailError, VerifyEmailPayload>({
     mutationFn: (payload) => verifyEmail(payload),
     onSuccess: () => {
-      enqueueSnackbar("Your email has been successfully verified.", {
+      enqueueSnackbar(t("useVerifyEmail.success"), {
         variant: "success",
       });
     },
     onError: (error) => {
-      let errorMessage =
-        "Failed to verify email, try again later! Please contact a support";
+      let errorMessage = t("useVerifyEmail.errors.default");
       if (error.response?.data?.message?.includes("expired")) {
-        errorMessage = "Email verification link expired!";
+        errorMessage = t("useVerifyEmail.errors.expired");
       }
       if (error.response?.data?.message?.includes("jwt string")) {
-        errorMessage = "Invalid verify email token!";
+        errorMessage = t("useVerifyEmail.errors.invalid");
       }
 
       setErrorMessage(errorMessage);

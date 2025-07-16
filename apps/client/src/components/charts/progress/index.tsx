@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@workout/ui";
 import { TrendingUp } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import Loading from "~/components/loading";
@@ -36,6 +37,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 const ProgressChart: React.FC = () => {
+  const t = useTranslations("ProgressChart");
   const [exerciseId, setExerciseId] = useState<string>();
   const { data, isLoading } = useProgressHistory(exerciseId || "");
   const {
@@ -64,7 +66,7 @@ const ProgressChart: React.FC = () => {
               onValueChange={(id) => setExerciseId(id)}
             >
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Exercise" />
+                <SelectValue placeholder={t("select.placeholder")} />
               </SelectTrigger>
               <SelectContent>
                 <ScrollArea>
@@ -84,7 +86,7 @@ const ProgressChart: React.FC = () => {
                       setExerciseId(undefined);
                     }}
                   >
-                    Clear
+                    {t("select.clear")}
                   </Button>
                 </ScrollArea>
               </SelectContent>
@@ -97,10 +99,8 @@ const ProgressChart: React.FC = () => {
       ) : (
         <Card>
           <CardHeader>
-            <CardTitle>Progressive Overload</CardTitle>
-            <CardDescription>
-              Showing your progressive overload in the exercise selected
-            </CardDescription>
+            <CardTitle>{t("card.title")}</CardTitle>
+            <CardDescription>{t("card.description")}</CardDescription>
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig}>
@@ -134,7 +134,7 @@ const ProgressChart: React.FC = () => {
             <div className="flex w-full items-start gap-2 text-sm">
               <div className="grid gap-2">
                 <div className="flex items-center gap-2 font-medium leading-none">
-                  Progressive Overload 💪🏼
+                  {t("footer.label")}
                   <TrendingUp className="h-4 w-4" />
                 </div>
               </div>

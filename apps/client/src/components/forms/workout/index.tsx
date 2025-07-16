@@ -20,17 +20,12 @@ import {
 } from "@workout/ui";
 import { cn } from "@workout/ui/utils";
 import { Dumbbell } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type RadioGroupItems = {
   value: "yes" | "no";
   label: string;
 };
-
-const WORKOUT_NAME_PLACEHOLDER = ["Chest", "Leg", "Back", "Arms", "Shoulder"];
-const RADIO_GROUP_ITEMS: RadioGroupItems[] = [
-  { value: "no", label: "No" },
-  { value: "yes", label: "Yes" },
-];
 
 const formSchema = z.object({
   name: z.string().min(1).max(255),
@@ -49,6 +44,7 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({
   onSubmit,
   onCancel,
 }) => {
+  const t = useTranslations("WorkoutForm");
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -58,6 +54,18 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({
     },
   });
   const { errors: formErrors } = form.formState;
+
+  const WORKOUT_NAME_PLACEHOLDER = [
+    t("placeholders.chest"),
+    t("placeholders.leg"),
+    t("placeholders.back"),
+    t("placeholders.arms"),
+    t("placeholders.shoulder"),
+  ];
+  const RADIO_GROUP_ITEMS: RadioGroupItems[] = [
+    { value: "no", label: t("radio.no") },
+    { value: "yes", label: t("radio.yes") },
+  ];
 
   const workoutNamePlaceholder = useMemo(
     () =>
@@ -93,7 +101,7 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>{t("labels.name")}</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
@@ -124,7 +132,7 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({
             name="isRoutine"
             render={({ field }) => (
               <FormItem className="space-y-3">
-                <FormLabel>Is routine?</FormLabel>
+                <FormLabel>{t("labels.isRoutine")}</FormLabel>
                 <FormControl>
                   <RadioGroup
                     onValueChange={(value) => {
@@ -155,7 +163,7 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({
             name="isPrivate"
             render={({ field }) => (
               <FormItem className="space-y-3">
-                <FormLabel>Is Private?</FormLabel>
+                <FormLabel>{t("labels.isPrivate")}</FormLabel>
                 <FormControl>
                   <RadioGroup
                     onValueChange={(value) => {
@@ -185,10 +193,10 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({
 
         <div className="flex space-x-4">
           <Button fullWidth type="button" className="mt-4" onClick={onCancel}>
-            Cancel
+            {t("buttons.cancel")}
           </Button>
           <Button fullWidth type="submit" className="mt-4">
-            {workout ? "Update" : "Create"}
+            {workout ? t("buttons.submit.update") : t("buttons.submit.create")}
           </Button>
         </div>
       </form>

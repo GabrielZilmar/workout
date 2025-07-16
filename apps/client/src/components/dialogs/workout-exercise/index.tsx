@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@workout/ui";
+import { useTranslations } from "next-intl";
 import WorkoutExerciseForm from "~/components/forms/workout-exercise";
 
 type WorkoutExerciseDialogProps = {
@@ -22,12 +23,14 @@ const WorkoutExerciseDialog: React.FC<WorkoutExerciseDialogProps> = ({
   onClose,
   onOpenChange,
 }) => {
+  const t = useTranslations("WorkoutExerciseDialog");
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Workout Exercise</DialogTitle>
-          <DialogDescription>Add an exercise to your workout</DialogDescription>
+          <DialogTitle>{t("title")}</DialogTitle>
+          <DialogDescription>{t("description")}</DialogDescription>
         </DialogHeader>
         <WorkoutExerciseForm
           workoutId={workoutId}

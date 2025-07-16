@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { enqueueSnackbar } from "notistack";
 import {
   deleteSet,
@@ -8,6 +9,7 @@ import {
 } from "~/data/delete-set";
 
 export const useDeleteSet = () => {
+  const t = useTranslations("Hooks");
   const queryClient = useQueryClient();
 
   const {
@@ -26,10 +28,10 @@ export const useDeleteSet = () => {
         queryKey: ["list-infinite-sets"],
       });
 
-      enqueueSnackbar("Set deleted!", { variant: "success" });
+      enqueueSnackbar(t("useDeleteSet.success"), { variant: "success" });
     },
     onError: () => {
-      return enqueueSnackbar("Ops.. Error on delete set. Try again!", {
+      return enqueueSnackbar(t("useDeleteSet.error"), {
         variant: "error",
       });
     },

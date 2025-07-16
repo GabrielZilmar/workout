@@ -1,1 +1,467 @@
-{}
+{
+  "WorkoutDataTable": {
+    "buttons": { "add": "Add Workout" }
+  },
+  "ExercisesPage": {
+    "buttons": {
+      "clear": "Clear"
+    },
+    "select": {
+      "placeholder": "Muscle"
+    },
+    "inputs": {
+      "placeholder": "Exercise name"
+    },
+    "dialog": {
+      "title": "Are you sure to delete this exercise?",
+      "description": "This action cannot be undone. This will permanently delete this exercise."
+    },
+    "image": {
+      "alt": "Exercise Video Thumbnail"
+    }
+  },
+  "ForgotPasswordPage": {
+    "description": "Enter your email to recover the password"
+  },
+  "RecoverPasswordPage": {
+    "description": "Enter your new password"
+  },
+  "SignInPage": {
+    "signIn": "Sign in to your account",
+    "noAccount": "Not have an account?",
+    "labels": {
+      "email": "Email",
+      "password": "Password"
+    },
+    "placeholders": {
+      "email": "test@example.com",
+      "password": "Password"
+    },
+    "links": {
+      "forgot": "Forgot password?",
+      "create": "Create now"
+    },
+    "buttons": {
+      "submit": "Sign in"
+    }
+  },
+  "SignUpPage": {
+    "title": "Register your account",
+    "hasAccount": "Already have an account?",
+    "labels": {
+      "email": "Email",
+      "username": "Username",
+      "password": "Password",
+      "confirmPassword": "Confirm Password"
+    },
+    "placeholders": {
+      "email": "test@example.com",
+      "username": "Username",
+      "password": "Password",
+      "confirmPassword": "Confirm Password"
+    },
+    "buttons": {
+      "submit": "Register"
+    },
+    "links": {
+      "signIn": "Sign In"
+    }
+  },
+  "UserSettingsPage": {
+    "title": "Account",
+    "notFound": "User not found"
+  },
+  "VerifyEmailPage": {
+    "loading": {
+      "title": "Loading",
+      "message": "Verifying your email..."
+    },
+    "error": {
+      "title": "Error"
+    },
+    "success": {
+      "title": "Congrats",
+      "message": "You have successfully created your account."
+    },
+    "button": {
+      "login": "Log in to account"
+    },
+    "errors": {
+      "missingToken": "Missing verify email token"
+    }
+  },
+  "WorkoutDetailsPage": {
+    "privacy": {
+      "private": "Private Workout",
+      "public": "Public Workout"
+    },
+    "exercises": {
+      "title": "Exercises"
+    },
+    "buttons": {
+      "addExercise": "Add New Exercise"
+    },
+    "dialog": {
+      "title": "Are you sure to delete this workout exercise?",
+      "description": "This action cannot be undone. This will permanently delete this workout exercise and the sets.",
+      "cancel": "Cancel",
+      "confirm": "Confirm"
+    }
+  },
+  "ProgressChart": {
+    "select": {
+      "placeholder": "Exercise",
+      "clear": "Clear"
+    },
+    "card": {
+      "title": "Progressive Overload",
+      "description": "Showing your progressive overload in the exercise selected"
+    },
+    "footer": {
+      "label": "Progressive Overload 💪🏼"
+    }
+  },
+  "PublicWorkoutActionColumn": {
+    "button": {
+      "start": "Start routine"
+    },
+    "dialog": {
+      "title": "Are you sure to start this routine?",
+      "description": "It will create a new workout exercise, copying all exercises and sets.",
+      "cancel": "Cancel",
+      "confirm": "Confirm"
+    }
+  },
+  "PublicWorkoutsColumns": {
+    "headers": {
+      "name": "Name",
+      "createdBy": "Created By",
+      "startRoutine": "Start routine"
+    }
+  },
+  "WorkoutActionColumn": {
+    "tableHeader": {
+      "action": "Action"
+    },
+    "dialog": {
+      "delete": {
+        "title": "Are you sure to delete the workout{quantity, plural, =1 {} other {s}}?",
+        "description": "This action cannot be undone. This will permanently delete the workout{quantity, plural, =1 {} other {s}} selected."
+      },
+      "start": {
+        "title": "Are you sure to start this routine?",
+        "description": "It will create a new workout exercise, copying all exercises and sets."
+      }
+    }
+  },
+  "WorkoutColumns": {
+    "headers": {
+      "name": "Name",
+      "privacy": "Private/Public",
+      "isRoutine": "Is Routine?"
+    },
+    "values": {
+      "private": "Private",
+      "public": "Public",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "aria": {
+      "selectAll": "Select all",
+      "selectRow": "Select row"
+    }
+  },
+  "ExerciseDialog": {
+    "title": {
+      "create": "Create exercise",
+      "update": "Update exercise"
+    },
+    "description": {
+      "create": "Create your exercise. Choice if it's public or private, if it's a routine...",
+      "update": "Update your exercise. Choice if it's public or private, if it's a routine..."
+    }
+  },
+  "GenericAlertDialog": {
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "WorkoutDialog": {
+    "title": {
+      "create": "Create workout",
+      "update": "Update workout"
+    },
+    "description": {
+      "create": "Create your workout. Choice if it's public or private, if it's a routine...",
+      "update": "Update your workout. Choice if it's public or private, if it's a routine..."
+    }
+  },
+  "WorkoutExerciseDialog": {
+    "title": "Create Workout Exercise",
+    "description": "Add an exercise to your workout"
+  },
+  "Error": {
+    "title": "Error",
+    "description": "An error occurred. Please try again later or contact a support."
+  },
+  "RecoverPasswordForm": {
+    "labels": {
+      "password": "Password",
+      "confirmPassword": "Confirm Password"
+    },
+    "placeholders": {
+      "password": "Password",
+      "confirmPassword": "Confirm Password"
+    },
+    "buttons": {
+      "submit": "Recover password"
+    },
+    "links": {
+      "returnToLogin": "Return to login"
+    },
+    "errors": {
+      "missingToken": "Missing recover password token"
+    }
+  },
+  "ExerciseForm": {
+    "labels": {
+      "name": "Name",
+      "muscleId": "Choose the muscle group you want to target in your workout",
+      "tutorialUrl": "Tutorial URL",
+      "info": "Info",
+      "translations": "Translations",
+      "lang": "{lang, select, PORTUGUESE {PORTUGUESE} SPANISH {SPANISH} other {-}}"
+    },
+    "placeholders": {
+      "selectMuscle": "Select a muscle",
+      "searchMuscle": "Search muscle...",
+      "translationName": "Name in {lang, select, PORTUGUESE {portuguese} SPANISH {spanish} other {english}}"
+    },
+    "command": {
+      "noMuscleFound": "No muscle found."
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "submit": {
+        "create": "Create",
+        "update": "Update"
+      }
+    },
+    "translation": {
+      "name": "Name",
+      "info": "Info"
+    }
+  },
+  "ForgotPasswordForm": {
+    "labels": {
+      "email": "Email"
+    },
+    "placeholders": {
+      "email": "test@example.com"
+    },
+    "buttons": {
+      "submit": "Recover password"
+    },
+    "links": {
+      "returnToLogin": "Return to login"
+    }
+  },
+  "SetForm": {
+    "labels": {
+      "reps": "Reps",
+      "drops": "Drops",
+      "weight": "Weight (KG)"
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "create": "Create Set",
+      "update": "Update Set"
+    }
+  },
+  "UserSettingForm": {
+    "labels": {
+      "email": "Email",
+      "username": "Username",
+      "age": "Age",
+      "weight": "Weight",
+      "height": "Height"
+    },
+    "buttons": {
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "errors": {
+      "usernameTaken": "Username is not available"
+    }
+  },
+  "WorkoutForm": {
+    "labels": {
+      "name": "Name",
+      "isRoutine": "Is routine?",
+      "isPrivate": "Is Private?"
+    },
+    "placeholders": {
+      "chest": "Chest",
+      "leg": "Leg",
+      "back": "Back",
+      "arms": "Arms",
+      "shoulder": "Shoulder"
+    },
+    "radio": {
+      "yes": "Yes",
+      "no": "No"
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "submit": {
+        "create": "Create",
+        "update": "Update"
+      }
+    }
+  },
+  "WorkoutExerciseForm": {
+    "title": "Select a new exercise for your workout",
+    "placeholder": "Select an exercise",
+    "searchPlaceholder": "Search exercise...",
+    "notFound": "No exercise found.",
+    "cancel": "Cancel",
+    "submit": "Create Workout Exercise"
+  },
+  "Navbar": {
+    "navigation": {
+      "home": "Home",
+      "publicWorkouts": "Public Workouts",
+      "exercises": "Exercises",
+      "progress": "Progress"
+    },
+    "yourProfile": "Your Profile",
+    "signOut": "Sign out",
+    "language": "Language"
+  },
+  "WorkoutExerciseSets": {
+    "removeSet": "Remove Set"
+  },
+  "Formatter": {
+    "errors": {
+      "itemExists": "Ops.. {name} already exists!",
+      "fieldUsed": "{field} {value} already used."
+    }
+  },
+  "Hooks": {
+    "Formatter": {
+      "errors": {
+        "duplicate": {
+          "itemExists": "Ops.. {item} already exists!",
+          "fieldUsed": "{field} {value} already used."
+        }
+      }
+    },
+    "useCreateWorkout": {
+      "success": "Workout created!",
+      "itemName": "Workout",
+      "error": "Ops.. Error on create workout. Try again!"
+    },
+    "useChangeWorkoutExercisesOrders": {
+      "error": "Ops.. Error on update workout exercises orders. Try again!"
+    },
+    "useCreateExercise": {
+      "error": "Ops.. Error creating exercise. Try again!"
+    },
+    "useCreateSet": {
+      "success": "Set created!",
+      "error": "Ops.. Error on create set. Try again!"
+    },
+    "useCreateWorkoutExercise": {
+      "success": "Workout exercise created!",
+      "error": "Ops.. Error on create workout exercise. Try again!"
+    },
+    "useDeleteExercise": {
+      "success": "Exercise deleted!",
+      "error": "Ops.. Error on delete exercise. Try again!"
+    },
+    "useDeleteSet": {
+      "success": "Set deleted!",
+      "error": "Ops.. Error on delete set. Try again!"
+    },
+    "useUpdateWorkout": {
+      "success": "Workout updated!",
+      "itemName": "Workout",
+      "error": "Ops.. Error on update workout. Try again!"
+    },
+    "useDeleteWorkout": {
+      "success": "Workout deleted!",
+      "error": "Ops.. Error on delete workout. Try again!"
+    },
+    "useUpdateUser": {
+      "success": "User updated!",
+      "itemName": "User",
+      "error": "Ops.. Error on update user. Try again!"
+    },
+    "useDeleteWorkoutExercise": {
+      "success": "Workout exercise deleted!",
+      "error": "Ops.. Error on delete workout exercise. Try again!"
+    },
+    "useRecoverPassword": {
+      "success": "Password recovered.",
+      "errors": {
+        "default": "Failed to recover password, try again later! Please contact a support",
+        "expired": "Recover password link expired!",
+        "invalidToken": "Invalid recover password token!"
+      }
+    },
+    "useSendRecoverPasswordEmail": {
+      "success": "Recover password email has been sent!",
+      "errors": {
+        "default": "Ops.. Error on sending recover password email. Try again!",
+        "alreadySent": "Recover password email already sent. Check your inbox!"
+      }
+    },
+    "useSendVerifyEmail": {
+      "success": "Verify email has been sent!",
+      "errors": {
+        "default": "Ops.. Error on sending verify email. Try again!",
+        "alreadySent": "Verify email already sent. Check your inbox!",
+        "alreadyVerified": "User email already verified!"
+      }
+    },
+    "useSignIn": {
+      "success": "Successful login!",
+      "errors": {
+        "default": "Ops.. Error on sign in. Try again!",
+        "invalid": "Ops.. Invalid password or email. Try again!"
+      }
+    },
+    "useSignUp": {
+      "success": "Successful sign up!",
+      "itemName": "User",
+      "errors": {
+        "default": "Ops.. Error on register user. Try again!",
+        "sendVerifyEmail": "Something went wrong when sending the verification email. Try again later."
+      }
+    },
+    "useStartRoutine": {
+      "success": "Routine started!",
+      "errors": {
+        "default": "Ops.. Error on start routine. Try again!",
+        "forbidden": "You can't start a routine from a private workout that doesn't belongs to you"
+      }
+    },
+    "useVerifyEmail": {
+      "success": "Your email has been successfully verified.",
+      "errors": {
+        "default": "Failed to verify email, try again later! Please contact a support",
+        "expired": "Email verification link expired!",
+        "invalid": "Invalid verify email token!"
+      }
+    },
+    "useUpdateSet": {
+      "success": "Set updated!",
+      "error": "Ops.. Error on update set. Try again!"
+    },
+    "useUpdateManySetOrders": {
+      "error": "Ops.. Error on update sets orders. Try again!"
+    },
+    "useUpdateExercise": {
+      "error": "Ops.. Error updating exercise. Try again!"
+    }
+  }
+}

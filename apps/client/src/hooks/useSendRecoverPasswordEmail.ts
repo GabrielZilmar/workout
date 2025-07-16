@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { enqueueSnackbar } from "notistack";
 import {
   sendRecoverPasswordEmail,
@@ -8,6 +9,8 @@ import {
 } from "~/data/send-recover-password-email";
 
 export const useSendRecoverPasswordEmail = () => {
+  const t = useTranslations("Hooks");
+
   const {
     mutate: sendRecoverPasswordEmailMutation,
     isError,
@@ -23,24 +26,21 @@ export const useSendRecoverPasswordEmail = () => {
   >({
     mutationFn: (payload) => sendRecoverPasswordEmail(payload),
     onSuccess: () => {
-      enqueueSnackbar("Recover password email has been sent!", {
+      enqueueSnackbar(t("useSendRecoverPasswordEmail.success"), {
         variant: "success",
       });
     },
     onError: ({ response }) => {
       if (response?.data?.message.includes("still valid")) {
         return enqueueSnackbar(
-          "Recover password email already sent. Check your inbox!",
+          t("useSendRecoverPasswordEmail.errors.alreadySent"),
           { variant: "info" }
         );
       }
 
-      enqueueSnackbar(
-        "Ops.. Error on sending recover password email. Try again!",
-        {
-          variant: "error",
-        }
-      );
+      enqueueSnackbar(t("useSendRecoverPasswordEmail.errors.default"), {
+        variant: "error",
+      });
     },
   });
 

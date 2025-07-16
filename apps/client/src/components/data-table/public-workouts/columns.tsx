@@ -12,6 +12,7 @@ import {
   AlertDialogTitle,
   Button,
 } from "@workout/ui";
+import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useState } from "react";
 import { useStartRoutine } from "~/hooks";
@@ -25,6 +26,7 @@ type PublicWorkoutActionColumnProps = {
 const PublicWorkoutActionColumn: React.FC<PublicWorkoutActionColumnProps> = ({
   workoutId,
 }) => {
+  const t = useTranslations("PublicWorkoutActionColumn");
   const [isOpen, setIsOpen] = useState(false);
   const { startRoutineMutation } = useStartRoutine();
 
@@ -39,24 +41,21 @@ const PublicWorkoutActionColumn: React.FC<PublicWorkoutActionColumnProps> = ({
 
   return (
     <div>
-      <Button onClick={handleToggleDialog}>Start routine</Button>
+      <Button onClick={handleToggleDialog}>{t("button.start")}</Button>
       <AlertDialog open={isOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>
-              Are you sure to start this routine?
-            </AlertDialogTitle>
+            <AlertDialogTitle>{t("dialog.title")}</AlertDialogTitle>
             <AlertDialogDescription>
-              It will create a new workout exercise, copying all exercises and
-              sets.
+              {t("dialog.description")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={handleToggleDialog}>
-              Cancel
+              {t("dialog.cancel")}
             </AlertDialogCancel>
             <AlertDialogAction onClick={handleStartRoutine}>
-              Confirm
+              {t("dialog.confirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -65,32 +64,37 @@ const PublicWorkoutActionColumn: React.FC<PublicWorkoutActionColumnProps> = ({
   );
 };
 
-export const publicWorkoutsColumns: ColumnDef<Workout>[] = [
-  {
-    accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => {
-      const routes = getRoutes();
-      const id = row.original.id;
-      const name = row.getValue<string>("name");
+export const usePublicWorkoutsColumns = (): ColumnDef<Workout>[] => {
+  const t = useTranslations("PublicWorkoutsColumns");
+  const locale = useLocale();
+  return [
+    {
+      accessorKey: "name",
+      header: t("headers.name"),
+      cell: ({ row }) => {
+        const routes = getRoutes(locale);
+        const id = row.original.id;
+        const name = row.getValue<string>("name");
 
-      return (
-        <Button variant="link">
-          <Link href={routes.workoutDetails(id)}>{name || "-"}</Link>
-        </Button>
-      );
+        return (
+          <Button variant="link">
+            <Link href={routes.workoutDetails(id)}>{name || "-"}</Link>
+          </Button>
+        );
+      },
     },
-  },
-  {
-    accessorKey: "user",
-    header: "Created By",
-    cell: ({ row }) => row.getValue<PublicWorkoutUser>("user")?.username || "-",
-  },
-  {
-    id: "actions",
-    header: "Start routine",
-    cell: ({ row }) => (
-      <PublicWorkoutActionColumn workoutId={row.original.id} />
-    ),
-  },
-];
+    {
+      accessorKey: "user",
+      header: t("headers.createdBy"),
+      cell: ({ row }) =>
+        row.getValue<PublicWorkoutUser>("user")?.username || "-",
+    },
+    {
+      id: "actions",
+      header: t("headers.startRoutine"),
+      cell: ({ row }) => (
+        <PublicWorkoutActionColumn workoutId={row.original.id} />
+      ),
+    },
+  ];
+};

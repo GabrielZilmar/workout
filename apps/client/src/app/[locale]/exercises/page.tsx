@@ -19,6 +19,7 @@ import {
 } from "@workout/ui";
 import { cn } from "@workout/ui/utils";
 import { PlusIcon, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import ReactPlayer from "react-player/youtube";
@@ -52,6 +53,7 @@ type ListExerciseState = {
 };
 
 const ExercisesPage: React.FC = () => {
+  const t = useTranslations("ExercisesPage");
   const { user, isLoading: userIsLoading } = useUser();
   const [exerciseDialog, setExerciseDialog] = useState<ExerciseDialogState>({
     isOpen: false,
@@ -151,7 +153,7 @@ const ExercisesPage: React.FC = () => {
       >
         <Input
           className="max-w-full sm:max-w-72"
-          placeholder="Exercise name"
+          placeholder={t("inputs.placeholder")}
           onChange={(e) => {
             handleSearch(e.target.value);
           }}
@@ -167,7 +169,7 @@ const ExercisesPage: React.FC = () => {
             }
           >
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Muscle" />
+              <SelectValue placeholder={t("select.placeholder")} />
             </SelectTrigger>
             <SelectContent>
               <ScrollArea>
@@ -190,7 +192,7 @@ const ExercisesPage: React.FC = () => {
                     });
                   }}
                 >
-                  Clear
+                  {t("buttons.clear")}
                 </Button>
               </ScrollArea>
             </SelectContent>
@@ -254,7 +256,7 @@ const ExercisesPage: React.FC = () => {
                         height={0}
                         style={{ width: "100%", height: 264 }}
                         src={getYouTubeThumbnail(exercise.tutorialUrl)}
-                        alt="Exercise Video Thumbnail"
+                        alt={t("image.alt")}
                       />
                     }
                     height={264}
@@ -274,10 +276,8 @@ const ExercisesPage: React.FC = () => {
 
       <GenericAlertDialog
         isOpen={deleteExerciseDialog.isOpen}
-        title={"Are you sure to delete this exercise?"}
-        description={
-          "This action cannot be undone. This will permanently delete this exercise."
-        }
+        title={t("dialog.title")}
+        description={t("dialog.description")}
         onConfirm={handleDeleteExercise}
         onCancel={() => setDeleteExerciseDialog({ isOpen: false })}
       />

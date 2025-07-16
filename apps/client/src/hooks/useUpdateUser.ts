@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { enqueueSnackbar } from "notistack";
 import { HttpStatus } from "~/constants/httpStatus";
 import {
@@ -10,6 +11,7 @@ import {
 import Formatter from "~/shared/formatter";
 
 export const useUpdateUser = () => {
+  const t = useTranslations("Hooks");
   const queryClient = useQueryClient();
 
   const {
@@ -25,16 +27,16 @@ export const useUpdateUser = () => {
         queryKey: ["sessionUserData"],
       });
 
-      enqueueSnackbar("User updated!", { variant: "success" });
+      enqueueSnackbar(t("useUpdateUser.success"), { variant: "success" });
     },
     onError: (error) => {
-      let message = "Ops.. Error on update user. Try again!";
+      let message = t("useUpdateUser.error");
       let style: undefined | React.CSSProperties;
 
       if (error.response?.status === HttpStatus.CONFLICT) {
         message = Formatter.mountDuplicateErrorMessage({
           duplicatedItems: error.response.data.duplicatedItems,
-          itemName: "User",
+          itemName: t("useUpdateUser.itemName"),
         });
         style = { whiteSpace: "pre-line" };
       }

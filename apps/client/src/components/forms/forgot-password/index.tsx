@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { useSendRecoverPasswordEmail } from "~/hooks";
 import { useEffect } from "react";
 import Loading from "~/components/loading";
+import { useLocale, useTranslations } from "next-intl";
 
 const formSchema = z.object({
   email: z.string().max(255).email(),
@@ -27,8 +28,10 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 const ForgotPasswordForm = () => {
+  const t = useTranslations("ForgotPasswordForm");
   const router = useRouter();
-  const routes = getRoutes();
+  const locale = useLocale();
+  const routes = getRoutes(locale);
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -62,7 +65,7 @@ const ForgotPasswordForm = () => {
               htmlFor="email"
               className="block text-sm font-medium leading-6 text-white-900"
             >
-              Email
+              {t("labels.email")}
             </Label>
             <div className="mt-2">
               <FormField
@@ -73,7 +76,7 @@ const ForgotPasswordForm = () => {
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="test@example.com"
+                        placeholder={t("placeholders.email")}
                         id="email"
                         type="email"
                         autoComplete="email"
@@ -95,7 +98,7 @@ const ForgotPasswordForm = () => {
               <Loading className="h-fit" />
             ) : (
               <Button fullWidth type="submit">
-                Recover password
+                {t("buttons.submit")}
               </Button>
             )}
           </div>
@@ -107,7 +110,7 @@ const ForgotPasswordForm = () => {
           href={routes.signIn}
           className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
         >
-          Return to login
+          {t("links.returnToLogin")}
         </Link>
       </p>
     </div>

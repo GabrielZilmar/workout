@@ -1,3 +1,5 @@
+"use client";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -8,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@workout/ui";
+import { useTranslations } from "next-intl";
 
 export type GenericAlertDialogProps = {
   isOpen: boolean;
@@ -24,6 +27,7 @@ const GenericAlertDialog: React.FC<GenericAlertDialogProps> = ({
   onConfirm,
   onCancel,
 }) => {
+  const t = useTranslations("GenericAlertDialog");
   return (
     <AlertDialog open={isOpen}>
       <AlertDialogContent>
@@ -32,8 +36,12 @@ const GenericAlertDialog: React.FC<GenericAlertDialogProps> = ({
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onCancel}>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm}>Confirm</AlertDialogAction>
+          <AlertDialogCancel onClick={onCancel}>
+            {t("cancel")}
+          </AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm}>
+            {t("confirm")}
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

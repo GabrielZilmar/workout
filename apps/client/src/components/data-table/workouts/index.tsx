@@ -1,8 +1,9 @@
 "use client";
 
 import { Button, DataTable } from "@workout/ui";
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
-import { workoutColumns } from "~/components/data-table/workouts/columns";
+import { useWorkoutColumns } from "~/components/data-table/workouts/columns";
 import WorkoutDialog from "~/components/dialogs/workout";
 import Error from "~/components/error";
 import Loading from "~/components/loading";
@@ -14,6 +15,8 @@ import { debounce } from "~/lib/utils";
 const INITIAL_PAGE = 1;
 
 export function WorkoutDataTable() {
+  const t = useTranslations("WorkoutDataTable");
+  const columns = useWorkoutColumns();
   const [isAddWorkoutModalOpen, setIsAddWorkoutModalOpen] = useState(false);
   const [search, setSearch] = useState<string>("");
   const [page, setPage] = useState<number>(INITIAL_PAGE);
@@ -46,13 +49,15 @@ export function WorkoutDataTable() {
   return (
     <div>
       <DataTable
-        columns={workoutColumns}
+        columns={columns}
         data={data.items}
         isServerSearch
         search={search}
         onSearch={handleSearch}
         addButton={
-          <Button onClick={handleToggleAddWorkoutModal}>Add Workout</Button>
+          <Button onClick={handleToggleAddWorkoutModal}>
+            {t("buttons.add")}
+          </Button>
         }
       />
       <Pagination

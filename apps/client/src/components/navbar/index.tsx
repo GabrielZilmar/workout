@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from "@workout/ui";
 import { LOCALE_ITEMS } from "~/i18n/locale";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { setCookie } from "cookies-next";
 import { startTransition } from "react";
 
@@ -35,16 +35,17 @@ function classNames(...classes: string[]) {
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const t = useTranslations("Navbar");
   const router = useRouter();
   const pathname = usePathname();
   const localActive = useLocale();
   const routes = getRoutes(localActive);
 
   const navigation = [
-    { name: "Home", href: routes.home },
-    { name: "Public Workouts", href: routes.publicWorkouts },
-    { name: "Exercises", href: routes.exercises },
-    { name: "Progress", href: routes.progress },
+    { name: t("navigation.home"), href: routes.home },
+    { name: t("navigation.publicWorkouts"), href: routes.publicWorkouts },
+    { name: t("navigation.exercises"), href: routes.exercises },
+    { name: t("navigation.progress"), href: routes.progress },
   ];
 
   const handleChangeLocale = (nextLocale: string) => {
@@ -130,12 +131,12 @@ export default function Navbar() {
                     href={routes.userSettings}
                     className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100"
                   >
-                    Your Profile
+                    {t("yourProfile")}
                   </Link>
                 </DropdownMenuItem>
                 <Select value={localActive} onValueChange={handleChangeLocale}>
                   <SelectTrigger className="flex w-full px-6 py-5 text-sm text-gray-700 bg-white hover:bg-gray-100">
-                    <SelectValue placeholder="Language" />
+                    <SelectValue placeholder={t("language")} />
                   </SelectTrigger>
                   <SelectContent className="bg-white">
                     <SelectGroup className="bg-white text-gray-700">
@@ -156,7 +157,7 @@ export default function Navbar() {
                     className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     onClick={handleLogout}
                   >
-                    Sign out
+                    {t("signOut")}
                   </button>
                 </DropdownMenuItem>
               </DropdownMenuContent>

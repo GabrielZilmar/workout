@@ -46,6 +46,7 @@ import {
   useUser,
 } from "~/hooks";
 import GlobalLayout from "~/layouts/global.layout";
+import { useTranslations } from "next-intl";
 
 type DeleteWorkoutExerciseDialogState = {
   workoutExerciseId?: string;
@@ -53,6 +54,7 @@ type DeleteWorkoutExerciseDialogState = {
 };
 
 const WorkoutDetailsPage = () => {
+  const t = useTranslations("WorkoutDetailsPage");
   const { id } = useParams<{ id: string }>();
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -130,10 +132,10 @@ const WorkoutDetailsPage = () => {
       <div className="py-4 px-6">
         <h1 className="text-3xl font-bold">{workout?.name || "-"}</h1>
         <p className="text-xs">
-          {workout?.isPrivate ? "Private Workout" : "Public Workout"}
+          {workout?.isPrivate ? t("privacy.private") : t("privacy.public")}
         </p>
         <div className="py-8">
-          <h2 className="text-2xl font-bold">Exercises</h2>
+          <h2 className="text-2xl font-bold">{t("exercises.title")}</h2>
           {isLoadingWorkoutExercises ? (
             <Loading />
           ) : (
@@ -193,7 +195,7 @@ const WorkoutDetailsPage = () => {
           <Button onClick={handleToggleAddWorkoutExerciseModal}>
             <div className="flex items-center space-x-2">
               <PlusCircle />
-              <p>Add New Exercise</p>
+              <p>{t("buttons.addExercise")}</p>
             </div>
           </Button>
         ) : null}
@@ -207,12 +209,9 @@ const WorkoutDetailsPage = () => {
       <AlertDialog open={deleteWorkoutExerciseDialog.isOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>
-              Are you sure to delete this workout exercise?
-            </AlertDialogTitle>
+            <AlertDialogTitle>{t("dialog.title")}</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete this
-              workout exercise and the sets
+              {t("dialog.description")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -224,10 +223,10 @@ const WorkoutDetailsPage = () => {
                 });
               }}
             >
-              Cancel
+              {t("dialog.cancel")}
             </AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteWorkoutExercise}>
-              Confirm
+              {t("dialog.confirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

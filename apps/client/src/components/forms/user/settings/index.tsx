@@ -16,6 +16,7 @@ import {
   Input,
   Label,
 } from "@workout/ui";
+import { useTranslations } from "next-intl";
 
 const formSchema = z.object({
   username: z.string().min(4).optional(),
@@ -38,6 +39,7 @@ const UserSettingForm: React.FC<UserSettingsFormProps> = ({
   onCancel,
   hideCancelLabel = false,
 }) => {
+  const t = useTranslations("UserSettingForm");
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -64,7 +66,7 @@ const UserSettingForm: React.FC<UserSettingsFormProps> = ({
       if (!isAvailable) {
         form.setError("username", {
           type: "manual",
-          message: "Username is not available",
+          message: t("errors.usernameTaken"),
         });
         return;
       }
@@ -91,7 +93,7 @@ const UserSettingForm: React.FC<UserSettingsFormProps> = ({
             htmlFor="email"
             className="block text-sm font-medium leading-6 text-white-900"
           >
-            Email
+            {t("labels.email")}
           </Label>
           <Input disabled value={user.email} />
         </div>
@@ -100,7 +102,7 @@ const UserSettingForm: React.FC<UserSettingsFormProps> = ({
             htmlFor="username"
             className="block text-sm font-medium leading-6 text-white-900"
           >
-            Username
+            {t("labels.username")}
           </Label>
           <FormField
             control={form.control}
@@ -123,7 +125,7 @@ const UserSettingForm: React.FC<UserSettingsFormProps> = ({
               htmlFor="age"
               className="block text-sm font-medium leading-6 text-white-900"
             >
-              Age
+              {t("labels.age")}
             </Label>
             <FormField
               control={form.control}
@@ -145,7 +147,7 @@ const UserSettingForm: React.FC<UserSettingsFormProps> = ({
               htmlFor="weight"
               className="block text-sm font-medium leading-6 text-white-900"
             >
-              Weight
+              {t("labels.weight")}
             </Label>
             <FormField
               control={form.control}
@@ -167,7 +169,7 @@ const UserSettingForm: React.FC<UserSettingsFormProps> = ({
               htmlFor="height"
               className="block text-sm font-medium leading-6 text-white-900"
             >
-              Height
+              {t("label.height")}
             </Label>
             <FormField
               control={form.control}
@@ -186,10 +188,10 @@ const UserSettingForm: React.FC<UserSettingsFormProps> = ({
           </div>
         </div>
 
-        <Button type="submit">Save</Button>
+        <Button type="submit">{t("buttons.save")}</Button>
         {!hideCancelLabel && (
           <Button type="button" onClick={handleCancel}>
-            Cancel
+            {t("buttons.cancel")}
           </Button>
         )}
       </form>

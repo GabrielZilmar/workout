@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { enqueueSnackbar } from "notistack";
 import {
   createSet,
@@ -9,6 +10,7 @@ import {
 
 export const useCreateSet = () => {
   const queryClient = useQueryClient();
+  const t = useTranslations("Hooks");
 
   const {
     mutate: createSetMutation,
@@ -26,10 +28,10 @@ export const useCreateSet = () => {
         queryKey: ["list-infinite-sets"],
       });
 
-      enqueueSnackbar("Set created!", { variant: "success" });
+      enqueueSnackbar(t("useCreateSet.success"), { variant: "success" });
     },
     onError: () => {
-      return enqueueSnackbar("Ops.. Error on create set. Try again!", {
+      return enqueueSnackbar(t("useCreateSet.error"), {
         variant: "error",
       });
     },

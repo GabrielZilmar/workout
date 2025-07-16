@@ -9,9 +9,12 @@ import { setCookie } from "cookies-next";
 import Env from "~/shared/env";
 import { COOKIES_NAMES } from "~/constants/cookies";
 import { getRoutes } from "~/routes";
+import { useLocale, useTranslations } from "next-intl";
 
 export const useSignIn = () => {
-  const routes = getRoutes();
+  const t = useTranslations("Hooks");
+  const locale = useLocale();
+  const routes = getRoutes(locale);
   const router = useRouter();
 
   const { mutate: signInMutation } = useMutation<
@@ -26,17 +29,17 @@ export const useSignIn = () => {
         sameSite: "lax",
         domain: Env.appDomain,
       });
-      enqueueSnackbar("Successful login!", { variant: "success" });
+      enqueueSnackbar(t("useSignIn.success"), { variant: "success" });
       router.push(routes.home);
     },
     onError: ({ response }: AxiosError) => {
       if (response?.status === HttpStatus.UNAUTHORIZED) {
-        return enqueueSnackbar("Ops.. Invalid password or email. Try again!", {
+        return enqueueSnackbar(t("useSignIn.errors.invalid"), {
           variant: "error",
         });
       }
 
-      return enqueueSnackbar("Ops.. Error on sign in. Try again!", {
+      return enqueueSnackbar(t("useSignIn.errors.default"), {
         variant: "error",
       });
     },

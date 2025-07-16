@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@workout/ui";
+import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 import WorkoutForm from "~/components/forms/workout";
 import { Workout } from "~/types/workout";
@@ -24,19 +25,18 @@ const WorkoutDialog: React.FC<WorkoutDialogProps> = ({
   onClose,
   onOpenChange,
 }) => {
+  const t = useTranslations("WorkoutDialog");
   const isEditing = useMemo(() => !!workout, [workout]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{`${
-            isEditing ? "Update" : "Create"
-          } workout`}</DialogTitle>
+          <DialogTitle>
+            {isEditing ? t("title.update") : t("title.create")}
+          </DialogTitle>
           <DialogDescription>
-            {`${
-              isEditing ? "Update" : "Create"
-            } your workout. Choice if it's public or private, if it's a routine...`}
+            {isEditing ? t("description.update") : t("description.create")}
           </DialogDescription>
         </DialogHeader>
         <WorkoutForm workout={workout} onSubmit={onClose} onCancel={onClose} />

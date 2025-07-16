@@ -2,6 +2,7 @@
 
 import { Button, buttonVariants } from "@workout/ui";
 import { cn } from "@workout/ui/utils";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
 import { Suspense, useEffect } from "react";
@@ -10,8 +11,10 @@ import SessionLayout from "~/layouts/session.layout";
 import { getRoutes } from "~/routes";
 
 const VerifyEmailPage: React.FC = () => {
+  const t = useTranslations("VerifyEmailPage");
   const router = useRouter();
-  const routes = getRoutes();
+  const locale = useLocale();
+  const routes = getRoutes(locale);
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";
   const { isIdle, isPending, errorMessage, verifyEmailMutation } =
@@ -19,12 +22,12 @@ const VerifyEmailPage: React.FC = () => {
 
   useEffect(() => {
     if (!token) {
-      enqueueSnackbar("Missing verify email token", { variant: "error" });
+      enqueueSnackbar(t("errors.missingToken"), { variant: "error" });
       return;
     }
 
     verifyEmailMutation({ token });
-  }, [token, verifyEmailMutation]);
+  }, [token, verifyEmailMutation, t]);
 
   const handleGoToSignIn = () => {
     router.push(routes.signIn);
@@ -35,8 +38,10 @@ const VerifyEmailPage: React.FC = () => {
       <SessionLayout>
         <div className="flex justify-center overflow-hidden">
           <div>
-            <p className={"text-primary font-bold text-2xl"}>Loading</p>
-            <p>Verifying your email...</p>
+            <p className={"text-primary font-bold text-2xl"}>
+              {t("loading.title")}
+            </p>
+            <p>{t("loading.message")}</p>
           </div>
         </div>
       </SessionLayout>
@@ -49,13 +54,17 @@ const VerifyEmailPage: React.FC = () => {
         <div>
           {errorMessage ? (
             <>
-              <p className={"text-destructive font-bold text-2xl"}>Error</p>
+              <p className={"text-destructive font-bold text-2xl"}>
+                {t("error.title")}
+              </p>
               <p>{errorMessage}.</p>
             </>
           ) : (
             <>
-              <p className={"text-primary font-bold text-2xl"}>Congrats</p>
-              <p>You have successfully created your account.</p>
+              <p className={"text-primary font-bold text-2xl"}>
+                {t("success.title")}
+              </p>
+              <p>{t("success.message")}</p>
             </>
           )}
 
@@ -67,7 +76,7 @@ const VerifyEmailPage: React.FC = () => {
               )}
               onClick={handleGoToSignIn}
             >
-              Log in to account
+              {t("button.login")}
             </Button>
           </div>
         </div>
