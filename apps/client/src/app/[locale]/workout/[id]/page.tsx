@@ -46,7 +46,8 @@ import {
   useUser,
 } from "~/hooks";
 import GlobalLayout from "~/layouts/global.layout";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { LOCALE_MAP } from "~/types/languages";
 
 type DeleteWorkoutExerciseDialogState = {
   workoutExerciseId?: string;
@@ -55,6 +56,7 @@ type DeleteWorkoutExerciseDialogState = {
 
 const WorkoutDetailsPage = () => {
   const t = useTranslations("WorkoutDetailsPage");
+  const locale = useLocale();
   const { id } = useParams<{ id: string }>();
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -160,7 +162,12 @@ const WorkoutDetailsPage = () => {
                           <Accordion type="single" collapsible>
                             <AccordionItem value="item-1">
                               <AccordionTrigger>
-                                {workoutExercise.exercise?.name}
+                                {(
+                                  workoutExercise.exercise?.translations || []
+                                ).find(
+                                  (translation) =>
+                                    LOCALE_MAP[translation.language] === locale
+                                )?.name || workoutExercise.exercise?.name}
                               </AccordionTrigger>
                               <AccordionContent>
                                 <WorkoutExerciseSets

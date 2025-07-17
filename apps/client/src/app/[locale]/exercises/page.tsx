@@ -19,7 +19,7 @@ import {
 } from "@workout/ui";
 import { cn } from "@workout/ui/utils";
 import { PlusIcon, Trash2 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import ReactPlayer from "react-player/youtube";
@@ -37,6 +37,7 @@ import GlobalLayout from "~/layouts/global.layout";
 import { debounce } from "~/lib/utils";
 import { getYouTubeThumbnail } from "~/shared/youtube";
 import { Exercise } from "~/types/exercise";
+import { LOCALE_MAP } from "~/types/languages";
 
 type ExerciseDialogState = {
   exercise?: Exercise;
@@ -54,6 +55,7 @@ type ListExerciseState = {
 
 const ExercisesPage: React.FC = () => {
   const t = useTranslations("ExercisesPage");
+  const locale = useLocale();
   const { user, isLoading: userIsLoading } = useUser();
   const [exerciseDialog, setExerciseDialog] = useState<ExerciseDialogState>({
     isOpen: false,
@@ -227,7 +229,10 @@ const ExercisesPage: React.FC = () => {
                       "flex justify-between": user?.isAdmin,
                     })}
                   >
-                    {exercise.name}
+                    {(exercise.translations || []).find(
+                      (translation) =>
+                        LOCALE_MAP[translation.language] === locale
+                    )?.name || exercise.name}
                     {user?.isAdmin && (
                       <Button
                         fullWidth
