@@ -22,12 +22,26 @@ import { useEffect } from "react";
 import Loading from "~/components/loading";
 import { useLocale, useTranslations } from "next-intl";
 
-const formSchema = z.object({
-  email: z.string().max(255).email(),
-});
-type FormSchema = z.infer<typeof formSchema>;
+const getFormSchema = (
+  t: (
+    key: string,
+    params?: Record<string, string | number | Date> | undefined
+  ) => string
+) => {
+  const formSchema = z.object({
+    email: z
+      .string()
+      .max(255, t("maxLength", { length: 255 }))
+      .email(t("email")),
+  });
+  return formSchema;
+};
+
+type FormSchema = z.infer<ReturnType<typeof getFormSchema>>;
 
 const ForgotPasswordForm = () => {
+  const zt = useTranslations("Zod");
+  const formSchema = getFormSchema(zt);
   const t = useTranslations("ForgotPasswordForm");
   const router = useRouter();
   const locale = useLocale();

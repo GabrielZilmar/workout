@@ -28,10 +28,19 @@ import { cn } from "@workout/ui/utils";
 import Loading from "~/components/loading";
 import { useTranslations } from "next-intl";
 
-const formSchema = z.object({
-  exerciseId: z.string().uuid(),
-});
-type FormSchema = z.infer<typeof formSchema>;
+const getFormSchema = (
+  t: (
+    key: string,
+    params?: Record<string, string | number | Date> | undefined
+  ) => string
+) => {
+  const formSchema = z.object({
+    exerciseId: z.string().uuid(t("invalidUUID")),
+  });
+  return formSchema;
+};
+
+type FormSchema = z.infer<ReturnType<typeof getFormSchema>>;
 type WorkoutExerciseFormProps = {
   workoutId: string;
   onSubmit?: (data?: FormSchema) => void;
@@ -43,6 +52,8 @@ const WorkoutExerciseForm: React.FC<WorkoutExerciseFormProps> = ({
   onSubmit,
   onCancel,
 }) => {
+  const zt = useTranslations("Zod");
+  const formSchema = getFormSchema(zt);
   const t = useTranslations("WorkoutExerciseForm");
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),

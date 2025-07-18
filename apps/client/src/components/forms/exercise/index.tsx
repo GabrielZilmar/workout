@@ -35,22 +35,40 @@ import Loading from "~/components/loading";
 import { Languages, LANGUAGES_ARRAY } from "~/types/languages";
 import { useTranslations } from "next-intl";
 
-const languagesEnum = z.enum(LANGUAGES_ARRAY);
+const getExerciseFormSchema = (
+  t: (
+    key: string,
+    params?: Record<string, string | number | Date> | undefined
+  ) => string
+) => {
+  const languagesEnum = z.enum(LANGUAGES_ARRAY);
 
-const translationSchema = z.object({
-  name: z.string().max(255),
-  info: z.string().optional(),
-  language: languagesEnum,
-});
+  const translationSchema = z.object({
+    name: z
+      .string()
+      .max(255, t("maxLength", { length: 255 }))
+      .min(8, t("minLength", { length: 8 })),
+    info: z.string().optional(),
+    language: languagesEnum,
+  });
 
-const formSchema = z.object({
-  name: z.string().max(255),
-  muscleId: z.string().uuid(),
-  tutorialUrl: z.string().url().max(255).optional(),
-  info: z.string().optional(),
-  translations: z.array(translationSchema).optional(),
-});
-type FormSchema = z.infer<typeof formSchema>;
+  return z.object({
+    name: z
+      .string()
+      .max(255, t("maxLength", { length: 255 }))
+      .min(3, t("minLength", { length: 8 })),
+    muscleId: z.string().uuid(t("invalidUUID")),
+    tutorialUrl: z
+      .string()
+      .url(t("invalidUrl"))
+      .max(255, t("maxLength", { length: 255 }))
+      .optional(),
+    info: z.string().optional(),
+    translations: z.array(translationSchema).optional(),
+  });
+};
+
+type FormSchema = z.infer<ReturnType<typeof getExerciseFormSchema>>;
 type ExerciseFormProps = {
   exercise?: Exercise;
   onSubmit?: (data?: FormSchema) => void;
@@ -62,6 +80,8 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
   onSubmit,
   onCancel,
 }) => {
+  const zt = useTranslations("Zod");
+  const formSchema = getExerciseFormSchema(zt);
   const t = useTranslations("ExerciseForm");
   const translationMap = useMemo(() => {
     const map = new Map<Languages, ExerciseTranslations>();

@@ -463,5 +463,19 @@
     "useUpdateExercise": {
       "error": "Ups... Error al actualizar el ejercicio. ¡Inténtalo de nuevo!"
     }
+  },
+  "Zod": {
+    "required": "Este campo es obligatorio",
+    "email": "Por favor, introduce una dirección de correo válida",
+    "minLength": "Debe tener al menos {length} caracteres",
+    "maxLength": "Debe tener como máximo {length} caracteres",
+    "usernameTaken": "El nombre de usuario ya está en uso",
+    "emailTaken": "El correo electrónico ya está en uso",
+    "passwordComplexity": "La contraseña no cumple con los requisitos de seguridad",
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "invalidUrl": "Por favor, introduce una URL válida",
+    "invalidUUID": "Formato de ID inválido",
+    "minValue": "Debe ser al menos {min}",
+    "maxValue": "Debe ser como máximo {max}"
   }
 }
