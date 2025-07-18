@@ -26,11 +26,21 @@ import {
 import { cn } from "@workout/ui/utils";
 
 import Loading from "~/components/loading";
+import { useTranslations } from "next-intl";
 
-const formSchema = z.object({
-  exerciseId: z.string().uuid(),
-});
-type FormSchema = z.infer<typeof formSchema>;
+const getFormSchema = (
+  t: (
+    key: string,
+    params?: Record<string, string | number | Date> | undefined
+  ) => string
+) => {
+  const formSchema = z.object({
+    exerciseId: z.string().uuid(t("invalidUUID")),
+  });
+  return formSchema;
+};
+
+type FormSchema = z.infer<ReturnType<typeof getFormSchema>>;
 type WorkoutExerciseFormProps = {
   workoutId: string;
   onSubmit?: (data?: FormSchema) => void;
@@ -42,6 +52,9 @@ const WorkoutExerciseForm: React.FC<WorkoutExerciseFormProps> = ({
   onSubmit,
   onCancel,
 }) => {
+  const zt = useTranslations("Zod");
+  const formSchema = getFormSchema(zt);
+  const t = useTranslations("WorkoutExerciseForm");
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -85,7 +98,7 @@ const WorkoutExerciseForm: React.FC<WorkoutExerciseFormProps> = ({
           name="exerciseId"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel> Select a new exercise for your workout</FormLabel>
+              <FormLabel>{t("title")}</FormLabel>
               <Popover modal={true}>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -102,7 +115,7 @@ const WorkoutExerciseForm: React.FC<WorkoutExerciseFormProps> = ({
                           ? exercises.find(
                               (exercise) => exercise.id === field.value
                             )?.name
-                          : "Select an exercise"}
+                          : t("placeholder")}
                       </div>
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -111,12 +124,12 @@ const WorkoutExerciseForm: React.FC<WorkoutExerciseFormProps> = ({
                 <PopoverContent className="w-[200px] p-0">
                   <ScrollArea>
                     <Command>
-                      <CommandInput placeholder="Search exercise..." />
+                      <CommandInput placeholder={t("searchPlaceholder")} />
                       {isLoading ? (
                         <Loading className="h-fit" />
                       ) : (
                         <CommandList className="max-h-64">
-                          <CommandEmpty>No exercise found.</CommandEmpty>
+                          <CommandEmpty>{t("searchPlaceholder")}</CommandEmpty>
                           <CommandGroup>
                             {exercises.map((exercise) => (
                               <CommandItem
@@ -150,10 +163,10 @@ const WorkoutExerciseForm: React.FC<WorkoutExerciseFormProps> = ({
         />
         <div className="flex space-x-4">
           <Button fullWidth type="button" className="mt-4" onClick={onCancel}>
-            Cancel
+            {t("cancel")}
           </Button>
           <Button fullWidth type="submit" className="mt-4">
-            Create Workout Exercise
+            {t("submit")}
           </Button>
         </div>
       </form>

@@ -1,0 +1,274 @@
+"use client";
+
+import {
+  Button,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+  Input,
+  Label,
+  PasswordInput,
+} from "@workout/ui";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SubmitHandler, useForm } from "react-hook-form";
+import Image from "next/image";
+import { Lock, Mail, User } from "lucide-react";
+import Logo from "/public/logo.svg";
+import { getRoutes } from "~/routes";
+import Link from "next/link";
+import SessionLayout from "~/layouts/session.layout";
+import { SignUpPayload } from "~/data/sign-up";
+import Validator from "~/shared/validator";
+import { useSignUp } from "~/hooks";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { isEmailAvailable } from "~/data/is-email-available";
+import { isUsernameAvailable } from "~/data/is-username-available";
+import { useLocale, useTranslations } from "next-intl";
+
+type FormFieldValues = SignUpPayload & { confirmPassword: string };
+
+const SignUp: React.FC = () => {
+  const zt = useTranslations("Zod");
+  const formSchema = z
+    .object({
+      username: z
+        .string()
+        .min(4, zt("minLength", { length: 4 }))
+        .refine(
+          async (value) => {
+            if (!value) return;
+            const { data: isAvail } = await isUsernameAvailable(value);
+            return isAvail;
+          },
+          { message: zt("usernameTaken") }
+        ),
+      email: z
+        .string()
+        .email(zt("email"))
+        .refine(
+          async (value) => {
+            const { data: isAvail } = await isEmailAvailable(value);
+            return isAvail;
+          },
+          { message: zt("emailTaken") }
+        ),
+      password: z.string().regex(Validator.regexPasswordValidation, {
+        message: zt("passwordComplexity"),
+      }),
+      confirmPassword: z.string(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: zt("passwordMismatch"),
+      path: ["confirmPassword"],
+    });
+
+  const t = useTranslations("SignUpPage");
+  const router = useRouter();
+  const locale = useLocale();
+  const routes = getRoutes(locale);
+  const form = useForm<FormFieldValues>({
+    resolver: zodResolver(formSchema),
+    mode: "onBlur",
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+  const { errors: formErrors } = form.formState;
+
+  const { signUpMutation, isSuccess } = useSignUp();
+  const onSubmit: SubmitHandler<FormFieldValues> = async (data) => {
+    signUpMutation(data);
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      router.push(routes.signIn);
+    }
+  }, [isSuccess, router, routes]);
+
+  return (
+    <SessionLayout>
+      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+        <Image
+          className="mx-auto"
+          src={Logo}
+          width={0}
+          height={0}
+          style={{ width: 160, height: 160 }}
+          alt="Workout Logo"
+          priority
+        />
+        <h2 className="text-center text-xl font-bold text-white-900">
+          {t("title")}
+        </h2>
+      </div>
+
+      <div className="mt-2 sm:mx-auto sm:w-full sm:max-w-sm">
+        <Form {...form}>
+          <form
+            className="space-y-2"
+            method="POST"
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
+            <div>
+              <Label
+                htmlFor="email"
+                className="block text-sm font-medium leading-6 text-white-900"
+              >
+                {t("labels.email")}
+              </Label>
+              <div className="mt-2">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder={t("placeholders.email")}
+                          id="email"
+                          type="email"
+                          autoComplete="email"
+                          required
+                          startIcon={<Mail />}
+                        />
+                      </FormControl>
+                      <FormMessage>
+                        <>{formErrors.email?.message}</>
+                      </FormMessage>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+            <div>
+              <Label
+                htmlFor="username"
+                className="block text-sm font-medium leading-6 text-white-900"
+              >
+                {t("labels.username")}
+              </Label>
+              <div className="mt-2">
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder={t("placeholders.username")}
+                          id="username"
+                          type="username"
+                          autoComplete="username"
+                          required
+                          startIcon={<User />}
+                        />
+                      </FormControl>
+                      <FormMessage>
+                        <>{formErrors.username?.message}</>
+                      </FormMessage>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center justify-between">
+                <Label
+                  htmlFor="password"
+                  className="block text-sm font-medium leading-6 text-white-900"
+                >
+                  {t("labels.password")}
+                </Label>
+              </div>
+              <div className="mt-2">
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <PasswordInput
+                          {...field}
+                          id="password"
+                          placeholder={t("placeholders.password")}
+                          autoComplete="current-password"
+                          displayRuleChecker
+                          required
+                          startIcon={<Lock />}
+                        />
+                      </FormControl>
+                      <FormMessage>
+                        <>{formErrors.password?.message}</>
+                      </FormMessage>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center justify-between">
+                <Label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-medium leading-6 text-white-900"
+                >
+                  {t("labels.confirmPassword")}
+                </Label>
+              </div>
+              <div className="mt-2">
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <PasswordInput
+                          {...field}
+                          id="confirmPassword"
+                          placeholder={t("placeholders.confirmPassword")}
+                          autoComplete="current-password"
+                          required
+                          startIcon={<Lock />}
+                        />
+                      </FormControl>
+                      <FormMessage>
+                        <>{formErrors.confirmPassword?.message}</>
+                      </FormMessage>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
+            <div>
+              <Button fullWidth type="submit" className="mt-4">
+                {t("buttons.submit")}
+              </Button>
+            </div>
+          </form>
+        </Form>
+
+        <p className="mt-4 text-center text-sm text-gray-500">
+          {t("hasAccount")}{" "}
+          <Link
+            href={routes.signIn}
+            className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+          >
+            {t("links.signIn")}
+          </Link>
+        </p>
+      </div>
+    </SessionLayout>
+  );
+};
+
+export default SignUp;

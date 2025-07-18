@@ -1,6 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from '~/modules/database/database.module';
+import ExerciseTranslationMapper from '~/modules/exercise-translations/mappers/exercise-translation.mapper';
 import { ExerciseModule } from '~/modules/exercise/exercise.module';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
 import MuscleMapper from '~/modules/muscle/mappers/muscle.mapper';
@@ -27,6 +28,7 @@ const mappersProviders = [
   ExerciseMapper,
   WorkoutExerciseMapper,
   SetMapper,
+  ExerciseTranslationMapper,
 ];
 const servicesProviders = [JwtService, Crypto];
 

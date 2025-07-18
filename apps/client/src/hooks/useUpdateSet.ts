@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { enqueueSnackbar } from "notistack";
 import {
   updateSet,
@@ -8,6 +9,7 @@ import {
 } from "~/data/update-set";
 
 export const useUpdateSet = () => {
+  const t = useTranslations("Hooks");
   const queryClient = useQueryClient();
 
   const {
@@ -29,10 +31,10 @@ export const useUpdateSet = () => {
         queryKey: ["progress-history"],
       });
 
-      enqueueSnackbar("Set updated!", { variant: "success" });
+      enqueueSnackbar(t("useUpdateSet.success"), { variant: "success" });
     },
     onError: () => {
-      return enqueueSnackbar("Ops.. Error on update set. Try again!", {
+      return enqueueSnackbar(t("useUpdateSet.error"), {
         variant: "error",
       });
     },

@@ -2,7 +2,7 @@
 
 import { DataTable } from "@workout/ui";
 import { useMemo, useState } from "react";
-import { publicWorkoutsColumns } from "~/components/data-table/public-workouts/columns";
+import { usePublicWorkoutsColumns } from "~/components/data-table/public-workouts/columns";
 import Error from "~/components/error";
 import Loading from "~/components/loading";
 import Pagination from "~/components/pagination";
@@ -13,6 +13,7 @@ import { debounce } from "~/lib/utils";
 const INITIAL_PAGE = 1;
 
 export function PublicWorkoutsDataTable() {
+  const columns = usePublicWorkoutsColumns();
   const [search, setSearch] = useState<string | undefined>(undefined);
   const [page, setPage] = useState<number>(INITIAL_PAGE);
   const { isLoading, isError, error, data } = useListPublicWorkouts({
@@ -42,7 +43,7 @@ export function PublicWorkoutsDataTable() {
   return (
     <div>
       <DataTable
-        columns={publicWorkoutsColumns}
+        columns={columns}
         data={data.items}
         isServerSearch
         search={search || ""}

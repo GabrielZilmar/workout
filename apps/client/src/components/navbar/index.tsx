@@ -1,39 +1,59 @@
 "use client";
 
-import {
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-} from "@headlessui/react";
+import { useState } from "react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import SecondaryLogo from "/public/secondary-logo.png";
 import Avatar from "/public/mock-avatar.jpeg";
-import { setCookie } from "cookies-next";
 import { COOKIES_NAMES } from "~/constants/cookies";
 import env from "~/shared/env";
 import { usePathname, useRouter } from "next/navigation";
-import { ALL_ROUTES } from "~/routes";
+import { getRoutes } from "~/routes";
 import Link from "next/link";
-
-const navigation = [
-  { name: "Home", href: ALL_ROUTES.home },
-  { name: "Public Workouts", href: ALL_ROUTES.publicWorkouts },
-  { name: "Exercises", href: ALL_ROUTES.exercises },
-  { name: "Progress", href: ALL_ROUTES.progress },
-];
+import {
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workout/ui";
+import { LOCALE_ITEMS } from "~/i18n/locale";
+import { useLocale, useTranslations } from "next-intl";
+import { setCookie } from "cookies-next";
+import { startTransition } from "react";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function Navbar() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const t = useTranslations("Navbar");
   const router = useRouter();
   const pathname = usePathname();
+  const localActive = useLocale();
+  const routes = getRoutes(localActive);
+
+  const navigation = [
+    { name: t("navigation.home"), href: routes.home },
+    { name: t("navigation.publicWorkouts"), href: routes.publicWorkouts },
+    { name: t("navigation.exercises"), href: routes.exercises },
+    { name: t("navigation.progress"), href: routes.progress },
+  ];
+
+  const handleChangeLocale = (nextLocale: string) => {
+    setCookie(COOKIES_NAMES.LOCALE, nextLocale);
+    startTransition(() => {
+      router.replace(pathname.replace(localActive, nextLocale));
+    });
+  };
 
   const handleLogout = () => {
     setCookie(COOKIES_NAMES.ACCESS_TOKEN, null, {
@@ -41,27 +61,26 @@ export default function Navbar() {
       sameSite: "lax",
       domain: env.appDomain,
     });
-    router.push(ALL_ROUTES.signIn);
+    router.push(routes.signIn);
   };
 
   return (
-    <Disclosure as="nav" className="bg-gray-800 fixed w-full z-10">
+    <nav className="bg-gray-800 fixed w-full z-10">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-            {/* Mobile menu button*/}
-            <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-              <span className="absolute -inset-0.5" />
-              <span className="sr-only">Open main menu</span>
-              <Bars3Icon
-                aria-hidden="true"
-                className="block h-6 w-6 group-data-[open]:hidden"
-              />
-              <XMarkIcon
-                aria-hidden="true"
-                className="hidden h-6 w-6 group-data-[open]:block"
-              />
-            </DisclosureButton>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              className="text-gray-400 hover:text-white hover:bg-gray-700"
+            >
+              {mobileMenuOpen ? (
+                <XMarkIcon className="h-6 w-6" />
+              ) : (
+                <Bars3Icon className="h-6 w-6" />
+              )}
+            </Button>
           </div>
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex flex-shrink-0 items-center">
@@ -70,20 +89,16 @@ export default function Navbar() {
                 src={SecondaryLogo}
                 className="h-12 w-auto"
                 priority
-                width={0}
-                height={0}
               />
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:items-center">
               <div className="flex space-x-4">
                 {navigation.map((item) => {
                   const current = pathname === item.href;
-
                   return (
                     <Link
                       key={item.name}
                       href={item.href}
-                      aria-current={current ? "page" : undefined}
                       className={classNames(
                         current
                           ? "bg-gray-900 text-white"
@@ -99,58 +114,66 @@ export default function Navbar() {
             </div>
           </div>
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            {/* Profile dropdown */}
-            <Menu as="div" className="relative ml-3">
-              <div>
-                <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div className="relative flex rounded-full bg-gray-800 text-sm cursor-pointer focus:outline-none">
                   <span className="absolute -inset-1.5" />
-                  <span className="sr-only">Open user menu</span>
                   <Image
-                    alt=""
+                    alt="Avatar"
                     src={Avatar}
                     className="h-8 w-8 rounded-full"
-                    width={0}
-                    height={0}
                   />
-                </MenuButton>
-              </div>
-              <MenuItems
-                transition
-                className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
-              >
-                <MenuItem>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="mt-2 w-48 bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+                <DropdownMenuItem className="hover:bg-gray-100 focus:bg-gray-100">
                   <Link
-                    href={ALL_ROUTES.userSettings}
-                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+                    href={routes.userSettings}
+                    className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100"
                   >
-                    Your Profile
+                    {t("yourProfile")}
                   </Link>
-                </MenuItem>
-                <MenuItem>
+                </DropdownMenuItem>
+                <Select value={localActive} onValueChange={handleChangeLocale}>
+                  <SelectTrigger className="flex w-full px-6 py-5 text-sm text-gray-700 bg-white hover:bg-gray-100">
+                    <SelectValue placeholder={t("language")} />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    <SelectGroup className="bg-white text-gray-700">
+                      {LOCALE_ITEMS.map(({ label, value }) => (
+                        <SelectItem
+                          key={value}
+                          value={value}
+                          className="text-gray-700 hover:text-gray-700 focus:text-gray-700 hover:bg-gray-100 focus:bg-gray-100hover:bg-gray-100 focus:bg-gray-100"
+                        >
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <DropdownMenuItem className="hover:bg-gray-100 focus:bg-gray-100">
                   <button
-                    className="w-full block px-4 py-2 text-left text-sm text-gray-700 data-[focus]:bg-gray-100"
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     onClick={handleLogout}
                   >
-                    Sign out
+                    {t("signOut")}
                   </button>
-                </MenuItem>
-              </MenuItems>
-            </Menu>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
 
-      <DisclosurePanel className="sm:hidden">
-        <div className="space-y-1 px-2 pb-3 pt-2">
+      {mobileMenuOpen && (
+        <div className="sm:hidden px-2 pt-2 pb-3 space-y-1">
           {navigation.map((item) => {
             const current = pathname === item.href;
-
             return (
-              <DisclosureButton
+              <Link
                 key={item.name}
-                as="a"
                 href={item.href}
-                aria-current={current ? "page" : undefined}
                 className={classNames(
                   current
                     ? "bg-gray-900 text-white"
@@ -159,11 +182,11 @@ export default function Navbar() {
                 )}
               >
                 {item.name}
-              </DisclosureButton>
+              </Link>
             );
           })}
         </div>
-      </DisclosurePanel>
-    </Disclosure>
+      )}
+    </nav>
   );
 }

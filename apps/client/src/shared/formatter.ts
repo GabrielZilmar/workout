@@ -1,6 +1,7 @@
 type MountDuplicateErrorMessageParams = {
   duplicatedItems?: Record<string, string>;
   itemName?: string;
+  t?: ReturnType<typeof import("next-intl").createTranslator>;
 };
 
 export default class Formatter {
@@ -25,14 +26,23 @@ export default class Formatter {
   public static mountDuplicateErrorMessage({
     duplicatedItems,
     itemName = "Item",
+    t,
   }: MountDuplicateErrorMessageParams = {}) {
-    let message = `Ops.. ${itemName} already exists!`;
+    let message = t
+      ? t("Formatter.errors.duplicate.itemExists", { item: itemName })
+      : `Ops.. ${itemName} already exists!`;
 
     if (duplicatedItems) {
       let duplicateItemsMessage = "";
       Object.entries(duplicatedItems).forEach(([key, value]) => {
         const capitalizedKey = Formatter.capitalizeAll(key);
-        duplicateItemsMessage += `\n${capitalizedKey} ${value} already used.`;
+        const fieldMessage = t
+          ? t("Formatter.errors.duplicate.fieldUsed", {
+              field: capitalizedKey,
+              value,
+            })
+          : `${capitalizedKey} ${value} already used.`;
+        duplicateItemsMessage += `\n${fieldMessage}`;
       });
       message = `${message}${duplicateItemsMessage}`;
     }

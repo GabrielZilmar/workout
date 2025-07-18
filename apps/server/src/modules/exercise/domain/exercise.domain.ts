@@ -1,4 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
+import ExerciseTranslationDomain from '~/modules/exercise-translations/domain/exercise-translation.domain';
 import { ExerciseDomainError } from '~/modules/exercise/domain/errors';
 import ExerciseInfo from '~/modules/exercise/domain/value-objects/info';
 import ExerciseName from '~/modules/exercise/domain/value-objects/name';
@@ -16,6 +17,7 @@ export type ExerciseDomainProps = {
   tutorialUrl: ExerciseTutorialUrl | null;
   muscleId: string;
   muscleDomain?: MuscleDomain;
+  translations?: ExerciseTranslationDomain[];
 };
 
 export type ExerciseDomainCreateParams = {
@@ -24,6 +26,7 @@ export type ExerciseDomainCreateParams = {
   info?: string;
   tutorialUrl?: string;
   muscleDomain?: MuscleDomain;
+  translations?: ExerciseTranslationDomain[];
 };
 
 export type ExerciseDomainUpdateParams = Partial<ExerciseDomainCreateParams>;
@@ -49,6 +52,10 @@ export default class ExerciseDomain extends AggregateRoot<ExerciseDomainProps> {
     return this.props.muscleDomain;
   }
 
+  get translations(): ExerciseTranslationDomain[] {
+    return this.props.translations || [];
+  }
+
   public toDto() {
     return ExerciseDto.domainToDto(this);
   }
@@ -63,6 +70,7 @@ export default class ExerciseDomain extends AggregateRoot<ExerciseDomainProps> {
     tutorialUrl,
     muscleId,
     muscleDomain,
+    translations,
   }: ExerciseDomainUpdateParams): Either<ExerciseDomainError, ExerciseDomain> {
     if (name) {
       const nameOrError = ExerciseName.create({ value: name });
@@ -107,6 +115,10 @@ export default class ExerciseDomain extends AggregateRoot<ExerciseDomainProps> {
       this.props.muscleDomain = muscleDomain;
     }
 
+    if (translations?.length) {
+      this.props.translations = translations;
+    }
+
     return right(this);
   }
 
@@ -146,6 +158,7 @@ export default class ExerciseDomain extends AggregateRoot<ExerciseDomainProps> {
       info: infoValueObject,
       tutorialUrl: tutorialUrlValueObject,
       muscleDomain: props.muscleDomain,
+      translations: props.translations,
     };
     return right(exerciseDomainProps);
   }

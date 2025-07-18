@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { enqueueSnackbar } from "notistack";
 import { HttpStatus } from "~/constants/httpStatus";
 import {
@@ -9,6 +10,8 @@ import {
 } from "~/data/send-verify-email";
 
 export const useSendVerifyEmail = () => {
+  const t = useTranslations("Hooks");
+
   const {
     mutate: sendVerifyEmailMutation,
     isError,
@@ -22,24 +25,24 @@ export const useSendVerifyEmail = () => {
   >({
     mutationFn: (payload) => sendVerifyEmail(payload),
     onSuccess: () => {
-      enqueueSnackbar("Verify email has been sent!", {
+      enqueueSnackbar(t("useSendVerifyEmail.success"), {
         variant: "success",
       });
     },
     onError: ({ response }) => {
       if (response?.data?.message.includes("still valid")) {
-        return enqueueSnackbar("Verify email already sent. Check your inbox!", {
+        return enqueueSnackbar(t("useSendVerifyEmail.errors.alreadySent"), {
           variant: "info",
         });
       }
 
       if (response?.data.statusCode === HttpStatus.CONFLICT) {
-        return enqueueSnackbar("User email already verified!", {
+        return enqueueSnackbar(t("useSendVerifyEmail.errors.alreadyVerified"), {
           variant: "success",
         });
       }
 
-      enqueueSnackbar("Ops.. Error on sending verify email. Try again!", {
+      enqueueSnackbar(t("useSendVerifyEmail.errors.default"), {
         variant: "error",
       });
     },

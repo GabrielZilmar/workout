@@ -9,6 +9,9 @@ export class ExerciseUseCaseError extends Error {
       `Exercise with name: ${name} was not found`,
     muscleNotFound: (id: string) =>
       `Muscle with id: ${id} was not found. Insert a valid muscle id`,
+    missingTranslationFields: 'Missing translations values',
+    translationNotFound: (id: string) =>
+      `Exercise translation with id: ${id} was not found`,
   };
 
   constructor(message: string, code: number, payload?: unknown) {

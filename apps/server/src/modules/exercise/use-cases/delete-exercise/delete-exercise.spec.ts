@@ -2,6 +2,7 @@ import { HttpException, NotFoundException, Provider } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ExerciseDomainMock } from 'test/utils/domains/exercise-domain-mock';
 import getExerciseRepositoryProvider from 'test/utils/providers/exercise-repository-mock';
+import ExerciseTranslationMapper from '~/modules/exercise-translations/mappers/exercise-translation.mapper';
 import ExerciseDomain from '~/modules/exercise/domain/exercise.domain';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
 import { DeleteExercise } from '~/modules/exercise/use-cases/delete-exercise';
@@ -41,6 +42,7 @@ describe('DeleteExercise use case', () => {
         exerciseRepositoryProvider,
         ExerciseMapper,
         MuscleMapper,
+        ExerciseTranslationMapper,
         DeleteExercise,
       ],
     }).compile();

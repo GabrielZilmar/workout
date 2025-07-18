@@ -27,9 +27,16 @@ export class GetExercise
     const isId = validateUUID(idOrUsername);
     try {
       exercise = isId
-        ? await this.exerciseRepository.findOneById(idOrUsername)
+        ? await this.exerciseRepository.findOne({
+            where: { id: idOrUsername },
+            relations: ['translations'],
+          })
         : await this.exerciseRepository.findOne({
-            where: { name: idOrUsername },
+            where: [
+              { name: idOrUsername },
+              { translations: { name: idOrUsername } },
+            ],
+            relations: ['translations'],
           });
     } catch (err) {
       throw new InternalServerErrorException((err as Error).message);

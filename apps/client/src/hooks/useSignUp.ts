@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { enqueueSnackbar } from "notistack";
 import { HttpStatus } from "~/constants/httpStatus";
 import { sendVerifyEmail } from "~/data/send-verify-email";
@@ -11,6 +12,8 @@ import {
 import Formatter from "~/shared/formatter";
 
 export const useSignUp = () => {
+  const t = useTranslations("Hooks");
+
   const {
     mutate: signUpMutation,
     data,
@@ -19,24 +22,21 @@ export const useSignUp = () => {
   } = useMutation<SignUpResult, SignUpUserErrorResult, SignUpPayload>({
     mutationFn: (payload) => signUp(payload),
     onSuccess: ({ data }: SignUpResult) => {
-      enqueueSnackbar("Successful sign up!", { variant: "success" });
+      enqueueSnackbar(t("useSignUp.success"), { variant: "success" });
       try {
         sendVerifyEmail({ userId: data.id });
       } catch (err) {
-        return enqueueSnackbar(
-          "Something went wrong when sending the verification email. Try again later.",
-          {
-            variant: "error",
-            style: { whiteSpace: "pre-line" },
-          }
-        );
+        return enqueueSnackbar(t("useSignUp.errors.sendVerifyEmail"), {
+          variant: "error",
+          style: { whiteSpace: "pre-line" },
+        });
       }
     },
     onError: (error) => {
       if (error.response?.status === HttpStatus.CONFLICT) {
         const message = Formatter.mountDuplicateErrorMessage({
           duplicatedItems: error.response.data.duplicatedItems,
-          itemName: "User",
+          itemName: t("useSignUp.itemName"),
         });
 
         return enqueueSnackbar(message, {
@@ -45,7 +45,7 @@ export const useSignUp = () => {
         });
       }
 
-      return enqueueSnackbar("Ops.. Error on register user. Try again!", {
+      return enqueueSnackbar(t("useSignUp.errors.default"), {
         variant: "error",
       });
     },

@@ -11,6 +11,7 @@ import { WorkoutDomainMock } from 'test/utils/domains/workout-domain-mock';
 import { WorkoutExerciseDomainMock } from 'test/utils/domains/workout-exercise-domain.mock';
 import { DataSource } from 'typeorm';
 import { v4 } from 'uuid';
+import ExerciseTranslationMapper from '~/modules/exercise-translations/mappers/exercise-translation.mapper';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
 import MuscleMapper from '~/modules/muscle/mappers/muscle.mapper';
 import SetDomain from '~/modules/set/domain/set.domain';
@@ -43,7 +44,7 @@ describe('Change many set orders', () => {
     const setMapper = new SetMapper(
       new WorkoutExerciseMapper(
         new WorkoutMapper(new UserMapper()),
-        new ExerciseMapper(new MuscleMapper()),
+        new ExerciseMapper(new MuscleMapper(), new ExerciseTranslationMapper()),
         new SetMapper(),
       ),
     );
@@ -91,6 +92,7 @@ describe('Change many set orders', () => {
         MuscleMapper,
         WorkoutMapper,
         WorkoutExerciseMapper,
+        ExerciseTranslationMapper,
         SetMapper,
         ChangeManySetOrders,
       ],

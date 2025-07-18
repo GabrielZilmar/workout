@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@workout/ui";
+import { useTranslations } from "next-intl";
 import React, { useMemo } from "react";
 import ExerciseForm from "~/components/forms/exercise";
 import { Exercise } from "~/types/exercise";
@@ -24,19 +25,18 @@ const ExerciseDialog: React.FC<ExerciseDialogProps> = ({
   onClose,
   onOpenChange,
 }) => {
+  const t = useTranslations("ExerciseDialog");
   const isEditing = useMemo(() => !!exercise, [exercise]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="overflow-auto h-full max-h-[80%]">
         <DialogHeader>
           <DialogTitle>{`${
-            isEditing ? "Update" : "Create"
+            isEditing ? t("title.update") : t("title.create")
           } exercise`}</DialogTitle>
           <DialogDescription>
-            {`${
-              isEditing ? "Update" : "Create"
-            } your exercise. Choice if it's public or private, if it's a routine...`}
+            {isEditing ? t("description.update") : t("description.create")}
           </DialogDescription>
         </DialogHeader>
         <ExerciseForm

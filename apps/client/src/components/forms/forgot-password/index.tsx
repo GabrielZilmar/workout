@@ -15,19 +15,37 @@ import {
   Label,
 } from "@workout/ui";
 import Link from "next/link";
-import { ALL_ROUTES } from "~/routes";
+import { getRoutes } from "~/routes";
 import { useRouter } from "next/navigation";
 import { useSendRecoverPasswordEmail } from "~/hooks";
 import { useEffect } from "react";
 import Loading from "~/components/loading";
+import { useLocale, useTranslations } from "next-intl";
 
-const formSchema = z.object({
-  email: z.string().max(255).email(),
-});
-type FormSchema = z.infer<typeof formSchema>;
+const getFormSchema = (
+  t: (
+    key: string,
+    params?: Record<string, string | number | Date> | undefined
+  ) => string
+) => {
+  const formSchema = z.object({
+    email: z
+      .string()
+      .max(255, t("maxLength", { length: 255 }))
+      .email(t("email")),
+  });
+  return formSchema;
+};
+
+type FormSchema = z.infer<ReturnType<typeof getFormSchema>>;
 
 const ForgotPasswordForm = () => {
+  const zt = useTranslations("Zod");
+  const formSchema = getFormSchema(zt);
+  const t = useTranslations("ForgotPasswordForm");
   const router = useRouter();
+  const locale = useLocale();
+  const routes = getRoutes(locale);
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,9 +62,9 @@ const ForgotPasswordForm = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      router.push(ALL_ROUTES.signIn);
+      router.push(routes.signIn);
     }
-  }, [isSuccess, router]);
+  }, [isSuccess, router, routes]);
 
   return (
     <div>
@@ -61,7 +79,7 @@ const ForgotPasswordForm = () => {
               htmlFor="email"
               className="block text-sm font-medium leading-6 text-white-900"
             >
-              Email
+              {t("labels.email")}
             </Label>
             <div className="mt-2">
               <FormField
@@ -72,7 +90,7 @@ const ForgotPasswordForm = () => {
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="test@example.com"
+                        placeholder={t("placeholders.email")}
                         id="email"
                         type="email"
                         autoComplete="email"
@@ -94,7 +112,7 @@ const ForgotPasswordForm = () => {
               <Loading className="h-fit" />
             ) : (
               <Button fullWidth type="submit">
-                Recover password
+                {t("buttons.submit")}
               </Button>
             )}
           </div>
@@ -103,10 +121,10 @@ const ForgotPasswordForm = () => {
 
       <p className="mt-10 text-center text-sm text-gray-500">
         <Link
-          href={ALL_ROUTES.signIn}
+          href={routes.signIn}
           className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
         >
-          Return to login
+          {t("links.returnToLogin")}
         </Link>
       </p>
     </div>

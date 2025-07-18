@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { enqueueSnackbar } from "notistack";
 import { HttpStatus } from "~/constants/httpStatus";
 import {
@@ -10,6 +11,7 @@ import {
 import Formatter from "~/shared/formatter";
 
 export const useUpdateWorkout = () => {
+  const t = useTranslations("Hooks");
   const queryClient = useQueryClient();
 
   const {
@@ -28,13 +30,14 @@ export const useUpdateWorkout = () => {
       queryClient.invalidateQueries({
         queryKey: ["workouts"],
       });
-      enqueueSnackbar("Workout updated!", { variant: "success" });
+      enqueueSnackbar(t("useUpdateWorkout.success"), { variant: "success" });
     },
     onError: (error) => {
       if (error.response?.status === HttpStatus.CONFLICT) {
         const message = Formatter.mountDuplicateErrorMessage({
           duplicatedItems: error.response.data.duplicatedItems,
-          itemName: "Workout",
+          itemName: t("useUpdateWorkout.itemName"),
+          t,
         });
 
         return enqueueSnackbar(message, {
@@ -43,7 +46,7 @@ export const useUpdateWorkout = () => {
         });
       }
 
-      return enqueueSnackbar("Ops.. Error on update workout. Try again!", {
+      return enqueueSnackbar(t("useUpdateWorkout.error"), {
         variant: "error",
       });
     },

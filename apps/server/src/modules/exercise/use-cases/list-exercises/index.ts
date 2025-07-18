@@ -24,10 +24,13 @@ export class ListExercises
     take,
   }: ListExercisesDto): Promise<ListExercisesResult> {
     const { items, count } = await this.exerciseRepository.find({
-      where: { name: name && ILike(`%${name}%`), muscleId },
+      where: [
+        { name: name && ILike(`%${name}%`), muscleId },
+        { translations: { name: name && ILike(`%${name}%`) }, muscleId },
+      ],
       skip,
       take,
-      relations: ['muscle'],
+      relations: ['muscle', 'translations'],
       order: { muscleId: 'ASC', id: 'ASC' },
     });
 

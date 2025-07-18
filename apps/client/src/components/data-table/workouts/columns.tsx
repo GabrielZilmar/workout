@@ -12,12 +12,13 @@ import {
   Repeat,
   Trash2,
 } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import GenericAlertDialog from "~/components/dialogs/generic";
 import WorkoutDialog from "~/components/dialogs/workout";
 import { useDeleteWorkout, useStartRoutine } from "~/hooks";
-import { ALL_ROUTES } from "~/routes";
+import { getRoutes } from "~/routes";
 import { Workout } from "~/types/workout";
 
 type RowProps = { row: Row<Workout> };
@@ -39,6 +40,7 @@ const WorkoutActionColumn: React.FC<WorkoutActionColumnProps> = ({
   table,
   ...params
 }) => {
+  const t = useTranslations("WorkoutActionColumn");
   const [alertDialog, setAlertDialog] = useState<AlertDialogState>({
     isOpen: false,
     title: "",
@@ -68,16 +70,12 @@ const WorkoutActionColumn: React.FC<WorkoutActionColumnProps> = ({
 
   const handleDeleteDialog = useCallback(() => {
     setAlertDialog({
-      title: `Are you sure to delete the workout${
-        isMultipleRowsSelected ? "s" : ""
-      }?`,
-      description: `This action cannot be undone. This will permanently delete the workout${
-        isMultipleRowsSelected ? "s" : ""
-      } selected`,
+      title: t("dialog.delete.title", { quantity: selectedRows.length }),
+      description: t("dialog.delete.title", { quantity: selectedRows.length }),
       confirmAction: handleDelete,
       isOpen: true,
     });
-  }, [handleDelete, isMultipleRowsSelected]);
+  }, [handleDelete, selectedRows, t]);
 
   const handleStartRoutine = useCallback(() => {
     setAlertDialog({ ...alertDialog, isOpen: false });
@@ -89,13 +87,12 @@ const WorkoutActionColumn: React.FC<WorkoutActionColumnProps> = ({
 
   const handleStartRoutineDialog = useCallback(() => {
     setAlertDialog({
-      title: "Are you sure to start this routine?",
-      description:
-        "It will create a new workout exercise, copying all exercises and sets.",
+      title: t("dialog.start.title"),
+      description: t("dialog.start.description"),
       confirmAction: handleStartRoutine,
       isOpen: true,
     });
-  }, [handleStartRoutine]);
+  }, [handleStartRoutine, t]);
 
   return (
     <>
@@ -115,7 +112,7 @@ const WorkoutActionColumn: React.FC<WorkoutActionColumnProps> = ({
             </Button>
           </div>
         ) : (
-          <span>Action</span>
+          <span>{t("tableHeader.action")}</span>
         )
       ) : !isMultipleRowsSelected ? (
         <div className="h-fit space-x-2 flex">
@@ -141,104 +138,109 @@ const WorkoutActionColumn: React.FC<WorkoutActionColumnProps> = ({
   );
 };
 
-export const workoutColumns: ColumnDef<Workout>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => {
-      const id = row.original.id;
-      const name = row.getValue<string>("name");
+export const useWorkoutColumns = (): ColumnDef<Workout>[] => {
+  const t = useTranslations("WorkoutColumns");
+  const locale = useLocale();
+  return [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label={t("aria.selectAll")}
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label={t("aria.selectRow")}
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "name",
+      header: t("headers.name"),
+      cell: ({ row }) => {
+        const routes = getRoutes(locale);
+        const id = row.original.id;
+        const name = row.getValue<string>("name");
 
-      return (
-        <Button variant="link">
-          <Link href={ALL_ROUTES.workoutDetails(id)}>{name || "-"}</Link>
-        </Button>
-      );
+        return (
+          <Button variant="link">
+            <Link href={routes.workoutDetails(id)}>{name || "-"}</Link>
+          </Button>
+        );
+      },
     },
-  },
-  {
-    accessorKey: "isPrivate",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Private/Public
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const isPrivate = row.getValue("isPrivate");
+    {
+      accessorKey: "isPrivate",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            {t("headers.privacy")}
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        const isPrivate = row.getValue("isPrivate");
 
-      return isPrivate ? (
-        <div className="flex space-x-2 items-center">
-          <BookLock />
-          <p>Private</p>
-        </div>
-      ) : (
-        <div className="flex space-x-2 items-center">
-          <BookOpen />
-          <p>Public</p>
-        </div>
-      );
+        return isPrivate ? (
+          <div className="flex space-x-2 items-center">
+            <BookLock />
+            <p>{t("values.private")}</p>
+          </div>
+        ) : (
+          <div className="flex space-x-2 items-center">
+            <BookOpen />
+            <p>{t("values.public")}</p>
+          </div>
+        );
+      },
     },
-  },
-  {
-    accessorKey: "isRoutine",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Is Routine?
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const isRoutine = row.getValue("isRoutine");
+    {
+      accessorKey: "isRoutine",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            {t("headers.isRoutine")}
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        const isRoutine = row.getValue("isRoutine");
 
-      return isRoutine ? (
-        <div className="flex space-x-2 items-center">
-          <AlarmClockCheck />
-          <p>Yes</p>
-        </div>
-      ) : (
-        <div className="flex space-x-2 items-center">
-          <CircleX />
-          <p>No</p>
-        </div>
-      );
+        return isRoutine ? (
+          <div className="flex space-x-2 items-center">
+            <AlarmClockCheck />
+            <p>{t("values.yes")}</p>
+          </div>
+        ) : (
+          <div className="flex space-x-2 items-center">
+            <CircleX />
+            <p>{t("values.no")}</p>
+          </div>
+        );
+      },
     },
-  },
-  {
-    id: "actions",
-    header: ({ table }) => <WorkoutActionColumn isHeader table={table} />,
-    cell: ({ row, table }) => <WorkoutActionColumn row={row} table={table} />,
-  },
-];
+    {
+      id: "actions",
+      header: ({ table }) => <WorkoutActionColumn isHeader table={table} />,
+      cell: ({ row, table }) => <WorkoutActionColumn row={row} table={table} />,
+    },
+  ];
+};

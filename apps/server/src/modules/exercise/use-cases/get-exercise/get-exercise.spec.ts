@@ -8,6 +8,7 @@ import {
 import { Test, TestingModule } from '@nestjs/testing';
 import { ExerciseDomainMock } from 'test/utils/domains/exercise-domain-mock';
 import getExerciseRepositoryProvider from 'test/utils/providers/exercise-repository-mock';
+import ExerciseTranslationMapper from '~/modules/exercise-translations/mappers/exercise-translation.mapper';
 import ExerciseDomain from '~/modules/exercise/domain/exercise.domain';
 import { ExerciseDtoError } from '~/modules/exercise/dto/errors';
 import ExerciseMapper from '~/modules/exercise/mappers/exercise.mapper';
@@ -48,6 +49,7 @@ describe('GetExercise use case', () => {
         exerciseRepositoryProvider,
         ExerciseMapper,
         MuscleMapper,
+        ExerciseTranslationMapper,
         GetExercise,
       ],
     }).compile();
@@ -58,19 +60,18 @@ describe('GetExercise use case', () => {
     const exerciseParams = {
       idOrUsername: exerciseDomain.id?.toString() as string,
     };
-    const findOneByIdSpy = jest.spyOn(
-      getExerciseUseCase['exerciseRepository'],
-      'findOneById',
-    );
-    const findOneIdSpy = jest.spyOn(
+    const findOneSpy = jest.spyOn(
       getExerciseUseCase['exerciseRepository'],
       'findOne',
     );
 
     const exercise = await getExerciseUseCase.execute(exerciseParams);
     expect(exercise).toEqual(exerciseDomain.toDto().value);
-    expect(findOneByIdSpy).toBeCalledTimes(1);
-    expect(findOneIdSpy).not.toBeCalled();
+    expect(findOneSpy).toHaveBeenCalledTimes(1);
+    expect(findOneSpy).toHaveBeenCalledWith({
+      where: { id: exerciseDomain.id?.toString() },
+      relations: ['translations'],
+    });
   });
 
   it('Should get exercise by name', async () => {
@@ -78,19 +79,21 @@ describe('GetExercise use case', () => {
     const exerciseParams = {
       idOrUsername: exerciseDomain.name.value,
     };
-    const findOneByIdSpy = jest.spyOn(
-      getExerciseUseCase['exerciseRepository'],
-      'findOneById',
-    );
-    const findOneIdSpy = jest.spyOn(
+    const findOneSpy = jest.spyOn(
       getExerciseUseCase['exerciseRepository'],
       'findOne',
     );
 
     const exercise = await getExerciseUseCase.execute(exerciseParams);
     expect(exercise).toEqual(exerciseDomain.toDto().value);
-    expect(findOneByIdSpy).not.toBeCalled();
-    expect(findOneIdSpy).toBeCalledTimes(1);
+    expect(findOneSpy).toHaveBeenCalledTimes(1);
+    expect(findOneSpy).toHaveBeenCalledWith({
+      where: [
+        { name: exerciseDomain.name.value },
+        { translations: { name: exerciseDomain.name.value } },
+      ],
+      relations: ['translations'],
+    });
   });
 
   it('Should not get exercise if repository query fails', async () => {
@@ -99,7 +102,7 @@ describe('GetExercise use case', () => {
 
     const getExerciseUseCase = module.get<GetExercise>(GetExercise);
     jest
-      .spyOn(getExerciseUseCase['exerciseRepository'], 'findOneById')
+      .spyOn(getExerciseUseCase['exerciseRepository'], 'findOne')
       .mockRejectedValue(errorMock);
 
     await expect(
@@ -114,7 +117,7 @@ describe('GetExercise use case', () => {
   it('Should not get exercise if it is not found by id', async () => {
     const getExerciseUseCase = module.get<GetExercise>(GetExercise);
     jest
-      .spyOn(getExerciseUseCase['exerciseRepository'], 'findOneById')
+      .spyOn(getExerciseUseCase['exerciseRepository'], 'findOne')
       .mockResolvedValueOnce(null);
 
     await expect(

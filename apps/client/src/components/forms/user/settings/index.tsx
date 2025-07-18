@@ -16,14 +16,37 @@ import {
   Input,
   Label,
 } from "@workout/ui";
+import { useTranslations } from "next-intl";
 
-const formSchema = z.object({
-  username: z.string().min(4).optional(),
-  age: z.coerce.number().min(12).max(100).optional(),
-  weight: z.coerce.number().min(36).optional(),
-  height: z.coerce.number().min(140).optional(),
-});
-type FormSchema = z.infer<typeof formSchema>;
+const getFormSchema = (
+  t: (
+    key: string,
+    params?: Record<string, string | number | Date> | undefined
+  ) => string
+) => {
+  const formSchema = z.object({
+    username: z
+      .string()
+      .min(4, t("minLength", { length: 4 }))
+      .optional(),
+    age: z.coerce
+      .number()
+      .min(12, t("minValue", { min: 12 }))
+      .max(100, t("maxValue", { max: 100 }))
+      .optional(),
+    weight: z.coerce
+      .number()
+      .min(36, t("minValue", { min: 36 }))
+      .optional(),
+    height: z.coerce
+      .number()
+      .min(140, t("minValue", { min: 140 }))
+      .optional(),
+  });
+  return formSchema;
+};
+
+type FormSchema = z.infer<ReturnType<typeof getFormSchema>>;
 
 type UserSettingsFormProps = {
   user: WorkoutUser;
@@ -38,6 +61,9 @@ const UserSettingForm: React.FC<UserSettingsFormProps> = ({
   onCancel,
   hideCancelLabel = false,
 }) => {
+  const zt = useTranslations("Zod");
+  const formSchema = getFormSchema(zt);
+  const t = useTranslations("UserSettingForm");
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -64,7 +90,7 @@ const UserSettingForm: React.FC<UserSettingsFormProps> = ({
       if (!isAvailable) {
         form.setError("username", {
           type: "manual",
-          message: "Username is not available",
+          message: t("errors.usernameTaken"),
         });
         return;
       }
@@ -91,7 +117,7 @@ const UserSettingForm: React.FC<UserSettingsFormProps> = ({
             htmlFor="email"
             className="block text-sm font-medium leading-6 text-white-900"
           >
-            Email
+            {t("labels.email")}
           </Label>
           <Input disabled value={user.email} />
         </div>
@@ -100,7 +126,7 @@ const UserSettingForm: React.FC<UserSettingsFormProps> = ({
             htmlFor="username"
             className="block text-sm font-medium leading-6 text-white-900"
           >
-            Username
+            {t("labels.username")}
           </Label>
           <FormField
             control={form.control}
@@ -123,7 +149,7 @@ const UserSettingForm: React.FC<UserSettingsFormProps> = ({
               htmlFor="age"
               className="block text-sm font-medium leading-6 text-white-900"
             >
-              Age
+              {t("labels.age")}
             </Label>
             <FormField
               control={form.control}
@@ -145,7 +171,7 @@ const UserSettingForm: React.FC<UserSettingsFormProps> = ({
               htmlFor="weight"
               className="block text-sm font-medium leading-6 text-white-900"
             >
-              Weight
+              {t("labels.weight")}
             </Label>
             <FormField
               control={form.control}
@@ -167,7 +193,7 @@ const UserSettingForm: React.FC<UserSettingsFormProps> = ({
               htmlFor="height"
               className="block text-sm font-medium leading-6 text-white-900"
             >
-              Height
+              {t("label.height")}
             </Label>
             <FormField
               control={form.control}
@@ -186,10 +212,10 @@ const UserSettingForm: React.FC<UserSettingsFormProps> = ({
           </div>
         </div>
 
-        <Button type="submit">Save</Button>
+        <Button type="submit">{t("buttons.save")}</Button>
         {!hideCancelLabel && (
           <Button type="button" onClick={handleCancel}>
-            Cancel
+            {t("buttons.cancel")}
           </Button>
         )}
       </form>
