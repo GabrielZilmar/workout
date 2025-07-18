@@ -18,13 +18,35 @@ import {
 } from "@workout/ui";
 import { useTranslations } from "next-intl";
 
-const formSchema = z.object({
-  username: z.string().min(4).optional(),
-  age: z.coerce.number().min(12).max(100).optional(),
-  weight: z.coerce.number().min(36).optional(),
-  height: z.coerce.number().min(140).optional(),
-});
-type FormSchema = z.infer<typeof formSchema>;
+const getFormSchema = (
+  t: (
+    key: string,
+    params?: Record<string, string | number | Date> | undefined
+  ) => string
+) => {
+  const formSchema = z.object({
+    username: z
+      .string()
+      .min(4, t("minLength", { length: 4 }))
+      .optional(),
+    age: z.coerce
+      .number()
+      .min(12, t("minValue", { min: 12 }))
+      .max(100, t("maxValue", { max: 100 }))
+      .optional(),
+    weight: z.coerce
+      .number()
+      .min(36, t("minValue", { min: 36 }))
+      .optional(),
+    height: z.coerce
+      .number()
+      .min(140, t("minValue", { min: 140 }))
+      .optional(),
+  });
+  return formSchema;
+};
+
+type FormSchema = z.infer<ReturnType<typeof getFormSchema>>;
 
 type UserSettingsFormProps = {
   user: WorkoutUser;
@@ -39,6 +61,8 @@ const UserSettingForm: React.FC<UserSettingsFormProps> = ({
   onCancel,
   hideCancelLabel = false,
 }) => {
+  const zt = useTranslations("Zod");
+  const formSchema = getFormSchema(zt);
   const t = useTranslations("UserSettingForm");
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),

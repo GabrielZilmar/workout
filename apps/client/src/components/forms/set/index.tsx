@@ -15,12 +15,30 @@ import {
 import { useCreateSet, useUpdateSet } from "~/hooks";
 import { useTranslations } from "next-intl";
 
-const formSchema = z.object({
-  numReps: z.coerce.number().min(0).default(0),
-  numDrops: z.coerce.number().min(0).default(0),
-  setWeight: z.coerce.number().min(0).default(0),
-});
-type FormSchema = z.infer<typeof formSchema>;
+const getFormSchema = (
+  t: (
+    key: string,
+    params?: Record<string, string | number | Date> | undefined
+  ) => string
+) => {
+  const formSchema = z.object({
+    numReps: z.coerce
+      .number()
+      .min(0, t("minValue", { min: 0 }))
+      .default(0),
+    numDrops: z.coerce
+      .number()
+      .min(0, t("minValue", { min: 0 }))
+      .default(0),
+    setWeight: z.coerce
+      .number()
+      .min(0, t("minValue", { min: 0 }))
+      .default(0),
+  });
+  return formSchema;
+};
+
+type FormSchema = z.infer<ReturnType<typeof getFormSchema>>;
 
 type SetFormProps = {
   workoutExerciseId: string;
@@ -39,6 +57,8 @@ const SetForm: React.FC<SetFormProps> = ({
   onCancel,
   cancelLabel,
 }) => {
+  const zt = useTranslations("Zod");
+  const formSchema = getFormSchema(zt);
   const t = useTranslations("SetForm");
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),

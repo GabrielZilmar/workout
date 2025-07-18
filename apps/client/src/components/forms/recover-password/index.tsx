@@ -24,20 +24,34 @@ import { useEffect } from "react";
 import { enqueueSnackbar } from "notistack";
 import { useLocale, useTranslations } from "next-intl";
 
-const formSchema = z
-  .object({
-    password: z.string().min(8).regex(Validator.regexPasswordValidation, {
-      message: "Password does not meet complexity requirements",
-    }),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
-type FormSchema = z.infer<typeof formSchema>;
+const getFormSchema = (
+  t: (
+    key: string,
+    params?: Record<string, string | number | Date> | undefined
+  ) => string
+) => {
+  const formSchema = z
+    .object({
+      password: z
+        .string()
+        .min(8, t("minLength", { length: 8 }))
+        .regex(Validator.regexPasswordValidation, {
+          message: t("passwordComplexity"),
+        }),
+      confirmPassword: z.string(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: t("passwordMismatch"),
+      path: ["confirmPassword"],
+    });
+  return formSchema;
+};
+
+type FormSchema = z.infer<ReturnType<typeof getFormSchema>>;
 
 const RecoverPasswordForm = () => {
+  const zt = useTranslations("Zod");
+  const formSchema = getFormSchema(zt);
   const t = useTranslations("RecoverPasswordForm");
   const router = useRouter();
   const locale = useLocale();

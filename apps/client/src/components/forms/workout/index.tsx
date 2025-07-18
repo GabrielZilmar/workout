@@ -27,12 +27,24 @@ type RadioGroupItems = {
   label: string;
 };
 
-const formSchema = z.object({
-  name: z.string().min(1).max(255),
-  isPrivate: z.boolean().optional(),
-  isRoutine: z.boolean().optional(),
-});
-type FormSchema = z.infer<typeof formSchema>;
+const getFormSchema = (
+  t: (
+    key: string,
+    params?: Record<string, string | number | Date> | undefined
+  ) => string
+) => {
+  const formSchema = z.object({
+    name: z
+      .string()
+      .min(1, t("minLength", { length: 1 }))
+      .max(255, t("maxLength", { length: 255 })),
+    isPrivate: z.boolean().optional(),
+    isRoutine: z.boolean().optional(),
+  });
+  return formSchema;
+};
+
+type FormSchema = z.infer<ReturnType<typeof getFormSchema>>;
 type WorkoutFormProps = {
   workout?: Workout;
   onSubmit?: (data?: FormSchema) => void;
@@ -44,6 +56,8 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({
   onSubmit,
   onCancel,
 }) => {
+  const zt = useTranslations("Zod");
+  const formSchema = getFormSchema(zt);
   const t = useTranslations("WorkoutForm");
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),

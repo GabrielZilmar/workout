@@ -25,12 +25,19 @@ import SessionLayout from "~/layouts/session.layout";
 import { getRoutes } from "~/routes";
 import { useLocale, useTranslations } from "next-intl";
 
-const formSchema = z.object({
-  email: z.string().max(255).email(),
-  password: z.string().max(255).min(8),
-});
-
 export default function SignIn() {
+  const zt = useTranslations("Zod");
+  const formSchema = z.object({
+    email: z
+      .string()
+      .max(255, zt("maxLength", { length: 255 }))
+      .email(zt("email")),
+    password: z
+      .string()
+      .min(8, zt("minLength", { length: 8 }))
+      .max(255, zt("maxLength", { length: 255 })),
+  });
+
   const t = useTranslations("SignInPage");
   const form = useForm<SignInPayload>({
     resolver: zodResolver(formSchema),

@@ -31,41 +31,41 @@ import { useLocale, useTranslations } from "next-intl";
 
 type FormFieldValues = SignUpPayload & { confirmPassword: string };
 
-const formSchema = z
-  .object({
-    username: z
-      .string()
-      .min(4)
-      .refine(async (value) => {
-        try {
-          const { data: isAvail } = await isUsernameAvailable(value);
-          return isAvail;
-        } catch (e) {
-          return false;
-        }
-      }, "Username is already taken"),
-    email: z
-      .string()
-      .email()
-      .refine(async (value) => {
-        try {
-          const { data: isAvail } = await isEmailAvailable(value);
-          return isAvail;
-        } catch (e) {
-          return false;
-        }
-      }, "Email is already taken"),
-    password: z.string().regex(Validator.regexPasswordValidation, {
-      message: "Password does not meet complexity requirements",
-    }),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
-
 const SignUp: React.FC = () => {
+  const zt = useTranslations("Zod");
+  const formSchema = z
+    .object({
+      username: z
+        .string()
+        .min(4, zt("minLength", { length: 4 }))
+        .refine(
+          async (value) => {
+            if (!value) return;
+            const { data: isAvail } = await isUsernameAvailable(value);
+            return isAvail;
+          },
+          { message: zt("usernameTaken") }
+        ),
+      email: z
+        .string()
+        .email(zt("email"))
+        .refine(
+          async (value) => {
+            const { data: isAvail } = await isEmailAvailable(value);
+            return isAvail;
+          },
+          { message: zt("emailTaken") }
+        ),
+      password: z.string().regex(Validator.regexPasswordValidation, {
+        message: zt("passwordComplexity"),
+      }),
+      confirmPassword: z.string(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: zt("passwordMismatch"),
+      path: ["confirmPassword"],
+    });
+
   const t = useTranslations("SignUpPage");
   const router = useRouter();
   const locale = useLocale();
