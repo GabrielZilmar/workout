@@ -22,12 +22,13 @@ import {
   SelectValue,
 } from "@workout/ui";
 import { TrendingUp } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import Loading from "~/components/loading";
 import { useListPaginatedExercises } from "~/hooks";
 import useProgressHistory from "~/hooks/useProgressHistory";
+import { LOCALE_MAP } from "~/types/languages";
 
 const chartConfig = {
   weight: {
@@ -38,6 +39,7 @@ const chartConfig = {
 
 const ProgressChart: React.FC = () => {
   const t = useTranslations("ProgressChart");
+  const locale = useLocale();
   const [exerciseId, setExerciseId] = useState<string>();
   const { data, isLoading } = useProgressHistory(exerciseId || "");
   const {
@@ -73,7 +75,10 @@ const ProgressChart: React.FC = () => {
                   <SelectGroup>
                     {exercises.map((exercise) => (
                       <SelectItem key={exercise.id} value={exercise.id}>
-                        {exercise.name}
+                        {(exercise.translations || []).find(
+                          (translation) =>
+                            LOCALE_MAP[translation.language] === locale
+                        )?.name || exercise.name}
                       </SelectItem>
                     ))}
                   </SelectGroup>
