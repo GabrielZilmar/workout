@@ -25,6 +25,7 @@ import {
   useUpdateManySetOrders,
 } from "~/hooks";
 import { Set } from "~/types/set";
+import { useTranslations } from "use-intl";
 
 const NEW_SET_PREFIX = "new-item";
 
@@ -41,6 +42,7 @@ const WorkoutExerciseSets: React.FC<WorkoutExerciseSetsProps> = ({
   workoutExerciseId,
   isOwner = false,
 }) => {
+  const t = useTranslations("WorkoutExerciseSets");
   const {
     data,
     isLoading,
@@ -140,7 +142,7 @@ const WorkoutExerciseSets: React.FC<WorkoutExerciseSetsProps> = ({
                 set={set}
                 isOwner={isOwner}
                 onCancel={() => handleDeleteSet(set ? set.id : id)}
-                cancelLabel={<Trash2>Remove Set</Trash2>}
+                cancelLabel={<Trash2>{t("removeSet")}</Trash2>}
               />
             </SortableItem>
           ))}

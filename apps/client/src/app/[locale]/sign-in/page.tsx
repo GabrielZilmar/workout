@@ -23,13 +23,22 @@ import { useSignIn } from "~/hooks";
 import Link from "next/link";
 import SessionLayout from "~/layouts/session.layout";
 import { getRoutes } from "~/routes";
-
-const formSchema = z.object({
-  email: z.string().max(255).email(),
-  password: z.string().max(255).min(8),
-});
+import { useLocale, useTranslations } from "next-intl";
 
 export default function SignIn() {
+  const zt = useTranslations("Zod");
+  const formSchema = z.object({
+    email: z
+      .string()
+      .max(255, zt("maxLength", { length: 255 }))
+      .email(zt("email")),
+    password: z
+      .string()
+      .min(8, zt("minLength", { length: 8 }))
+      .max(255, zt("maxLength", { length: 255 })),
+  });
+
+  const t = useTranslations("SignInPage");
   const form = useForm<SignInPayload>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -38,7 +47,8 @@ export default function SignIn() {
     },
   });
   const { errors: formErrors } = form.formState;
-  const routes = getRoutes();
+  const locale = useLocale();
+  const routes = getRoutes(locale);
 
   const { signInMutation } = useSignIn();
 
@@ -59,7 +69,7 @@ export default function SignIn() {
           priority
         />
         <h2 className="mt-2 text-center text-2xl font-bold text-white-900">
-          Sign in to your account
+          {t("signIn")}
         </h2>
       </div>
 
@@ -75,7 +85,7 @@ export default function SignIn() {
                 htmlFor="email"
                 className="block text-sm font-medium leading-6 text-white-900"
               >
-                Email
+                {t("labels.email")}
               </Label>
               <div className="mt-2">
                 <FormField
@@ -86,7 +96,7 @@ export default function SignIn() {
                       <FormControl>
                         <Input
                           {...field}
-                          placeholder="test@example.com"
+                          placeholder={t("placeholders.email")}
                           id="email"
                           type="email"
                           autoComplete="email"
@@ -109,7 +119,7 @@ export default function SignIn() {
                   htmlFor="password"
                   className="block text-sm font-medium leading-6 text-white-900"
                 >
-                  Password
+                  {t("labels.password")}
                 </Label>
                 <div className="text-sm">
                   <Link
@@ -118,7 +128,7 @@ export default function SignIn() {
                       "font-semibold text-indigo-600 hover:text-indigo-500"
                     )}
                   >
-                    Forgot password?
+                    {t("links.forgot")}
                   </Link>
                 </div>
               </div>
@@ -131,7 +141,7 @@ export default function SignIn() {
                       <FormControl>
                         <PasswordInput
                           {...field}
-                          placeholder="Password"
+                          placeholder={t("placeholders.password")}
                           id="password"
                           autoComplete="current-password"
                           required
@@ -149,19 +159,19 @@ export default function SignIn() {
 
             <div>
               <Button fullWidth type="submit">
-                Sign in
+                {t("buttons.submit")}
               </Button>
             </div>
           </form>
         </Form>
 
         <p className="mt-10 text-center text-sm text-gray-500">
-          Not have an account?{" "}
+          {t("noAccount")}{" "}
           <Link
             href={routes.signUp}
             className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
           >
-            Create now
+            {t("links.create")}
           </Link>
         </p>
       </div>

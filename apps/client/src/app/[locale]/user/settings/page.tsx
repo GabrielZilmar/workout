@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import UserSettingForm from "~/components/forms/user/settings";
 import Loading from "~/components/loading";
 import { useUpdateUser, useUser } from "~/hooks";
@@ -13,6 +14,7 @@ type HandleSubmitParams = {
 };
 
 const UserSettingsPage = () => {
+  const t = useTranslations("UserSettingsPage");
   const { user, isLoading } = useUser();
   const { updateUserMutation } = useUpdateUser();
 
@@ -26,7 +28,7 @@ const UserSettingsPage = () => {
   };
 
   if (!user && !isLoading) {
-    <h1 className="text-4xl text-red-600">User not found</h1>;
+    <h1 className="text-4xl text-red-600">{t("notFound")}</h1>;
   }
 
   return (
@@ -35,7 +37,7 @@ const UserSettingsPage = () => {
         <Loading />
       ) : (
         <div className="h-full">
-          <h1 className="text-4xl">Account</h1>
+          <h1 className="text-4xl">{t("title")}</h1>
           <div className="mt-2 px-2">
             <UserSettingForm
               user={user}

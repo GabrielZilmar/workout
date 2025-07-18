@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { enqueueSnackbar } from "notistack";
 import {
   deleteExercise,
@@ -8,6 +9,7 @@ import {
 } from "~/data/delete-exercise";
 
 export const useDeleteExercise = () => {
+  const t = useTranslations("Hooks");
   const queryClient = useQueryClient();
 
   const {
@@ -30,10 +32,10 @@ export const useDeleteExercise = () => {
         queryKey: ["list-infinite-exercises"],
       });
 
-      enqueueSnackbar("Exercise deleted!", { variant: "success" });
+      enqueueSnackbar(t("useDeleteExercise.success"), { variant: "success" });
     },
     onError: () => {
-      return enqueueSnackbar("Ops.. Error on delete exercise. Try again!", {
+      return enqueueSnackbar(t("useDeleteExercise.error"), {
         variant: "error",
       });
     },

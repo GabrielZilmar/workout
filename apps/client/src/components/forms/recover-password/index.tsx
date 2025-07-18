@@ -22,23 +22,40 @@ import Link from "next/link";
 import { getRoutes } from "~/routes";
 import { useEffect } from "react";
 import { enqueueSnackbar } from "notistack";
+import { useLocale, useTranslations } from "next-intl";
 
-const formSchema = z
-  .object({
-    password: z.string().min(8).regex(Validator.regexPasswordValidation, {
-      message: "Password does not meet complexity requirements",
-    }),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
-type FormSchema = z.infer<typeof formSchema>;
+const getFormSchema = (
+  t: (
+    key: string,
+    params?: Record<string, string | number | Date> | undefined
+  ) => string
+) => {
+  const formSchema = z
+    .object({
+      password: z
+        .string()
+        .min(8, t("minLength", { length: 8 }))
+        .regex(Validator.regexPasswordValidation, {
+          message: t("passwordComplexity"),
+        }),
+      confirmPassword: z.string(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: t("passwordMismatch"),
+      path: ["confirmPassword"],
+    });
+  return formSchema;
+};
+
+type FormSchema = z.infer<ReturnType<typeof getFormSchema>>;
 
 const RecoverPasswordForm = () => {
+  const zt = useTranslations("Zod");
+  const formSchema = getFormSchema(zt);
+  const t = useTranslations("RecoverPasswordForm");
   const router = useRouter();
-  const routes = getRoutes();
+  const locale = useLocale();
+  const routes = getRoutes(locale);
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";
 
@@ -55,7 +72,7 @@ const RecoverPasswordForm = () => {
     useRecoverPassword();
   const onSubmit: SubmitHandler<FormSchema> = async (data) => {
     if (!token) {
-      enqueueSnackbar("Missing recover password token", { variant: "error" });
+      enqueueSnackbar(t("errors.missingToken"), { variant: "error" });
       return;
     }
 
@@ -85,7 +102,7 @@ const RecoverPasswordForm = () => {
                 htmlFor="password"
                 className="block text-sm font-medium leading-6 text-white-900"
               >
-                Password
+                {t("labels.password")}
               </Label>
             </div>
             <div className="mt-2">
@@ -97,7 +114,7 @@ const RecoverPasswordForm = () => {
                     <FormControl>
                       <PasswordInput
                         {...field}
-                        placeholder="Password"
+                        placeholder={t("placeholders.password")}
                         id="password"
                         autoComplete="current-password"
                         displayRuleChecker
@@ -120,7 +137,7 @@ const RecoverPasswordForm = () => {
                 htmlFor="confirmPassword"
                 className="block text-sm font-medium leading-6 text-white-900"
               >
-                Confirm Password
+                {t("labels.confirmPassword")}
               </Label>
             </div>
             <div className="mt-2">
@@ -132,7 +149,7 @@ const RecoverPasswordForm = () => {
                     <FormControl>
                       <PasswordInput
                         {...field}
-                        placeholder="Confirm Password"
+                        placeholder={t("placeholders.confirmPassword")}
                         id="confirmPassword"
                         autoComplete="current-password"
                         required
@@ -153,7 +170,7 @@ const RecoverPasswordForm = () => {
               <Loading className="h-fit" />
             ) : (
               <Button fullWidth type="submit">
-                Recover password
+                {t("buttons.submit")}
               </Button>
             )}
           </div>
@@ -165,7 +182,7 @@ const RecoverPasswordForm = () => {
           href={routes.signIn}
           className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
         >
-          Return to login
+          {t("links.returnToLogin")}
         </Link>
       </p>
     </div>

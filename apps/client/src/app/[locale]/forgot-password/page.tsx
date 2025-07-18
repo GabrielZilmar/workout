@@ -1,11 +1,14 @@
-"use client"; // Todo: remove
+"use client";
 
 import Image from "next/image";
 import SessionLayout from "~/layouts/session.layout";
 import Logo from "/public/logo.svg";
 import ForgotPasswordForm from "~/components/forms/forgot-password";
+import { useTranslations } from "next-intl";
 
 export default function ForgotPassword() {
+  const t = useTranslations("ForgotPasswordPage");
+
   return (
     <SessionLayout>
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -19,7 +22,7 @@ export default function ForgotPassword() {
           priority
         />
         <h2 className="mt-2 text-center text-2xl font-bold text-white-900">
-          Enter your email to recover the password
+          {t("description")}
         </h2>
       </div>
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-sm">

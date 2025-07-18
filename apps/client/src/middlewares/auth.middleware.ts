@@ -6,16 +6,24 @@ import { HttpStatus } from "~/constants/httpStatus";
 import { PUBLIC_ROUTES } from "~/routes";
 import { WorkoutUser } from "~/types/user";
 
+type AuthMiddlewareParams = {
+  url: NextURL;
+  locale: string;
+};
+
 type AuthMiddlewareResponse = {
   isAuth: boolean;
   user?: WorkoutUser;
 };
 
-export async function authMiddleware(
-  url: NextURL
-): Promise<AuthMiddlewareResponse> {
+export async function authMiddleware({
+  url,
+  locale,
+}: AuthMiddlewareParams): Promise<AuthMiddlewareResponse> {
   const { signIn: signInRoute, ...publicRoutes } = PUBLIC_ROUTES;
-  if (Object.values(publicRoutes).includes(url.pathname)) {
+  if (
+    Object.values(publicRoutes).includes(url.pathname.replace(`/${locale}`, ""))
+  ) {
     return { isAuth: true };
   }
 

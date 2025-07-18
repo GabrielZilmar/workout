@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { enqueueSnackbar } from "notistack";
 import { useState } from "react";
 import {
@@ -9,6 +10,7 @@ import {
 } from "~/data/recover-password";
 
 export const useRecoverPassword = () => {
+  const t = useTranslations("Hooks");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const {
@@ -26,18 +28,17 @@ export const useRecoverPassword = () => {
   >({
     mutationFn: (payload) => recoverPassword(payload),
     onSuccess: () => {
-      enqueueSnackbar("Password recovered.", {
+      enqueueSnackbar(t("useRecoverPassword.success"), {
         variant: "success",
       });
     },
     onError: (error) => {
-      let errorMessage =
-        "Failed to recover password, try again later! Please contact a support";
+      let errorMessage = t("useRecoverPassword.errors.default");
       if (error.response?.data?.message?.includes("expired")) {
-        errorMessage = "Recover password link expired!";
+        errorMessage = t("useRecoverPassword.errors.expired");
       }
       if (error.response?.data?.message?.includes("jwt string")) {
-        errorMessage = "Invalid recover password token!";
+        errorMessage = t("useRecoverPassword.errors.invalidToken");
       }
 
       setErrorMessage(errorMessage);

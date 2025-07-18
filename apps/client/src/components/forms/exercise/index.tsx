@@ -33,23 +33,42 @@ import { useEffect, useMemo } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import Loading from "~/components/loading";
 import { Languages, LANGUAGES_ARRAY } from "~/types/languages";
+import { useTranslations } from "next-intl";
 
-const languagesEnum = z.enum(LANGUAGES_ARRAY);
+const getExerciseFormSchema = (
+  t: (
+    key: string,
+    params?: Record<string, string | number | Date> | undefined
+  ) => string
+) => {
+  const languagesEnum = z.enum(LANGUAGES_ARRAY);
 
-const translationSchema = z.object({
-  name: z.string().max(255),
-  info: z.string().optional(),
-  language: languagesEnum,
-});
+  const translationSchema = z.object({
+    name: z
+      .string()
+      .max(255, t("maxLength", { length: 255 }))
+      .min(8, t("minLength", { length: 8 })),
+    info: z.string().optional(),
+    language: languagesEnum,
+  });
 
-const formSchema = z.object({
-  name: z.string().max(255),
-  muscleId: z.string().uuid(),
-  tutorialUrl: z.string().url().max(255).optional(),
-  info: z.string().optional(),
-  translations: z.array(translationSchema).optional(),
-});
-type FormSchema = z.infer<typeof formSchema>;
+  return z.object({
+    name: z
+      .string()
+      .max(255, t("maxLength", { length: 255 }))
+      .min(3, t("minLength", { length: 8 })),
+    muscleId: z.string().uuid(t("invalidUUID")),
+    tutorialUrl: z
+      .string()
+      .url(t("invalidUrl"))
+      .max(255, t("maxLength", { length: 255 }))
+      .optional(),
+    info: z.string().optional(),
+    translations: z.array(translationSchema).optional(),
+  });
+};
+
+type FormSchema = z.infer<ReturnType<typeof getExerciseFormSchema>>;
 type ExerciseFormProps = {
   exercise?: Exercise;
   onSubmit?: (data?: FormSchema) => void;
@@ -61,6 +80,9 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
   onSubmit,
   onCancel,
 }) => {
+  const zt = useTranslations("Zod");
+  const formSchema = getExerciseFormSchema(zt);
+  const t = useTranslations("ExerciseForm");
   const translationMap = useMemo(() => {
     const map = new Map<Languages, ExerciseTranslations>();
     exercise?.translations?.forEach((translation) => {
@@ -144,7 +166,7 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>{t("labels.name")}</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -168,10 +190,8 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
             name="muscleId"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>
-                  Choose the muscle group you want to target in your workout
-                </FormLabel>
-                <Popover modal={true}>
+                <FormLabel>{t("labels.muscleId")}</FormLabel>
+                <Popover modal>
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
@@ -187,7 +207,7 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                             ? muscles.find(
                                 (muscle) => muscle.id === field.value
                               )?.name
-                            : "Select an muscle"}
+                            : t("placeholders.selectMuscle")}
                         </div>
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
@@ -196,12 +216,16 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                   <PopoverContent className="w-[200px] p-0">
                     <ScrollArea>
                       <Command>
-                        <CommandInput placeholder="Search muscle..." />
+                        <CommandInput
+                          placeholder={t("placeholders.searchMuscle")}
+                        />
                         {isLoading ? (
                           <Loading className="h-fit" />
                         ) : (
                           <CommandList className="max-h-64">
-                            <CommandEmpty>No muscle found.</CommandEmpty>
+                            <CommandEmpty>
+                              {t("command.noMuscleFound")}
+                            </CommandEmpty>
                             <CommandGroup>
                               {muscles.map((muscle) => (
                                 <CommandItem
@@ -240,7 +264,7 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
             name="tutorialUrl"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Tutorial URL</FormLabel>
+                <FormLabel>{t("labels.tutorialUrl")}</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -262,7 +286,7 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
             name="info"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Info</FormLabel>
+                <FormLabel>{t("labels.info")}</FormLabel>
                 <FormControl>
                   <Textarea {...field} name="info" id="info" />
                 </FormControl>
@@ -274,19 +298,28 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
           />
         </div>
         <div className="mt-4 space-y-2">
-          <FormLabel className="text-base">Translations</FormLabel>
+          <FormLabel className="text-base">
+            {t("labels.translations")}
+          </FormLabel>
           {LANGUAGES_ARRAY.map((lang, index) => (
             <div key={lang} className="space-y-1 border p-4 rounded-xl">
-              <FormLabel className="text-muted-foreground">{lang}</FormLabel>
+              <FormLabel className="text-muted-foreground">
+                {t("labels.lang", { lang })}
+              </FormLabel>
 
               <FormField
                 control={form.control}
                 name={`translations.${index}.name`}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>{t("translation.name")}</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder={`Name in ${lang}`} />
+                      <Input
+                        {...field}
+                        placeholder={t("placeholders.translationName", {
+                          lang,
+                        })}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -297,7 +330,7 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                 name={`translations.${index}.info`}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Info</FormLabel>
+                    <FormLabel>{t("translation.info")}</FormLabel>
                     <FormControl>
                       <Textarea
                         {...field}
@@ -315,10 +348,10 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
 
         <div className="flex space-x-4">
           <Button fullWidth type="button" className="mt-4" onClick={onCancel}>
-            Cancel
+            {t("buttons.cancel")}
           </Button>
           <Button fullWidth type="submit" className="mt-4">
-            {exercise ? "Update" : "Create"}
+            {exercise ? t("buttons.submit.update") : t("buttons.submit.create")}
           </Button>
         </div>
       </form>

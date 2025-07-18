@@ -16,7 +16,7 @@ export async function middleware(req: NextRequest, event: NextFetchEvent) {
   const url = req.nextUrl.clone();
   const locale = req.cookies.get(COOKIES_NAMES.LOCALE)?.value || DEFAULT_LOCALE;
   const routes = getRoutes(locale);
-  const { isAuth } = await authMiddleware(url);
+  const { isAuth } = await authMiddleware({ url, locale });
 
   const isSignInPage = url.pathname === routes.signIn;
   if (!isAuth && !isSignInPage) {

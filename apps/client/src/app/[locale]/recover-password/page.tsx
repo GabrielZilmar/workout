@@ -1,12 +1,15 @@
-"use client"; // Todo: remove
+"use client";
 
 import Image from "next/image";
 import SessionLayout from "~/layouts/session.layout";
 import Logo from "/public/logo.svg";
 import RecoverPasswordForm from "~/components/forms/recover-password";
 import { Suspense } from "react";
+import { useTranslations } from "next-intl";
 
 const RecoverPassword = () => {
+  const t = useTranslations("RecoverPasswordPage");
+
   return (
     <SessionLayout>
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -20,7 +23,7 @@ const RecoverPassword = () => {
           priority
         />
         <h2 className="mt-2 text-center text-2xl font-bold text-white-900">
-          Enter your new password
+          {t("description")}
         </h2>
       </div>
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-sm">

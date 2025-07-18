@@ -11,7 +11,9 @@ type UsersWorkoutExercisesWhereOption = {
   userId: string;
   workoutId: string;
 };
-type UsersWorkoutExercisesFindRelationsParams = 'exercise';
+type UsersWorkoutExercisesFindRelationsParams =
+  | 'exercise'
+  | 'exercise.translations';
 type UsersWorkoutExercisesFindParams = {
   where: UsersWorkoutExercisesWhereOption;
   relations?: UsersWorkoutExercisesFindRelationsParams[];
@@ -58,6 +60,16 @@ export default class WorkoutExerciseRepository extends BaseRepository<
       .take(take);
     if (relations) {
       for (const relation of relations) {
+        if (relation.includes('.')) {
+          const [parent, child] = relation.split('.');
+          if (parent) {
+            qb.leftJoinAndSelect(`we.${parent}`, parent).leftJoinAndSelect(
+              `${parent}.${child}`,
+              `${parent}_${child}`,
+            );
+          }
+          continue;
+        }
         qb.leftJoinAndSelect(`we.${relation}`, relation);
       }
     }

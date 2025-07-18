@@ -1,1 +1,481 @@
-{}
+{
+  "WorkoutDataTable": {
+    "buttons": { "add": "Agregar entrenamiento" }
+  },
+  "ExercisesPage": {
+    "buttons": {
+      "clear": "Limpiar"
+    },
+    "select": {
+      "placeholder": "Músculo"
+    },
+    "inputs": {
+      "placeholder": "Nombre del ejercicio"
+    },
+    "dialog": {
+      "title": "¿Estás seguro de que deseas eliminar este ejercicio?",
+      "description": "Esta acción no se puede deshacer. Esto eliminará permanentemente este ejercicio."
+    },
+    "image": {
+      "alt": "Miniatura del video del ejercicio"
+    }
+  },
+  "ForgotPasswordPage": {
+    "description": "Ingresa tu correo electrónico para recuperar la contraseña"
+  },
+  "RecoverPasswordPage": {
+    "description": "Ingresa tu nueva contraseña"
+  },
+  "SignInPage": {
+    "signIn": "Inicia sesión en tu cuenta",
+    "noAccount": "¿No tienes una cuenta?",
+    "labels": {
+      "email": "Correo electrónico",
+      "password": "Contraseña"
+    },
+    "placeholders": {
+      "email": "prueba@ejemplo.com",
+      "password": "Contraseña"
+    },
+    "links": {
+      "forgot": "¿Olvidaste tu contraseña?",
+      "create": "Crea una ahora"
+    },
+    "buttons": {
+      "submit": "Iniciar sesión"
+    }
+  },
+  "SignUpPage": {
+    "title": "Registra tu cuenta",
+    "hasAccount": "¿Ya tienes una cuenta?",
+    "labels": {
+      "email": "Correo electrónico",
+      "username": "Nombre de usuario",
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar contraseña"
+    },
+    "placeholders": {
+      "email": "prueba@ejemplo.com",
+      "username": "Nombre de usuario",
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar contraseña"
+    },
+    "buttons": {
+      "submit": "Registrarse"
+    },
+    "links": {
+      "signIn": "Iniciar sesión"
+    }
+  },
+  "UserSettingsPage": {
+    "title": "Cuenta",
+    "notFound": "Usuario no encontrado"
+  },
+  "VerifyEmailPage": {
+    "loading": {
+      "title": "Cargando",
+      "message": "Verificando tu correo electrónico..."
+    },
+    "error": {
+      "title": "Error"
+    },
+    "success": {
+      "title": "Felicidades",
+      "message": "Tu cuenta ha sido creada exitosamente."
+    },
+    "button": {
+      "login": "Iniciar sesión"
+    },
+    "errors": {
+      "missingToken": "Falta el token de verificación de correo electrónico"
+    }
+  },
+  "WorkoutDetailsPage": {
+    "privacy": {
+      "private": "Entrenamiento privado",
+      "public": "Entrenamiento público"
+    },
+    "exercises": {
+      "title": "Ejercicios"
+    },
+    "buttons": {
+      "addExercise": "Agregar nuevo ejercicio"
+    },
+    "dialog": {
+      "title": "¿Estás seguro de que deseas eliminar este ejercicio del entrenamiento?",
+      "description": "Esta acción no se puede deshacer. Esto eliminará permanentemente este ejercicio del entrenamiento y sus series.",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar"
+    }
+  },
+  "ProgressChart": {
+    "select": {
+      "placeholder": "Ejercicio",
+      "clear": "Limpiar"
+    },
+    "card": {
+      "title": "Sobrecarga progresiva",
+      "description": "Mostrando tu sobrecarga progresiva en el ejercicio seleccionado"
+    },
+    "footer": {
+      "label": "Sobrecarga progresiva 💪🏼"
+    }
+  },
+  "PublicWorkoutActionColumn": {
+    "button": {
+      "start": "Iniciar rutina"
+    },
+    "dialog": {
+      "title": "¿Estás seguro de que deseas iniciar esta rutina?",
+      "description": "Esto creará un nuevo entrenamiento copiando todos los ejercicios y series.",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar"
+    }
+  },
+  "PublicWorkoutsColumns": {
+    "headers": {
+      "name": "Nombre",
+      "createdBy": "Creado por",
+      "startRoutine": "Iniciar rutina"
+    }
+  },
+  "WorkoutActionColumn": {
+    "tableHeader": {
+      "action": "Acción"
+    },
+    "dialog": {
+      "delete": {
+        "title": "¿Estás seguro de que deseas eliminar {quantity, plural, =1 {el} other {los}} entrenamiento{quantity, plural, =1 {} other {s}}?",
+        "description": "Esta acción no se puede deshacer. Esto eliminará permanentemente {quantity, plural, =1 {el} other {los}} entrenamiento{quantity, plural, =1 {} other {s}} seleccionado{quantity, plural, =1 {} other {s}}."
+      },
+      "start": {
+        "title": "¿Estás seguro de que deseas iniciar esta rutina?",
+        "description": "Esto creará un nuevo entrenamiento copiando todos los ejercicios y series."
+      }
+    }
+  },
+  "WorkoutColumns": {
+    "headers": {
+      "name": "Nombre",
+      "privacy": "Privado/Público",
+      "isRoutine": "¿Es rutina?"
+    },
+    "values": {
+      "private": "Privado",
+      "public": "Público",
+      "yes": "Sí",
+      "no": "No"
+    },
+    "aria": {
+      "selectAll": "Seleccionar todo",
+      "selectRow": "Seleccionar fila"
+    }
+  },
+  "ExerciseDialog": {
+    "title": {
+      "create": "Crear ejercicio",
+      "update": "Actualizar ejercicio"
+    },
+    "description": {
+      "create": "Crea tu ejercicio. Elige si será público o privado, si formará parte de una rutina...",
+      "update": "Actualiza tu ejercicio. Elige si será público o privado, si formará parte de una rutina..."
+    }
+  },
+  "GenericAlertDialog": {
+    "cancel": "Cancelar",
+    "confirm": "Confirmar"
+  },
+  "WorkoutDialog": {
+    "title": {
+      "create": "Crear entrenamiento",
+      "update": "Actualizar entrenamiento"
+    },
+    "description": {
+      "create": "Crea tu entrenamiento. Elige si será público o privado, si formará parte de una rutina...",
+      "update": "Actualiza tu entrenamiento. Elige si será público o privado, si formará parte de una rutina..."
+    }
+  },
+  "WorkoutExerciseDialog": {
+    "title": "Crear ejercicio del entrenamiento",
+    "description": "Agrega un ejercicio a tu entrenamiento"
+  },
+  "Error": {
+    "title": "Error",
+    "description": "Ocurrió un error. Intenta nuevamente más tarde o contacta al soporte."
+  },
+  "RecoverPasswordForm": {
+    "labels": {
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar contraseña"
+    },
+    "placeholders": {
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar contraseña"
+    },
+    "buttons": {
+      "submit": "Recuperar contraseña"
+    },
+    "links": {
+      "returnToLogin": "Volver al inicio de sesión"
+    },
+    "errors": {
+      "missingToken": "Falta el token de recuperación de contraseña"
+    }
+  },
+  "ExerciseForm": {
+    "labels": {
+      "name": "Nombre",
+      "muscleId": "Elige el grupo muscular que deseas trabajar en tu entrenamiento",
+      "tutorialUrl": "URL del tutorial",
+      "info": "Información",
+      "translations": "Traducciones",
+      "lang": "{lang, select, PORTUGUESE {PORTUGUÉS} SPANISH {ESPAÑOL} other {-}}"
+    },
+    "placeholders": {
+      "selectMuscle": "Selecciona un músculo",
+      "searchMuscle": "Buscar músculo...",
+      "translationName": "Nombre en {lang, select, PORTUGUESE {portugués} SPANISH {español} other {inglés}}"
+    },
+    "command": {
+      "noMuscleFound": "No se encontró ningún músculo."
+    },
+    "buttons": {
+      "cancel": "Cancelar",
+      "submit": {
+        "create": "Crear",
+        "update": "Actualizar"
+      }
+    },
+    "translation": {
+      "name": "Nombre",
+      "info": "Información"
+    }
+  },
+  "ForgotPasswordForm": {
+    "labels": {
+      "email": "Correo electrónico"
+    },
+    "placeholders": {
+      "email": "prueba@ejemplo.com"
+    },
+    "buttons": {
+      "submit": "Recuperar contraseña"
+    },
+    "links": {
+      "returnToLogin": "Volver al inicio de sesión"
+    }
+  },
+  "SetForm": {
+    "labels": {
+      "reps": "Repeticiones",
+      "drops": "Drops",
+      "weight": "Peso (KG)"
+    },
+    "buttons": {
+      "cancel": "Cancelar",
+      "create": "Crear serie",
+      "update": "Actualizar serie"
+    }
+  },
+  "UserSettingForm": {
+    "labels": {
+      "email": "Correo electrónico",
+      "username": "Nombre de usuario",
+      "age": "Edad",
+      "weight": "Peso",
+      "height": "Altura"
+    },
+    "buttons": {
+      "save": "Guardar",
+      "cancel": "Cancelar"
+    },
+    "errors": {
+      "usernameTaken": "Nombre de usuario no está disponible"
+    }
+  },
+  "WorkoutForm": {
+    "labels": {
+      "name": "Nombre",
+      "isRoutine": "¿Es una rutina?",
+      "isPrivate": "¿Es privado?"
+    },
+    "placeholders": {
+      "chest": "Pecho",
+      "leg": "Pierna",
+      "back": "Espalda",
+      "arms": "Brazos",
+      "shoulder": "Hombros"
+    },
+    "radio": {
+      "yes": "Sí",
+      "no": "No"
+    },
+    "buttons": {
+      "cancel": "Cancelar",
+      "submit": {
+        "create": "Crear",
+        "update": "Actualizar"
+      }
+    }
+  },
+  "WorkoutExerciseForm": {
+    "title": "Selecciona un nuevo ejercicio para tu entrenamiento",
+    "placeholder": "Selecciona un ejercicio",
+    "searchPlaceholder": "Buscar ejercicio...",
+    "notFound": "No se encontró ningún ejercicio.",
+    "cancel": "Cancelar",
+    "submit": "Crear ejercicio del entrenamiento"
+  },
+  "Navbar": {
+    "navigation": {
+      "home": "Inicio",
+      "publicWorkouts": "Entrenamientos Públicos",
+      "exercises": "Ejercicios",
+      "progress": "Progreso"
+    },
+    "yourProfile": "Tu Perfil",
+    "signOut": "Cerrar sesión",
+    "language": "Idioma"
+  },
+  "WorkoutExerciseSets": {
+    "removeSet": "Eliminar serie"
+  },
+  "Formatter": {
+    "errors": {
+      "itemExists": "Ops.. {name} ya existe",
+      "fieldUsed": "{field} {value} ya usado."
+    }
+  },
+  "Hooks": {
+    "Formatter": {
+      "errors": {
+        "duplicate": {
+          "itemExists": "Ops.. {item} já existe!",
+          "fieldUsed": "{field} {value} já em uso."
+        }
+      }
+    },
+    "useCreateWorkout": {
+      "success": "¡Entrenamiento creado!",
+      "itemName": "Entrenamiento",
+      "error": "Ups... Error al crear el entrenamiento. ¡Inténtalo de nuevo!"
+    },
+    "useChangeWorkoutExercisesOrders": {
+      "error": "Ups... Error al actualizar el orden de los ejercicios del entrenamiento. ¡Inténtalo de nuevo!"
+    },
+    "useCreateExercise": {
+      "error": "Ups... Error al crear el ejercicio. ¡Inténtalo de nuevo!"
+    },
+    "useCreateSet": {
+      "success": "¡Serie creada!",
+      "error": "Ups... Error al crear la serie. ¡Inténtalo de nuevo!"
+    },
+    "useCreateWorkoutExercise": {
+      "success": "¡Ejercicio del entrenamiento creado!",
+      "error": "Ups... Error al crear el ejercicio del entrenamiento. ¡Inténtalo de nuevo!"
+    },
+    "useDeleteExercise": {
+      "success": "¡Ejercicio eliminado!",
+      "error": "Ups... Error al eliminar el ejercicio. ¡Inténtalo de nuevo!"
+    },
+    "useDeleteSet": {
+      "success": "¡Serie eliminada!",
+      "error": "Ups... Error al eliminar la serie. ¡Inténtalo de nuevo!"
+    },
+    "useUpdateWorkout": {
+      "success": "¡Entrenamiento actualizado!",
+      "itemName": "Entrenamiento",
+      "error": "Ups... Error al actualizar el entrenamiento. ¡Inténtalo de nuevo!"
+    },
+    "useDeleteWorkout": {
+      "success": "¡Entrenamiento eliminado!",
+      "error": "Ups... Error al eliminar el entrenamiento. ¡Inténtalo de nuevo!"
+    },
+    "useUpdateUser": {
+      "success": "¡Usuario actualizado!",
+      "itemName": "Usuario",
+      "error": "Ups... Error al actualizar el usuario. ¡Inténtalo de nuevo!"
+    },
+    "useDeleteWorkoutExercise": {
+      "success": "¡Ejercicio del entrenamiento eliminado!",
+      "error": "Ups... Error al eliminar el ejercicio del entrenamiento. ¡Inténtalo de nuevo!"
+    },
+    "useRecoverPassword": {
+      "success": "Contraseña recuperada.",
+      "errors": {
+        "default": "Error al recuperar la contraseña, ¡intenta de nuevo más tarde! Por favor, contacta con soporte.",
+        "expired": "¡El enlace para recuperar la contraseña ha expirado!",
+        "invalidToken": "¡Token de recuperación de contraseña inválido!"
+      }
+    },
+    "useSendRecoverPasswordEmail": {
+      "success": "¡Correo para recuperar la contraseña enviado!",
+      "errors": {
+        "default": "Ups... Error al enviar el correo de recuperación de contraseña. ¡Inténtalo de nuevo!",
+        "alreadySent": "Correo de recuperación de contraseña ya enviado. ¡Revisa tu bandeja de entrada!"
+      }
+    },
+    "useSendVerifyEmail": {
+      "success": "¡Correo de verificación enviado!",
+      "errors": {
+        "default": "Ups... Error al enviar el correo de verificación. ¡Inténtalo de nuevo!",
+        "alreadySent": "Correo de verificación ya enviado. ¡Revisa tu bandeja de entrada!",
+        "alreadyVerified": "¡El correo del usuario ya está verificado!"
+      }
+    },
+    "useSignIn": {
+      "success": "¡Inicio de sesión exitoso!",
+      "errors": {
+        "default": "Ups... Error al iniciar sesión. ¡Inténtalo de nuevo!",
+        "invalid": "Ups... Contraseña o correo inválidos. ¡Inténtalo de nuevo!"
+      }
+    },
+    "useSignUp": {
+      "success": "¡Registro exitoso!",
+      "itemName": "Usuario",
+      "errors": {
+        "default": "Ups... Error al registrar el usuario. ¡Inténtalo de nuevo!",
+        "sendVerifyEmail": "Algo salió mal al enviar el correo de verificación. Intenta más tarde."
+      }
+    },
+    "useStartRoutine": {
+      "success": "¡Rutina iniciada!",
+      "errors": {
+        "default": "Ups... Error al iniciar la rutina. ¡Inténtalo de nuevo!",
+        "forbidden": "No puedes iniciar una rutina de un entrenamiento privado que no te pertenece"
+      }
+    },
+    "useVerifyEmail": {
+      "success": "Tu correo ha sido verificado exitosamente.",
+      "errors": {
+        "default": "Error al verificar el correo, intenta de nuevo más tarde. Por favor, contacta con soporte.",
+        "expired": "¡El enlace de verificación de correo expiró!",
+        "invalid": "¡Token de verificación de correo inválido!"
+      }
+    },
+    "useUpdateSet": {
+      "success": "¡Serie actualizada!",
+      "error": "Ups... Error al actualizar la serie. ¡Inténtalo de nuevo!"
+    },
+    "useUpdateManySetOrders": {
+      "error": "Ups... Error al actualizar el orden de las series. ¡Inténtalo de nuevo!"
+    },
+    "useUpdateExercise": {
+      "error": "Ups... Error al actualizar el ejercicio. ¡Inténtalo de nuevo!"
+    }
+  },
+  "Zod": {
+    "required": "Este campo es obligatorio",
+    "email": "Por favor, introduce una dirección de correo válida",
+    "minLength": "Debe tener al menos {length} caracteres",
+    "maxLength": "Debe tener como máximo {length} caracteres",
+    "usernameTaken": "El nombre de usuario ya está en uso",
+    "emailTaken": "El correo electrónico ya está en uso",
+    "passwordComplexity": "La contraseña no cumple con los requisitos de seguridad",
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "invalidUrl": "Por favor, introduce una URL válida",
+    "invalidUUID": "Formato de ID inválido",
+    "minValue": "Debe ser al menos {min}",
+    "maxValue": "Debe ser como máximo {max}"
+  }
+}

@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { enqueueSnackbar } from "notistack";
 import {
   createWorkoutExercise,
@@ -8,6 +9,7 @@ import {
 } from "~/data/create-workout-exercise";
 
 export const useCreateWorkoutExercise = () => {
+  const t = useTranslations("Hooks");
   const queryClient = useQueryClient();
 
   const {
@@ -27,13 +29,14 @@ export const useCreateWorkoutExercise = () => {
         queryKey: ["workout-exercises", data.workoutId],
       });
 
-      enqueueSnackbar("Workout exercise created!", { variant: "success" });
+      enqueueSnackbar(t("useCreateWorkoutExercise.success"), {
+        variant: "success",
+      });
     },
     onError: () => {
-      return enqueueSnackbar(
-        "Ops.. Error on create workout exercise. Try again!",
-        { variant: "error" }
-      );
+      return enqueueSnackbar(t("useCreateWorkoutExercise.error"), {
+        variant: "error",
+      });
     },
   });
 

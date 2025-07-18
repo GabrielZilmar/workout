@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { enqueueSnackbar } from "notistack";
 import { HttpStatus } from "~/constants/httpStatus";
 import {
@@ -9,6 +10,7 @@ import {
 } from "~/data/start-routine";
 
 export const useStartRoutine = () => {
+  const t = useTranslations("Hooks");
   const queryClient = useQueryClient();
 
   const {
@@ -27,19 +29,16 @@ export const useStartRoutine = () => {
         queryKey: ["public-workouts"],
       });
 
-      enqueueSnackbar("Routine started!", { variant: "success" });
+      enqueueSnackbar(t("useStartRoutine.success"), { variant: "success" });
     },
     onError: (data) => {
       if (data.response?.status === HttpStatus.FORBIDDEN) {
-        return enqueueSnackbar(
-          "You can't start a routine from a private workout that doesn't belongs to you",
-          {
-            variant: "error",
-          }
-        );
+        return enqueueSnackbar(t("useStartRoutine.errors.forbidden"), {
+          variant: "error",
+        });
       }
 
-      enqueueSnackbar("Ops.. Error on start routine. Try again!", {
+      enqueueSnackbar(t("useStartRoutine.errors.default"), {
         variant: "error",
       });
     },

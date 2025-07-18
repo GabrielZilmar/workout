@@ -27,46 +27,49 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { isEmailAvailable } from "~/data/is-email-available";
 import { isUsernameAvailable } from "~/data/is-username-available";
+import { useLocale, useTranslations } from "next-intl";
 
 type FormFieldValues = SignUpPayload & { confirmPassword: string };
 
-const formSchema = z
-  .object({
-    username: z
-      .string()
-      .min(4)
-      .refine(async (value) => {
-        try {
-          const { data: isAvail } = await isUsernameAvailable(value);
-          return isAvail;
-        } catch (e) {
-          return false;
-        }
-      }, "Username is already taken"),
-    email: z
-      .string()
-      .email()
-      .refine(async (value) => {
-        try {
-          const { data: isAvail } = await isEmailAvailable(value);
-          return isAvail;
-        } catch (e) {
-          return false;
-        }
-      }, "Email is already taken"),
-    password: z.string().regex(Validator.regexPasswordValidation, {
-      message: "Password does not meet complexity requirements",
-    }),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
-
 const SignUp: React.FC = () => {
+  const zt = useTranslations("Zod");
+  const formSchema = z
+    .object({
+      username: z
+        .string()
+        .min(4, zt("minLength", { length: 4 }))
+        .refine(
+          async (value) => {
+            if (!value) return;
+            const { data: isAvail } = await isUsernameAvailable(value);
+            return isAvail;
+          },
+          { message: zt("usernameTaken") }
+        ),
+      email: z
+        .string()
+        .email(zt("email"))
+        .refine(
+          async (value) => {
+            const { data: isAvail } = await isEmailAvailable(value);
+            return isAvail;
+          },
+          { message: zt("emailTaken") }
+        ),
+      password: z.string().regex(Validator.regexPasswordValidation, {
+        message: zt("passwordComplexity"),
+      }),
+      confirmPassword: z.string(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: zt("passwordMismatch"),
+      path: ["confirmPassword"],
+    });
+
+  const t = useTranslations("SignUpPage");
   const router = useRouter();
-  const routes = getRoutes();
+  const locale = useLocale();
+  const routes = getRoutes(locale);
   const form = useForm<FormFieldValues>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
@@ -103,7 +106,7 @@ const SignUp: React.FC = () => {
           priority
         />
         <h2 className="text-center text-xl font-bold text-white-900">
-          Register your account
+          {t("title")}
         </h2>
       </div>
 
@@ -119,7 +122,7 @@ const SignUp: React.FC = () => {
                 htmlFor="email"
                 className="block text-sm font-medium leading-6 text-white-900"
               >
-                Email
+                {t("labels.email")}
               </Label>
               <div className="mt-2">
                 <FormField
@@ -130,7 +133,7 @@ const SignUp: React.FC = () => {
                       <FormControl>
                         <Input
                           {...field}
-                          placeholder="test@example.com"
+                          placeholder={t("placeholders.email")}
                           id="email"
                           type="email"
                           autoComplete="email"
@@ -151,7 +154,7 @@ const SignUp: React.FC = () => {
                 htmlFor="username"
                 className="block text-sm font-medium leading-6 text-white-900"
               >
-                Username
+                {t("labels.username")}
               </Label>
               <div className="mt-2">
                 <FormField
@@ -162,7 +165,7 @@ const SignUp: React.FC = () => {
                       <FormControl>
                         <Input
                           {...field}
-                          placeholder="Username"
+                          placeholder={t("placeholders.username")}
                           id="username"
                           type="username"
                           autoComplete="username"
@@ -184,7 +187,7 @@ const SignUp: React.FC = () => {
                   htmlFor="password"
                   className="block text-sm font-medium leading-6 text-white-900"
                 >
-                  Password
+                  {t("labels.password")}
                 </Label>
               </div>
               <div className="mt-2">
@@ -197,6 +200,7 @@ const SignUp: React.FC = () => {
                         <PasswordInput
                           {...field}
                           id="password"
+                          placeholder={t("placeholders.password")}
                           autoComplete="current-password"
                           displayRuleChecker
                           required
@@ -217,7 +221,7 @@ const SignUp: React.FC = () => {
                   htmlFor="confirmPassword"
                   className="block text-sm font-medium leading-6 text-white-900"
                 >
-                  Confirm Password
+                  {t("labels.confirmPassword")}
                 </Label>
               </div>
               <div className="mt-2">
@@ -230,6 +234,7 @@ const SignUp: React.FC = () => {
                         <PasswordInput
                           {...field}
                           id="confirmPassword"
+                          placeholder={t("placeholders.confirmPassword")}
                           autoComplete="current-password"
                           required
                           startIcon={<Lock />}
@@ -246,19 +251,19 @@ const SignUp: React.FC = () => {
 
             <div>
               <Button fullWidth type="submit" className="mt-4">
-                Register
+                {t("buttons.submit")}
               </Button>
             </div>
           </form>
         </Form>
 
         <p className="mt-4 text-center text-sm text-gray-500">
-          Already have an account?{" "}
+          {t("hasAccount")}{" "}
           <Link
             href={routes.signIn}
             className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
           >
-            Sign In
+            {t("links.signIn")}
           </Link>
         </p>
       </div>

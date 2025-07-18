@@ -22,11 +22,13 @@ import {
   SelectValue,
 } from "@workout/ui";
 import { TrendingUp } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import Loading from "~/components/loading";
 import { useListPaginatedExercises } from "~/hooks";
 import useProgressHistory from "~/hooks/useProgressHistory";
+import { LOCALE_MAP } from "~/types/languages";
 
 const chartConfig = {
   weight: {
@@ -36,6 +38,8 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 const ProgressChart: React.FC = () => {
+  const t = useTranslations("ProgressChart");
+  const locale = useLocale();
   const [exerciseId, setExerciseId] = useState<string>();
   const { data, isLoading } = useProgressHistory(exerciseId || "");
   const {
@@ -64,14 +68,17 @@ const ProgressChart: React.FC = () => {
               onValueChange={(id) => setExerciseId(id)}
             >
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Exercise" />
+                <SelectValue placeholder={t("select.placeholder")} />
               </SelectTrigger>
               <SelectContent>
                 <ScrollArea>
                   <SelectGroup>
                     {exercises.map((exercise) => (
                       <SelectItem key={exercise.id} value={exercise.id}>
-                        {exercise.name}
+                        {(exercise.translations || []).find(
+                          (translation) =>
+                            LOCALE_MAP[translation.language] === locale
+                        )?.name || exercise.name}
                       </SelectItem>
                     ))}
                   </SelectGroup>
@@ -84,7 +91,7 @@ const ProgressChart: React.FC = () => {
                       setExerciseId(undefined);
                     }}
                   >
-                    Clear
+                    {t("select.clear")}
                   </Button>
                 </ScrollArea>
               </SelectContent>
@@ -97,10 +104,8 @@ const ProgressChart: React.FC = () => {
       ) : (
         <Card>
           <CardHeader>
-            <CardTitle>Progressive Overload</CardTitle>
-            <CardDescription>
-              Showing your progressive overload in the exercise selected
-            </CardDescription>
+            <CardTitle>{t("card.title")}</CardTitle>
+            <CardDescription>{t("card.description")}</CardDescription>
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig}>
@@ -134,7 +139,7 @@ const ProgressChart: React.FC = () => {
             <div className="flex w-full items-start gap-2 text-sm">
               <div className="grid gap-2">
                 <div className="flex items-center gap-2 font-medium leading-none">
-                  Progressive Overload 💪🏼
+                  {t("footer.label")}
                   <TrendingUp className="h-4 w-4" />
                 </div>
               </div>

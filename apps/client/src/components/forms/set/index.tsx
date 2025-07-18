@@ -13,13 +13,32 @@ import {
   Label,
 } from "@workout/ui";
 import { useCreateSet, useUpdateSet } from "~/hooks";
+import { useTranslations } from "next-intl";
 
-const formSchema = z.object({
-  numReps: z.coerce.number().min(0).default(0),
-  numDrops: z.coerce.number().min(0).default(0),
-  setWeight: z.coerce.number().min(0).default(0),
-});
-type FormSchema = z.infer<typeof formSchema>;
+const getFormSchema = (
+  t: (
+    key: string,
+    params?: Record<string, string | number | Date> | undefined
+  ) => string
+) => {
+  const formSchema = z.object({
+    numReps: z.coerce
+      .number()
+      .min(0, t("minValue", { min: 0 }))
+      .default(0),
+    numDrops: z.coerce
+      .number()
+      .min(0, t("minValue", { min: 0 }))
+      .default(0),
+    setWeight: z.coerce
+      .number()
+      .min(0, t("minValue", { min: 0 }))
+      .default(0),
+  });
+  return formSchema;
+};
+
+type FormSchema = z.infer<ReturnType<typeof getFormSchema>>;
 
 type SetFormProps = {
   workoutExerciseId: string;
@@ -36,8 +55,11 @@ const SetForm: React.FC<SetFormProps> = ({
   isOwner = false,
   onSubmit,
   onCancel,
-  cancelLabel = "Cancel",
+  cancelLabel,
 }) => {
+  const zt = useTranslations("Zod");
+  const formSchema = getFormSchema(zt);
+  const t = useTranslations("SetForm");
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -86,7 +108,7 @@ const SetForm: React.FC<SetFormProps> = ({
               htmlFor="numReps"
               className="block text-sm font-medium leading-6 text-white-900"
             >
-              Reps
+              {t("labels.reps")}
             </Label>
             <FormField
               control={form.control}
@@ -110,7 +132,7 @@ const SetForm: React.FC<SetFormProps> = ({
               htmlFor="numDrops"
               className="block text-sm font-medium leading-6 text-white-900"
             >
-              Drops
+              {t("labels.drops")}
             </Label>
             <FormField
               control={form.control}
@@ -134,7 +156,7 @@ const SetForm: React.FC<SetFormProps> = ({
               htmlFor="setWeight"
               className="block text-sm font-medium leading-6 text-white-900"
             >
-              Weight (KG)
+              {t("labels.weight")}
             </Label>
             <FormField
               control={form.control}
@@ -162,10 +184,10 @@ const SetForm: React.FC<SetFormProps> = ({
               className="mt-4"
               onClick={handleCancel}
             >
-              {cancelLabel}
+              {cancelLabel || t("buttons.cancel")}
             </Button>
             <Button type="submit" className="mt-4">
-              {set ? "Update Set" : "Create Set"}
+              {set ? t("buttons.update") : t("buttons.create")}
             </Button>
           </div>
         ) : null}

@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { enqueueSnackbar } from "notistack";
 import {
   deleteWorkoutExercise,
@@ -8,6 +9,7 @@ import {
 } from "~/data/delete-workout-exercise";
 
 export const useDeleteWorkoutExercise = () => {
+  const t = useTranslations("Hooks");
   const queryClient = useQueryClient();
 
   const {
@@ -26,10 +28,12 @@ export const useDeleteWorkoutExercise = () => {
       queryClient.invalidateQueries({
         queryKey: ["workout-exercises"],
       });
-      enqueueSnackbar("Workout exercise deleted!", { variant: "success" });
+      enqueueSnackbar(t("useDeleteWorkoutExercise.success"), {
+        variant: "success",
+      });
     },
     onError: () => {
-      enqueueSnackbar("Ops.. Error on delete workout exercise. Try again!", {
+      enqueueSnackbar(t("useDeleteWorkoutExercise.error"), {
         variant: "error",
       });
     },
