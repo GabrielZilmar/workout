@@ -156,6 +156,7 @@ const WorkoutDetailsPage = () => {
                       key={workoutExercise.id}
                       id={workoutExercise.id}
                       className="w-full"
+                      iconSize={16}
                     >
                       <div className="flex items-center justify-between space-x-6 w-full">
                         <div className="w-full">

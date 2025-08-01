@@ -7,12 +7,14 @@ type SortableItemProps = {
   id: string;
   children: React.ReactNode;
   className?: string;
+  iconSize?: string | number;
 };
 
 export const SortableItem: React.FC<SortableItemProps> = ({
   id,
   children,
   className,
+  iconSize = 24,
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
@@ -29,7 +31,7 @@ export const SortableItem: React.FC<SortableItemProps> = ({
       className={cn("flex space-x-2", className)}
     >
       <button {...listeners} {...attributes}>
-        <GripVertical />
+        <GripVertical size={iconSize} />
       </button>
       {children}
     </div>

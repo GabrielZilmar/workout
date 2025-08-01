@@ -136,7 +136,7 @@ const WorkoutExerciseSets: React.FC<WorkoutExerciseSetsProps> = ({
       >
         <SortableContext items={sets} strategy={verticalListSortingStrategy}>
           {sets.map(({ id, set }) => (
-            <SortableItem key={id} id={id} className="w-full">
+            <SortableItem key={id} id={id} className="w-full" iconSize={16}>
               <SetForm
                 workoutExerciseId={workoutExerciseId}
                 set={set}
