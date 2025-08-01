@@ -1,10 +1,6 @@
 "use client";
 
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -14,6 +10,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
   SortableItem,
 } from "@workout/ui";
 import {
@@ -31,7 +31,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { PlusCircle, Trash2 } from "lucide-react";
+import { PlusCircle, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import WorkoutExerciseDialog from "~/components/dialogs/workout-exercise";
@@ -54,6 +54,10 @@ type DeleteWorkoutExerciseDialogState = {
   isOpen: boolean;
 };
 
+type OpenedWorkoutExercisesState = {
+  [id: string]: boolean;
+};
+
 const WorkoutDetailsPage = () => {
   const t = useTranslations("WorkoutDetailsPage");
   const locale = useLocale();
@@ -71,6 +75,8 @@ const WorkoutDetailsPage = () => {
     useState<DeleteWorkoutExerciseDialogState>({
       isOpen: false,
     });
+  const [openedWorkoutExercises, setOpenedWorkoutExercise] =
+    useState<OpenedWorkoutExercisesState>({});
 
   const { data: workout, isLoading, isError, error } = useGetWorkout(id);
   const { data: workoutExerciseData, isLoading: isLoadingWorkoutExercises } =
@@ -118,6 +124,14 @@ const WorkoutDetailsPage = () => {
     }
   };
 
+  const handleToggleCard = (workoutExerciseId: string) => {
+    setOpenedWorkoutExercise((prev) => ({
+      ...prev,
+      [workoutExerciseId]:
+        prev[workoutExerciseId] !== undefined ? !prev[workoutExerciseId] : true,
+    }));
+  };
+
   if (isError) {
     const errorMessage = `${error?.response?.data?.message || ""}\n ${
       error?.response?.statusText || ""
@@ -150,7 +164,7 @@ const WorkoutDetailsPage = () => {
                 items={workoutExerciseData?.items || []}
                 strategy={verticalListSortingStrategy}
               >
-                <div className="px-4">
+                <div className="px-4 pt-4 space-y-4">
                   {workoutExerciseData?.items.map((workoutExercise) => (
                     <SortableItem
                       key={workoutExercise.id}
@@ -159,38 +173,57 @@ const WorkoutDetailsPage = () => {
                       iconSize={16}
                     >
                       <div className="flex items-center justify-between space-x-6 w-full">
-                        <div className="w-full">
-                          <Accordion type="single" collapsible>
-                            <AccordionItem value="item-1">
-                              <AccordionTrigger>
-                                {(
-                                  workoutExercise.exercise?.translations || []
-                                ).find(
-                                  (translation) =>
-                                    LOCALE_MAP[translation.language] === locale
-                                )?.name || workoutExercise.exercise?.name}
-                              </AccordionTrigger>
-                              <AccordionContent>
-                                <WorkoutExerciseSets
-                                  workoutExerciseId={workoutExercise.id}
-                                  isOwner={isOwner}
-                                />
-                              </AccordionContent>
-                            </AccordionItem>
-                          </Accordion>
-                        </div>
-                        {isOwner ? (
-                          <Button
-                            onClick={() =>
-                              setDeleteWorkoutExerciseDialog({
-                                workoutExerciseId: workoutExercise.id,
-                                isOpen: true,
-                              })
-                            }
+                        <Card className="w-full">
+                          <CardHeader
+                            onClick={() => handleToggleCard(workoutExercise.id)}
                           >
-                            <Trash2 />
-                          </Button>
-                        ) : null}
+                            <CardTitle>
+                              <div className="flex justify-between items-center">
+                                <h4 className="text-base sm:text-xl">
+                                  {(
+                                    workoutExercise.exercise?.translations || []
+                                  ).find(
+                                    (translation) =>
+                                      LOCALE_MAP[translation.language] ===
+                                      locale
+                                  )?.name || workoutExercise.exercise?.name}
+                                </h4>
+
+                                <div className="flex items-center space-x-2">
+                                  {openedWorkoutExercises[
+                                    workoutExercise.id
+                                  ] ? (
+                                    <ChevronUp />
+                                  ) : (
+                                    <ChevronDown />
+                                  )}
+                                  {isOwner ? (
+                                    <Button
+                                      className="p-1 sm:p-2 h-8 w-8 sm:h-11 sm:w-11"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setDeleteWorkoutExerciseDialog({
+                                          workoutExerciseId: workoutExercise.id,
+                                          isOpen: true,
+                                        });
+                                      }}
+                                    >
+                                      <Trash2 className="h-4 w-4 sm:h-6 sm:w-6" />
+                                    </Button>
+                                  ) : null}
+                                </div>
+                              </div>
+                            </CardTitle>
+                          </CardHeader>
+                          {openedWorkoutExercises[workoutExercise.id] && (
+                            <CardContent>
+                              <WorkoutExerciseSets
+                                workoutExerciseId={workoutExercise.id}
+                                isOwner={isOwner}
+                              />
+                            </CardContent>
+                          )}
+                        </Card>
                       </div>
                     </SortableItem>
                   ))}
