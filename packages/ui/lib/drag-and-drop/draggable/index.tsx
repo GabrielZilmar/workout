@@ -6,12 +6,14 @@ type DraggableProps = {
   id: string;
   children: React.ReactNode;
   className?: string;
+  iconSize?: string | number;
 };
 
 export const Draggable: React.FC<DraggableProps> = ({
   id,
   children,
   className,
+  iconSize,
 }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
   const style = transform
@@ -25,7 +27,7 @@ export const Draggable: React.FC<DraggableProps> = ({
       className={cn("flex space-x-2", className)}
     >
       <button {...listeners} {...attributes}>
-        <GripVertical />
+        <GripVertical size={iconSize} />
       </button>
       {children}
     </div>

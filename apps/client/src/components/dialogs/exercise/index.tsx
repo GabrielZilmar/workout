@@ -34,7 +34,7 @@ const ExerciseDialog: React.FC<ExerciseDialogProps> = ({
         <DialogHeader>
           <DialogTitle>{`${
             isEditing ? t("title.update") : t("title.create")
-          } exercise`}</DialogTitle>
+          }`}</DialogTitle>
           <DialogDescription>
             {isEditing ? t("description.update") : t("description.create")}
           </DialogDescription>
