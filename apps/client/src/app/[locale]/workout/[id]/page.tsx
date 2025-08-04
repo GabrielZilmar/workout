@@ -164,7 +164,7 @@ const WorkoutDetailsPage = () => {
                 items={workoutExerciseData?.items || []}
                 strategy={verticalListSortingStrategy}
               >
-                <div className="px-4 pt-4 space-y-4">
+                <div className="px-0 sm:px-4 pt-4 space-y-4">
                   {workoutExerciseData?.items.map((workoutExercise) => (
                     <SortableItem
                       key={workoutExercise.id}
@@ -200,6 +200,7 @@ const WorkoutDetailsPage = () => {
                                   {isOwner ? (
                                     <Button
                                       className="p-1 sm:p-2 h-8 w-8 sm:h-11 sm:w-11"
+                                      variant="destructive"
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         setDeleteWorkoutExerciseDialog({

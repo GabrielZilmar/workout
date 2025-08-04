@@ -338,7 +338,8 @@
     "language": "Language"
   },
   "WorkoutExerciseSets": {
-    "removeSet": "Remove Set"
+    "removeSet": "Remove Set",
+    "set": "Set {value}"
   },
   "Formatter": {
     "errors": {

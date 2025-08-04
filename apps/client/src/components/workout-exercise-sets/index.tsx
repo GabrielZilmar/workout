@@ -135,8 +135,14 @@ const WorkoutExerciseSets: React.FC<WorkoutExerciseSetsProps> = ({
         onDragEnd={handleDragEnd}
       >
         <SortableContext items={sets} strategy={verticalListSortingStrategy}>
-          {sets.map(({ id, set }) => (
-            <SortableItem key={id} id={id} className="w-full" iconSize={16}>
+          {sets.map(({ id, set }, index) => (
+            <SortableItem
+              key={id}
+              id={id}
+              className="w-full flex-col space-y-1"
+              title={t("set", { value: index + 1 })}
+              iconSize={16}
+            >
               <SetForm
                 workoutExerciseId={workoutExerciseId}
                 set={set}

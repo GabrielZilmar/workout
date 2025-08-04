@@ -338,7 +338,8 @@
     "language": "Idioma"
   },
   "WorkoutExerciseSets": {
-    "removeSet": "Remover série"
+    "removeSet": "Remover série",
+    "set": "Série {value}"
   },
   "Hooks": {
     "Formatter": {
